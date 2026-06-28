@@ -2,11 +2,11 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 
 exports.showLogin = (req, res) => {
-  res.render("auth/login");
+  res.render("login");
 };
 
 exports.showRegister = (req, res) => {
-  res.render("auth/register");
+  res.render("register");
 };
 
 exports.register = async (req, res) => {
