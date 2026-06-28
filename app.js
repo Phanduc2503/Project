@@ -15,7 +15,9 @@ app.use(express.urlencoded({
 
 app.use(express.static("public"));
 
-app.use(require("./routes/authRoutes"));
+// app.use(require("./routes/authRoutes"));
+// app.use(require("./routes/categoryRoutes"));
+// app.use(require("./routes/breedRoutes"));
 
 app.listen(3000, () => {
   console.log("Server running...");

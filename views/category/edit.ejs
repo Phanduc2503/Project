@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<title>Edit Category</title>
+
+</head>
+
+<body>
+
+<h1>Edit Category</h1>
+
+<form action="/categories/update/<%= category._id %>" method="POST">
+
+<label>
+
+Category Name
+
+</label>
+
+<br>
+
+<input
+type="text"
+name="name"
+value="<%= category.name %>">
+
+<br><br>
+
+<label>
+
+Description
+
+</label>
+
+<br>
+
+<textarea
+name="description"><%= category.description %></textarea>
+
+<br><br>
+
+<button>
+
+Update
+
+</button>
+
+</form>
+
+<br>
+
+<a href="/categories">
+
+Back
+
+</a>
+
+</body>
+
+</html>
