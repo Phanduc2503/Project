@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Create Breed</title>
+</head>
+
+<body>
+
+<h1>Create Breed</h1>
+
+<form action="/breeds" method="POST">
+
+<label>Category</label>
+
+<select name="categoryId">
+
+<% categories.forEach(category=>{ %>
+
+<option value="<%= category._id %>">
+
+<%= category.name %>
+
+</option>
+
+<% }) %>
+
+</select>
+
+<br><br>
+
+<input
+type="text"
+name="name"
+placeholder="Breed Name">
+
+<br><br>
+
+<input
+type="text"
+name="originCountry"
+placeholder="Country">
+
+<br><br>
+
+<input
+type="number"
+name="lifeExpectancy"
+placeholder="Life Expectancy">
+
+<br><br>
+
+<input
+type="text"
+name="temperament"
+placeholder="Temperament">
+
+<br><br>
+
+<input
+type="text"
+name="behavior"
+placeholder="Behavior">
+
+<br><br>
+
+<textarea
+name="careRequirements"
+placeholder="Care Requirements"></textarea>
+
+<br><br>
+
+<textarea
+name="description"
+placeholder="Description"></textarea>
+
+<br><br>
+
+<input
+type="text"
+name="image"
+placeholder="Image URL">
+
+<br><br>
+
+<button>
+
+Save
+
+</button>
+
+</form>
+
+</body>
+
+</html>

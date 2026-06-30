@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Edit Breed</title>
+</head>
+
+<body>
+
+<h1>Edit Breed</h1>
+
+<form action="/breeds/update/<%= breed._id %>" method="POST">
+
+<select name="categoryId">
+
+<% categories.forEach(category=>{ %>
+
+<option
+value="<%= category._id %>"
+<%= category._id.toString()===breed.categoryId.toString()
+? "selected"
+: "" %>>
+
+<%= category.name %>
+
+</option>
+
+<% }) %>
+
+</select>
+
+<br><br>
+
+<input
+type="text"
+name="name"
+value="<%= breed.name %>">
+
+<br><br>
+
+<input
+type="text"
+name="originCountry"
+value="<%= breed.originCountry %>">
+
+<br><br>
+
+<input
+type="number"
+name="lifeExpectancy"
+value="<%= breed.lifeExpectancy %>">
+
+<br><br>
+
+<button>
+
+Update
+
+</button>
+
+</form>
+
+</body>
+
+</html>

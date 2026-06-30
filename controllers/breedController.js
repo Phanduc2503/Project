@@ -167,22 +167,3 @@ exports.destroy = async (req, res) => {
 
 };
 
-const express = require("express");
-
-const router = express.Router();
-
-const breedController = require("../controllers/breedController");
-
-router.get("/breeds", breedController.index);
-
-router.get("/breeds/create", breedController.create);
-
-router.post("/breeds", breedController.store);
-
-router.get("/breeds/edit/:id", breedController.edit);
-
-router.post("/breeds/update/:id", breedController.update);
-
-router.get("/breeds/delete/:id", breedController.destroy);
-
-module.exports = router;
