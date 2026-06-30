@@ -38,3 +38,7 @@ exports.login = async (req, res) => {
   req.session.user = user;
   res.redirect("/");
 };
+exports.logout = async (req, res) => {
+  req.session.destroy();
+  res.redirect("/login");
+};

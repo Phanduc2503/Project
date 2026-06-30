@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const auth = require("../middleware/auth");
+const auth = require("../middleware/auth.js");
 
 const authController = require(
   "../controllers/authController"
@@ -20,7 +20,6 @@ router.get(
   "/login",
   authController.showLogin
 );
-
 router.post("/login", authController.login);
 
 router.get("/dashboard", auth, (req, res) => {
