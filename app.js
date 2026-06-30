@@ -7,12 +7,13 @@ const path = require("path");
 const app = express();
 
 const connectDB = require("./config/db");
-const authRoutes = require("./Route/authRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 
 connectDB();
 
 app.set("view engine", "ejs");
+app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.urlencoded({
     extended: true,
@@ -20,8 +21,8 @@ app.use(express.urlencoded({
 
 app.use(express.static("public"));
 
-// app.use(require("./routes/authRoutes"));
-// app.use(require("./routes/categoryRoutes"));
+app.use(require("./routes/authRoutes"));
+app.use(require("./routes/categoryRoutes"));
 // app.use(require("./routes/breedRoutes"));
 
 app.listen(3000, () => {

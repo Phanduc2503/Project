@@ -6,7 +6,7 @@ exports.showLogin = (req, res) => {
 };
 
 exports.showRegister = (req, res) => {
-  res.render("register");
+  res.render("auth/register");
 };
 
 exports.register = async (req, res) => {
