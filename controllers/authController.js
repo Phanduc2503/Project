@@ -9,6 +9,7 @@ exports.showRegister = (req, res) => {
   res.render("register");
 };
 
+
 exports.register = async (req, res) => {
   const { username, email, password } =
     req.body;
@@ -23,4 +24,17 @@ exports.register = async (req, res) => {
   });
 
   res.redirect("/login");
+};
+exports.login = async (req, res) => {
+  const {username, password} = req.body;
+  const user = await User.findOne({username});
+  if(!user){
+    return res.redirect("/login");
+  }
+  const isMatch = await bcrypt.compare(password, user.password);
+  if(!isMatch){
+    return res.redirect("/login");
+  }
+  req.session.user = user;
+  res.redirect("/");
 };
