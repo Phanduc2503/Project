@@ -15,6 +15,8 @@ router.post("/breeds", breedController.store);
 // Form sửa
 router.get("/breeds/edit/:id", breedController.edit);
 
+router.get("/breeds/:id", breedController.detail);
+
 // Cập nhật
 router.post("/breeds/update/:id", breedController.update);
 

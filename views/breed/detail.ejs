@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<title>Breed Detail</title>
+
+</head>
+
+<body>
+
+<h1><%= breed.name %></h1>
+
+<hr>
+
+<p>
+
+<b>Category:</b>
+
+<%= breed.categoryId.name %>
+
+</p>
+
+<p>
+
+<b>Country:</b>
+
+<%= breed.originCountry %>
+
+</p>
+
+<p>
+
+<b>Life Expectancy:</b>
+
+<%= breed.lifeExpectancy %> years
+
+</p>
+
+<p>
+
+<b>Temperament:</b>
+
+<%= breed.temperament %>
+
+</p>
+
+<p>
+
+<b>Behavior:</b>
+
+<%= breed.behavior %>
+
+</p>
+
+<p>
+
+<b>Care Requirements:</b>
+
+<%= breed.careRequirements %>
+
+</p>
+
+<p>
+
+<b>Description:</b>
+
+<%= breed.description %>
+
+</p>
+
+<img
+
+src="<%= breed.image %>"
+
+width="350"
+
+>
+
+<br><br>
+
+<a href="/breeds">
+
+Back
+
+</a>
+
+</body>
+
+</html>

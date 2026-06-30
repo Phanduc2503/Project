@@ -167,3 +167,28 @@ exports.destroy = async (req, res) => {
 
 };
 
+exports.detail = async (req, res) => {
+
+    try {
+
+        const breed = await Breed.findById(req.params.id)
+            .populate("categoryId");
+
+        if (!breed) {
+            return res.status(404).send("Breed not found");
+        }
+
+        res.render("breed/detail", {
+            breed
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(500).send("Server Error");
+
+    }
+
+};
+
