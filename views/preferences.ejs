@@ -1,0 +1,61 @@
+<h1>User Preferences</h1>
+
+<form action="/preferences" method="POST">
+
+    <label>Home Size</label>
+    <select name="homeSize">
+        <option>Apartment</option>
+        <option>House</option>
+    </select>
+
+    <br><br>
+
+    <label>Lifestyle</label>
+    <select name="lifestyle">
+        <option>Active</option>
+        <option>Moderate</option>
+        <option>Relaxed</option>
+    </select>
+
+    <br><br>
+
+    <label>Activity Level</label>
+    <select name="activityLevel">
+        <option>Low</option>
+        <option>Medium</option>
+        <option>High</option>
+    </select>
+
+    <br><br>
+
+    <label>Climate</label>
+    <select name="climate">
+        <option>Hot</option>
+        <option>Cold</option>
+        <option>Moderate</option>
+    </select>
+
+    <br><br>
+
+    <label>Family Type</label>
+    <select name="familyType">
+        <option>Single</option>
+        <option>Couple</option>
+        <option>Family with Kids</option>
+    </select>
+
+    <br><br>
+
+    <button type="submit">
+        Save Preferences
+    </button>
+
+</form>
+
+<p>Home Size: <%= preferences.homeSize %></p>
+<p>Lifestyle: <%= preferences.lifestyle %></p>
+<p>Activity: <%= preferences.activityLevel %></p>
+<p>Climate: <%= preferences.climate %></p>
+<p>Family: <%= preferences.familyType %></p>
+
+<a href="/">← Back to Home</a>

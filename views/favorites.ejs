@@ -1,0 +1,31 @@
+<h1>Favorites</h1>
+
+<ul>
+    <% favorites.forEach(favorite => { %>
+
+        <li>
+            <%= favorite.name %>
+
+            <form action="/favorites/delete/<%= favorite.id %>"
+                  method="POST"
+                  style="display:inline;">
+
+                <button type="submit">
+                    Remove
+                </button>
+
+            </form>
+        </li>
+
+    <% }) %>
+</ul>
+
+<form action="/favorites" method="POST">
+    <input type="text" name="name">
+
+    <button type="submit">
+        Add
+    </button>
+</form>
+
+<a href="/">← Back to Home</a>

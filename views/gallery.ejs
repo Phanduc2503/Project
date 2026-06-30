@@ -1,0 +1,49 @@
+<h1>Gallery</h1>
+
+<ul>
+    <% gallery.forEach(item => { %>
+
+        <li>
+            <h3><%= item.breed %></h3>
+
+            <img
+                src="<%= item.image %>"
+                width="200"
+            >
+
+            <form
+                action="/gallery/delete/<%= item.id %>"
+                method="POST"
+            >
+                <button type="submit">
+                    Delete
+                </button>
+            </form>
+        </li>
+
+    <% }) %>
+</ul>
+
+<h2>Add Image</h2>
+
+<form action="/gallery" method="POST">
+
+    <input
+        type="text"
+        name="breed"
+        placeholder="Breed"
+    >
+
+    <input
+        type="text"
+        name="image"
+        placeholder="Image URL"
+    >
+
+    <button type="submit">
+        Add
+    </button>
+
+</form>
+
+<a href="/">← Back to Home</a>
