@@ -22,81 +22,40 @@ exports.index = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-
     try {
-
         const categories = await Category.find();
+
+        console.log(categories); // kiểm tra có dữ liệu không
 
         res.render("breed/create", {
             categories
         });
 
     } catch (error) {
-
         console.log(error);
-
     }
-
 };
 
 exports.store = async (req, res) => {
-
     try {
+        console.log("Before create");
+        console.log(req.body);
 
-        const {
+        const breed = new Breed(req.body);
 
-            categoryId,
+        console.log("Model created");
 
-            name,
+        await breed.save();
 
-            originCountry,
-
-            lifeExpectancy,
-
-            temperament,
-
-            behavior,
-
-            careRequirements,
-
-            description,
-
-            image
-
-        } = req.body;
-
-        await Breed.create({
-
-            categoryId,
-
-            name,
-
-            originCountry,
-
-            lifeExpectancy,
-
-            temperament,
-
-            behavior,
-
-            careRequirements,
-
-            description,
-
-            image
-
-        });
+        console.log("Saved");
 
         res.redirect("/breeds");
 
-    }
-
-    catch (error) {
-
+    } catch (error) {
+        console.log("ERROR:");
         console.log(error);
-
+        res.status(500).send(error.message);
     }
-
 };
 
 exports.edit = async (req, res) => {
@@ -192,3 +151,58 @@ exports.detail = async (req, res) => {
 
 };
 
+exports.search = async (req, res) => {
+    try {
+
+        const {
+            name,
+            country,
+            temperament,
+            category
+        } = req.query;
+
+        let filter = {};
+
+        if (name) {
+            filter.name = {
+                $regex: name,
+                $options: "i"
+            };
+        }
+
+        if (country) {
+            filter.originCountry = {
+                $regex: country,
+                $options: "i"
+            };
+        }
+
+        if (temperament) {
+            filter.temperament = {
+                $regex: temperament,
+                $options: "i"
+            };
+        }
+
+        if (category) {
+            filter.categoryId = category;
+        }
+
+        const breeds = await Breed.find(filter)
+            .populate("categoryId");
+
+        const categories = await Category.find();
+
+        res.render("breed/search", {
+            breeds,
+            categories
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.send("Server Error");
+
+    }
+};

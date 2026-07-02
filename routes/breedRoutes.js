@@ -23,4 +23,6 @@ router.post("/breeds/update/:id", breedController.update);
 // Xóa
 router.get("/breeds/delete/:id", breedController.destroy);
 
+router.get("/search", breedController.search);
+
 module.exports = router;

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Search Result</title>
+</head>
+
+<body>
+
+<h1>Search Breed</h1>
+
+<form action="/search" method="GET">
+
+    <input
+        type="text"
+        name="name"
+        placeholder="Breed name">
+
+    <input
+        type="text"
+        name="country"
+        placeholder="Country">
+
+    <input
+        type="text"
+        name="temperament"
+        placeholder="Temperament">
+
+    <select name="category">
+
+        <option value="">All Categories</option>
+
+        <% categories.forEach(category => { %>
+
+            <option value="<%= category._id %>">
+                <%= category.name %>
+            </option>
+
+        <% }) %>
+
+    </select>
+
+    <button type="submit">
+        Search
+    </button>
+
+</form>
+
+<br>
+
+<a href="/breeds">Back</a>
+
+<br><br>
+
+<table border="1">
+
+    <tr>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Country</th>
+    </tr>
+
+    <% breeds.forEach(breed => { %>
+
+        <tr>
+
+            <td>
+                <a href="/breeds/<%= breed._id %>">
+                    <%= breed.name %>
+                </a>
+            </td>
+
+            <td>
+                <%= breed.categoryId.name %>
+            </td>
+
+            <td>
+                <%= breed.originCountry %>
+            </td>
+
+        </tr>
+
+    <% }) %>
+
+</table>
+
+</body>
+
+</html>

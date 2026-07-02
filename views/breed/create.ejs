@@ -2,94 +2,72 @@
 <html>
 
 <head>
-<title>Create Breed</title>
+    <title>Create Breed</title>
 </head>
 
 <body>
+    <h1 style="color:red">ĐÂY LÀ FILE CREATE MỚI</h1>
+    <h1>Create Breed</h1>
 
-<h1>Create Breed</h1>
+    <form action="/breeds" method="POST">
 
-<form action="/breeds" method="POST">
+        <label>Category</label>
 
-<label>Category</label>
+        <select name="categoryId" required>
 
-<select name="categoryId">
+            <option value="">-- Select Category --</option>
 
-<% categories.forEach(category=>{ %>
+            <% categories.forEach(category=> { %>
 
-<option value="<%= category._id %>">
+                <option value="<%= category._id %>">
+                    <%= category.name %>
+                </option>
 
-<%= category.name %>
+                <% }) %>
 
-</option>
+        </select>
 
-<% }) %>
+        <br><br>
 
-</select>
+        <input type="text" name="name" placeholder="Breed Name">
 
-<br><br>
+        <br><br>
 
-<input
-type="text"
-name="name"
-placeholder="Breed Name">
+        <input type="text" name="originCountry" placeholder="Country">
 
-<br><br>
+        <br><br>
 
-<input
-type="text"
-name="originCountry"
-placeholder="Country">
+        <input type="number" name="lifeExpectancy" placeholder="Life Expectancy">
 
-<br><br>
+        <br><br>
 
-<input
-type="number"
-name="lifeExpectancy"
-placeholder="Life Expectancy">
+        <input type="text" name="temperament" placeholder="Temperament">
 
-<br><br>
+        <br><br>
 
-<input
-type="text"
-name="temperament"
-placeholder="Temperament">
+        <input type="text" name="behavior" placeholder="Behavior">
 
-<br><br>
+        <br><br>
 
-<input
-type="text"
-name="behavior"
-placeholder="Behavior">
+        <textarea name="careRequirements" placeholder="Care Requirements"></textarea>
 
-<br><br>
+        <br><br>
 
-<textarea
-name="careRequirements"
-placeholder="Care Requirements"></textarea>
+        <textarea name="description" placeholder="Description"></textarea>
 
-<br><br>
+        <br><br>
 
-<textarea
-name="description"
-placeholder="Description"></textarea>
+        <input type="text" name="image" placeholder="Image URL">
 
-<br><br>
+        <br><br>
 
-<input
-type="text"
-name="image"
-placeholder="Image URL">
+        <button type="submit">
 
-<br><br>
+            Save
 
-<button>
+        </button>
 
-Save
-
-</button>
-
-</form>
+    </form>
 
 </body>
 
