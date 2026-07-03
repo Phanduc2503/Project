@@ -1,65 +1,29 @@
 <!DOCTYPE html>
-
-<html>
-
+<html lang="en">
 <head>
-
-<title>Create Category</title>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Category</title>
+  <link rel="stylesheet" href="/css/common.css">
+  <link rel="stylesheet" href="/css/category.css">
 </head>
-
 <body>
+  <div class="page-category container">
+    <h1 class="page-title">Them danh muc cho shop cho cun</h1>
+    <p class="page-subtitle">Tao nhom san pham, giong cho, phu kien hoac dich vu thu cung.</p>
 
-<h1>Create Category</h1>
+    <form class="category-form" action="/categories" method="POST">
+      <label for="name">Ten danh muc</label>
+      <input type="text" id="name" name="name" placeholder="Vi du: Thuc an cho cho con">
 
-<form action="/categories" method="POST">
+      <label for="description">Mo ta</label>
+      <textarea id="description" name="description" placeholder="Nhap mo ta danh muc..."></textarea>
 
-<label>
-
-Category Name
-
-</label>
-
-<br>
-
-<input
-type="text"
-name="name"
-required>
-
-<br><br>
-
-<label>
-
-Description
-
-</label>
-
-<br>
-
-<textarea
-name="description">
-
-</textarea>
-
-<br><br>
-
-<button>
-
-Save
-
-</button>
-
-</form>
-
-<br>
-
-<a href="/categories">
-
-Back
-
-</a>
-
+      <div class="actions">
+        <button type="submit">Save</button>
+        <a class="btn btn-secondary" href="/categories">Back</a>
+      </div>
+    </form>
+  </div>
 </body>
-
 </html>

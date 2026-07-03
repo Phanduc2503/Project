@@ -8,7 +8,7 @@ const app = express();
 
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
-
+const homeRoutes = require("./routes/homeRoutes");
 
 connectDB();
 
@@ -24,6 +24,7 @@ app.use(express.static("public"));
 app.use(require("./routes/authRoutes"));
 app.use(require("./routes/categoryRoutes"));
 app.use(require("./routes/breedRoutes"));
+app.use(require("./routes/homeRoutes"));
 
 app.listen(3000, () => {
     console.log("Server running...");

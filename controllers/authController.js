@@ -2,7 +2,7 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 
 exports.showLogin = (req, res) => {
-  res.render("login");
+  res.render("auth/login");
 };
 
 exports.showRegister = (req, res) => {

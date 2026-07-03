@@ -4,59 +4,56 @@
 
 <head>
 
-<title>Edit Category</title>
-
+    <title>Edit Category</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/category.css">
 </head>
 
 <body>
 
-<h1>Edit Category</h1>
+    <h1>Edit Category</h1>
 
-<form action="/categories/update/<%= category._id %>" method="POST">
+    <form action="/categories/update/<%= category._id %>" method="POST">
 
-<label>
+        <label>
 
-Category Name
+            Category Name
 
-</label>
+        </label>
 
-<br>
+        <br>
 
-<input
-type="text"
-name="name"
-value="<%= category.name %>">
+        <input type="text" name="name" value="<%= category.name %>">
 
-<br><br>
+        <br><br>
 
-<label>
+        <label>
 
-Description
+            Description
 
-</label>
+        </label>
 
-<br>
+        <br>
 
-<textarea
-name="description"><%= category.description %></textarea>
+        <textarea name="description"><%= category.description %></textarea>
 
-<br><br>
+        <br><br>
 
-<button>
+        <button>
 
-Update
+            Update
 
-</button>
+        </button>
 
-</form>
+    </form>
 
-<br>
+    <br>
 
-<a href="/categories">
+    <a href="/categories">
 
-Back
+        Back
 
-</a>
+    </a>
 
 </body>
 

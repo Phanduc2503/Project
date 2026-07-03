@@ -3,86 +3,80 @@
 
 <head>
     <title>Search Result</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/search.css">
+    <link rel="stylesheet" href="/css/breed.css">
 </head>
 
 <body>
 
-<h1>Search Breed</h1>
+    <h1>Search Breed</h1>
 
-<form action="/search" method="GET">
+    <form action="/search" method="GET">
 
-    <input
-        type="text"
-        name="name"
-        placeholder="Breed name">
+        <input type="text" name="name" placeholder="Breed name">
 
-    <input
-        type="text"
-        name="country"
-        placeholder="Country">
+        <input type="text" name="country" placeholder="Country">
 
-    <input
-        type="text"
-        name="temperament"
-        placeholder="Temperament">
+        <input type="text" name="temperament" placeholder="Temperament">
 
-    <select name="category">
+        <select name="category">
 
-        <option value="">All Categories</option>
+            <option value="">All Categories</option>
 
-        <% categories.forEach(category => { %>
+            <% categories.forEach(category=> { %>
 
-            <option value="<%= category._id %>">
-                <%= category.name %>
-            </option>
+                <option value="<%= category._id %>">
+                    <%= category.name %>
+                </option>
 
-        <% }) %>
+                <% }) %>
 
-    </select>
+        </select>
 
-    <button type="submit">
-        Search
-    </button>
+        <button type="submit">
+            Search
+        </button>
 
-</form>
+    </form>
 
-<br>
+    <br>
 
-<a href="/breeds">Back</a>
+    <a href="/breeds">Back</a>
 
-<br><br>
+    <br><br>
 
-<table border="1">
-
-    <tr>
-        <th>Name</th>
-        <th>Category</th>
-        <th>Country</th>
-    </tr>
-
-    <% breeds.forEach(breed => { %>
+    <table border="1">
 
         <tr>
-
-            <td>
-                <a href="/breeds/<%= breed._id %>">
-                    <%= breed.name %>
-                </a>
-            </td>
-
-            <td>
-                <%= breed.categoryId.name %>
-            </td>
-
-            <td>
-                <%= breed.originCountry %>
-            </td>
-
+            <th>Name</th>
+            <th>Category</th>
+            <th>Country</th>
         </tr>
 
-    <% }) %>
+        <% breeds.forEach(breed=> { %>
 
-</table>
+            <tr>
+
+                <td>
+                    <a href="/breeds/<%= breed._id %>">
+                        <%= breed.name %>
+                    </a>
+                </td>
+
+                <td>
+                    <%= breed.categoryId.name %>
+                </td>
+
+                <td>
+                    <%= breed.originCountry %>
+                </td>
+
+            </tr>
+
+            <% }) %>
+
+    </table>
 
 </body>
 

@@ -3,101 +3,100 @@
 
 <head>
     <title>Breed List</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/breed.css">
+    <link rel="stylesheet" href="/css/search.css">
 </head>
 
 <body>
 
-<h1>Breed List</h1>
+    <h1>Breed List</h1>
 
-<a href="/breeds/create">Add Breed</a>
+    <a href="/breeds/create">Add Breed</a>
 
-<br><br>
+    <br><br>
 
-<table border="1" cellpadding="10">
+    <table border="1" cellpadding="10" class="breed-table">
 
-<tr>
+        <tr>
 
-<th>Name</th>
+            <th>Name</th>
 
-<th>Category</th>
+            <th>Category</th>
 
-<th>Country</th>
+            <th>Country</th>
 
-<th>Life</th>
+            <th>Life</th>
 
-<th>Action</th>
+            <th>Action</th>
 
-</tr>
+        </tr>
 
-<% breeds.forEach(breed=>{ %>
+        <% breeds.forEach(breed=>{ %>
 
-<tr>
+            <tr>
 
-<td>
+                <td>
 
-<a href="/breeds/<%= breed._id %>">
+                    <a href="/breeds/<%= breed._id %>">
 
-<%= breed.name %>
+                        <%= breed.name %>
 
-</a>
+                    </a>
 
-</td>
+                </td>
 
-<td><%= breed.categoryId.name %></td>
+                <td>
+                    <%= breed.categoryId.name %>
+                </td>
 
-<td><%= breed.originCountry %></td>
+                <td>
+                    <%= breed.originCountry %>
+                </td>
 
-<td><%= breed.lifeExpectancy %></td>
+                <td>
+                    <%= breed.lifeExpectancy %>
+                </td>
 
-<td>
+                <td>
 
-<a href="/breeds/edit/<%= breed._id %>">
+                    <a href="/breeds/edit/<%= breed._id %>">
 
-Edit
+                        Edit
 
-</a>
+                    </a>
 
-|
+                    |
 
-<a href="/breeds/delete/<%= breed._id %>"
-onclick="return confirm('Delete Breed?')">
+                    <a href="/breeds/delete/<%= breed._id %>" onclick="return confirm('Delete Breed?')">
 
-Delete
+                        Delete
 
-</a>
+                    </a>
 
-</td>
+                </td>
 
-</tr>
+            </tr>
 
-<% }) %>
+            <% }) %>
 
-<form action="/search" method="GET">
+                <form action="/search" method="GET">
 
-<input
-type="text"
-name="name"
-placeholder="Breed name">
+                    <input type="text" name="name" placeholder="Breed name">
 
-<input
-type="text"
-name="country"
-placeholder="Country">
+                    <input type="text" name="country" placeholder="Country">
 
-<input
-type="text"
-name="temperament"
-placeholder="Temperament">
+                    <input type="text" name="temperament" placeholder="Temperament">
 
-<button>
+                    <button>
 
-Search
+                        Search
 
-</button>
+                    </button>
 
-</form>
+                </form>
 
-</table>
+    </table>
 
 </body>
 
