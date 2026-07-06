@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Dog Breed Portal</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f5f6fa;
+        }
+
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        a {
+            text-decoration: none;
+            color: #2980b9;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 8px 12px;
+            background: #3498db;
+            color: white;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+        }
+
+        .nav {
+            margin-top: 10px;
+        }
+
+        .nav a {
+            margin-right: 15px;
+            color: white;
+        }
+
+        .admin-badge {
+            background: red;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h2>🐶 Dog Breed Portal</h2>
+
+    <div class="nav">
+
+        <% if (user) { %>
+
+            Xin chào, <b><%= user.username %></b>
+
+            <% if (user.role === "admin") { %>
+                <span class="admin-badge">ADMIN</span>
+            <% } %>
+
+            |
+            <a href="/">Home</a>
+            <a href="/breeds">Breeds</a>
+            <a href="/categories">Categories</a>
+            <a href="/logout">Logout</a>
+
+        <% } else { %>
+
+            <a href="/login">Login</a>
+            <a href="/register">Register</a>
+
+        <% } %>
+
+    </div>
+</header>
+
+<div class="container">
+
+    <% if (!user) { %>
+
+        <div class="card">
+            <h2>Chào mừng đến Dog Breed Portal 🐾</h2>
+            <p>Hãy đăng nhập để quản lý giống chó, danh mục và nhiều chức năng khác.</p>
+            <a class="btn" href="/login">Đăng nhập ngay</a>
+        </div>
+
+    <% } else { %>
+
+        <div class="card">
+            <h2>Dashboard</h2>
+            <p>Quản lý hệ thống giống chó</p>
+
+            <a class="btn" href="/breeds">Quản lý giống chó</a>
+            <a class="btn" href="/categories">Quản lý danh mục</a>
+        </div>
+
+        <% if (user.role === "admin") { %>
+
+            <div class="card">
+                <h2>🔐 Admin Panel</h2>
+
+                <p>Bạn có quyền quản trị hệ thống</p>
+
+                <a class="btn" href="/breeds/create">+ Thêm giống chó</a>
+                <a class="btn" href="/categories/create">+ Thêm danh mục</a>
+            </div>
+
+        <% } %>
+
+    <% } %>
+
+</div>
+
+</body>
+</html>
