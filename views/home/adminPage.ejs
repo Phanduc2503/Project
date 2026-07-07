@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Woofy Admin Dashboard</title>
+
+    <link rel="stylesheet" href="/css/admin.css">
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+
+<body>
+
+<div class="sidebar">
+
+    <h2>🐾 Woofy</h2>
+
+    <ul>
+
+        <li>
+            <a href="/admin">
+                <i class="fa-solid fa-house"></i>
+                Dashboard
+            </a>
+        </li>
+
+        <li>
+            <a href="/breeds">
+                <i class="fa-solid fa-dog"></i>
+                Breed Management
+            </a>
+        </li>
+
+        <li>
+            <a href="/categories">
+                <i class="fa-solid fa-folder"></i>
+                Category Management
+            </a>
+        </li>
+
+        <li>
+            <a href="/users">
+                <i class="fa-solid fa-users"></i>
+                User Management
+            </a>
+        </li>
+
+        <li>
+            <a href="/profile">
+                <i class="fa-solid fa-user"></i>
+                My Profile
+            </a>
+        </li>
+
+        <li>
+            <a href="/auth/logout">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Logout
+            </a>
+        </li>
+
+    </ul>
+
+</div>
+
+<div class="main">
+
+    <header>
+
+        <div>
+
+            <h1>Admin Dashboard</h1>
+
+            <p>
+                Welcome,
+                <strong><%= user.username %></strong>
+            </p>
+
+        </div>
+
+        <img
+            src="<%= user.avatar %>"
+            class="avatar">
+
+    </header>
+
+    <section class="cards">
+
+        <div class="card">
+
+            <h3>Total Users</h3>
+
+            <h1><%= totalUsers %></h1>
+
+        </div>
+
+        <div class="card">
+
+            <h3>Total Breeds</h3>
+
+            <h1><%= totalBreeds %></h1>
+
+        </div>
+
+        <div class="card">
+
+            <h3>Total Categories</h3>
+
+            <h1><%= totalCategories %></h1>
+
+        </div>
+
+        <div class="card">
+
+            <h3>Administrator</h3>
+
+            <h1>✔</h1>
+
+        </div>
+
+    </section>
+
+    <section class="quick-actions">
+
+        <h2>Quick Actions</h2>
+
+        <div class="actions">
+
+            <a href="/breeds/create" class="action">
+                ➕ Add Breed
+            </a>
+
+            <a href="/categories/create" class="action">
+                📂 Add Category
+            </a>
+
+            <a href="/breeds" class="action">
+                🐶 View Breeds
+            </a>
+
+            <a href="/categories" class="action">
+                📋 View Categories
+            </a>
+
+        </div>
+
+    </section>
+
+    <section class="welcome">
+
+        <h2>Welcome to Woofy Admin Panel</h2>
+
+        <p>
+
+            Đây là trang quản trị của hệ thống Dog Breed Portal.
+
+            Bạn có thể quản lý giống chó,
+
+            danh mục,
+
+            người dùng,
+
+            và các dữ liệu khác của hệ thống.
+
+        </p>
+
+    </section>
+
+</div>
+
+</body>
+
+</html>

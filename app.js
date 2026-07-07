@@ -12,10 +12,8 @@ const categoryRoutes = require("./routes/categoryRoutes");
 const breedRoutes = require("./routes/breedRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 
-
 const app = express();
 
-// Kết nối MongoDB
 connectDB();
 
 // View Engine
@@ -28,7 +26,7 @@ app.use(express.json());
 
 app.use(express.static("public"));
 
-// Session
+
 app.use(
     session({
         secret: process.env.SESSION_SECRET || "mysecretkey",
@@ -37,17 +35,13 @@ app.use(
     })
 );
 
+
 // Routes
 app.use("/", homeRoutes);
-app.use(authRoutes);
+app.use("/auth", authRoutes);
 app.use(categoryRoutes);
 app.use(breedRoutes);
 app.use("/admin", adminRoutes);
-
-app.get("/admin-test", (req, res) => {
-    console.log("ADMIN TEST HIT");
-    res.send("OK ADMIN TEST");
-});
 
 // Start server
 app.listen(3000, () => {

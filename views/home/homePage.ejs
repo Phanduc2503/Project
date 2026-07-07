@@ -1,80 +1,142 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Dog Breed Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Woofy - Dog Breed Information Portal</title>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial;
-            background: linear-gradient(135deg, #74b9ff, #0984e3);
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .box {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            text-align: center;
-            width: 400px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-
-        h1 {
-            margin-bottom: 10px;
-        }
-
-        p {
-            color: #555;
-            margin-bottom: 30px;
-        }
-
-        .btn {
-            display: block;
-            padding: 12px;
-            margin: 10px 0;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-        }
-
-        .login {
-            background: #3498db;
-            color: white;
-        }
-
-        .register {
-            background: #2ecc71;
-            color: white;
-        }
-
-        .login:hover {
-            background: #2980b9;
-        }
-
-        .register:hover {
-            background: #27ae60;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/home.css">
 </head>
 
 <body>
 
-<div class="box">
+<header class="navbar">
 
-    <h1>🐶 Dog Breed Portal</h1>
+    <div class="logo">
+        🐾 Woofy
+    </div>
 
-    <p>Quản lý và khám phá các giống chó trên thế giới</p>
+    <nav>
+        <a href="/">Home</a>
+        <a href="#about">About</a>
+        <a href="#features">Features</a>
+        <a href="#contact">Contact</a>
+    </nav>
 
-    <a href="/login" class="btn login">Đăng nhập</a>
+    <div class="auth">
+        <a href="/auth/login" class="btn-login">Login</a>
+        <a href="/auth/register" class="btn-register">Register</a>
+    </div>
 
-    <a href="/register" class="btn register">Đăng ký</a>
+</header>
 
-</div>
+<section class="hero">
+
+    <div class="hero-text">
+
+        <h1>Welcome to Woofy 🐶</h1>
+
+        <p>
+            Woofy là hệ thống giúp bạn khám phá hàng trăm giống chó,
+            tìm hiểu đặc điểm, nguồn gốc, tính cách và lựa chọn người
+            bạn bốn chân phù hợp nhất với mình.
+        </p>
+
+        <div class="hero-buttons">
+
+            <a href="/auth/register" class="btn-primary">
+                Bắt đầu ngay
+            </a>
+
+            <a href="/auth/login" class="btn-secondary">
+                Đăng nhập
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="hero-image">
+
+        <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?q=80&w=1200&auto=format&fit=crop"
+             alt="Dog">
+
+    </div>
+
+</section>
+
+<section id="about" class="section">
+
+    <h2>🐾 Giới thiệu</h2>
+
+    <p>
+        Woofy được xây dựng nhằm cung cấp thông tin đầy đủ về các giống chó,
+        giúp người dùng dễ dàng tìm kiếm và lựa chọn giống chó phù hợp với
+        sở thích và nhu cầu của mình.
+    </p>
+
+</section>
+
+<section id="features" class="section">
+
+    <h2>✨ Chức năng nổi bật</h2>
+
+    <div class="feature-grid">
+
+        <div class="feature-card">
+            <h3>🐶 Breed Information</h3>
+            <p>
+                Xem thông tin chi tiết về các giống chó.
+            </p>
+        </div>
+
+        <div class="feature-card">
+            <h3>📂 Categories</h3>
+            <p>
+                Phân loại giống chó theo từng nhóm.
+            </p>
+        </div>
+
+        <div class="feature-card">
+            <h3>🔍 Search</h3>
+            <p>
+                Tìm kiếm giống chó nhanh chóng.
+            </p>
+        </div>
+
+        <div class="feature-card">
+            <h3>🤖 AI Recommendation</h3>
+            <p>
+                Gợi ý giống chó phù hợp với bạn.
+            </p>
+        </div>
+
+    </div>
+
+</section>
+
+<section class="cta">
+
+    <h2>Sẵn sàng khám phá thế giới của những chú chó?</h2>
+
+    <p>
+        Đăng ký tài khoản miễn phí để bắt đầu sử dụng Woofy.
+    </p>
+
+    <a href="/auth/register" class="btn-primary">
+        Đăng ký ngay
+    </a>
+
+</section>
+
+<footer id="contact">
+
+    <p>
+        © 2026 Woofy - Dog Breed Information Portal
+    </p>
+
+</footer>
 
 </body>
 </html>

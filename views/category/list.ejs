@@ -3,60 +3,61 @@
 
 <head>
     <title>Category List</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/category.css">
 </head>
 
 <body>
 
-<h1>Category List</h1>
+    <h1>Category List</h1>
 
-<a href="/categories/create">
-    Add New Category
-</a>
+    <a href="/categories/create">
+        Add New Category
+    </a>
 
-<br><br>
+    <br><br>
 
-<table border="1" cellpadding="10">
-
-    <tr>
-        <th>Name</th>
-        <th>Description</th>
-        <th>Action</th>
-    </tr>
-
-    <% categories.forEach(category=>{ %>
+    <table border="1" cellpadding="10">
 
         <tr>
-
-            <td>
-                <%= category.name %>
-            </td>
-
-            <td>
-                <%= category.description %>
-            </td>
-
-            <td>
-
-                <a href="/categories/edit/<%= category._id %>">
-                    Edit
-                </a>
-
-                |
-
-                <a href="/categories/delete/<%= category._id %>"
-                    onclick="return confirm('Delete this category?')">
-
-                    Delete
-
-                </a>
-
-            </td>
-
+            <th>Name</th>
+            <th>Description</th>
+            <th>Action</th>
         </tr>
 
-    <% }) %>
+        <% categories.forEach(category=>{ %>
 
-</table>
+            <tr>
+
+                <td>
+                    <%= category.name %>
+                </td>
+
+                <td>
+                    <%= category.description %>
+                </td>
+
+                <td>
+
+                    <a href="/categories/edit/<%= category._id %>">
+                        Edit
+                    </a>
+
+                    |
+
+                    <a href="/categories/delete/<%= category._id %>" onclick="return confirm('Delete this category?')">
+
+                        Delete
+
+                    </a>
+
+                </td>
+
+            </tr>
+
+            <% }) %>
+
+    </table>
 
 </body>
 

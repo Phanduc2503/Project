@@ -2,11 +2,21 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 
 exports.showLogin = (req, res) => {
-  res.render("auth/login");
+  res.render("auth/login", {
+    error: null
+  });
 };
 
 exports.showRegister = (req, res) => {
-  res.render("auth/register");
+  res.render("auth/register",{
+    error: null,
+    success: null,
+    oldData: {
+      username: "",
+      email: "",
+      password: "",
+    },
+  });
 };
 exports.index = (req, res) => {
   res.render("home/index", {
@@ -48,20 +58,19 @@ exports.login = async (req, res) => {
         role: user.role,
         
     };
-  
 
     // 🔥 redirect theo role
     if (user.role === "admin") {
         return res.redirect("/admin");
     }
 
-    return res.redirect("/user");
+    return res.redirect("/");
 };
 exports.logout = (req, res) => {
   req.session.destroy((err) => {
     if (err) {
       console.log(err);
     }
-    res.redirect("/login");
+    res.redirect("/auth/login");
   });
 };
