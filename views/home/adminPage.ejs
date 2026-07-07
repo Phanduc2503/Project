@@ -1,175 +1,65 @@
 <!DOCTYPE html>
-<html lang="vi">
-
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Woofy Admin Dashboard</title>
-
-    <link rel="stylesheet" href="/css/admin.css">
-
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Woofy - Admin Dashboard</title>
+  <link rel="stylesheet" href="/css/home.css" />
 </head>
-
 <body>
+  <header class="navbar">
+    <div class="nav-left">
+      <a href="/" class="logo">🐾 Woofy Admin</a>
+    </div>
 
-<div class="sidebar">
+    <nav class="menu">
+      <a href="/">Home</a>
+      <a href="/breeds">Manage Breeds</a>
+      <a href="/categories">Manage Categories</a>
+    </nav>
 
-    <h2>🐾 Woofy</h2>
+    <div class="auth-actions">
+      <span class="welcome-user">Admin: <%= currentUser.username %></span>
+      <a href="/logout" class="btn-register">Logout</a>
+    </div>
+  </header>
 
-    <ul>
+  <main class="container">
+    <section class="section">
+      <div class="section-header">
+        <h2>📊 Admin Dashboard</h2>
+      </div>
 
-        <li>
-            <a href="/admin">
-                <i class="fa-solid fa-house"></i>
-                Dashboard
-            </a>
-        </li>
-
-        <li>
-            <a href="/breeds">
-                <i class="fa-solid fa-dog"></i>
-                Breed Management
-            </a>
-        </li>
-
-        <li>
-            <a href="/categories">
-                <i class="fa-solid fa-folder"></i>
-                Category Management
-            </a>
-        </li>
-
-        <li>
-            <a href="/users">
-                <i class="fa-solid fa-users"></i>
-                User Management
-            </a>
-        </li>
-
-        <li>
-            <a href="/profile">
-                <i class="fa-solid fa-user"></i>
-                My Profile
-            </a>
-        </li>
-
-        <li>
-            <a href="/auth/logout">
-                <i class="fa-solid fa-right-from-bracket"></i>
-                Logout
-            </a>
-        </li>
-
-    </ul>
-
-</div>
-
-<div class="main">
-
-    <header>
-
-        <div>
-
-            <h1>Admin Dashboard</h1>
-
-            <p>
-                Welcome,
-                <strong><%= user.username %></strong>
-            </p>
-
+      <div class="category-grid">
+        <div class="category-card">
+          <h3><%= totalBreeds %></h3>
+          <p>Total Breeds</p>
         </div>
 
-        <img
-            src="<%= user.avatar %>"
-            class="avatar">
-
-    </header>
-
-    <section class="cards">
-
-        <div class="card">
-
-            <h3>Total Users</h3>
-
-            <h1><%= totalUsers %></h1>
-
+        <div class="category-card">
+          <h3><%= totalCategories %></h3>
+          <p>Total Categories</p>
         </div>
 
-        <div class="card">
-
-            <h3>Total Breeds</h3>
-
-            <h1><%= totalBreeds %></h1>
-
+        <div class="category-card">
+          <h3><%= totalUsers %></h3>
+          <p>Total Users</p>
         </div>
-
-        <div class="card">
-
-            <h3>Total Categories</h3>
-
-            <h1><%= totalCategories %></h1>
-
-        </div>
-
-        <div class="card">
-
-            <h3>Administrator</h3>
-
-            <h1>✔</h1>
-
-        </div>
-
+      </div>
     </section>
 
-    <section class="quick-actions">
+    <section class="section">
+      <div class="section-header">
+        <h2>⚙️ Quản trị hệ thống</h2>
+      </div>
 
-        <h2>Quick Actions</h2>
-
-        <div class="actions">
-
-            <a href="/breeds/create" class="action">
-                ➕ Add Breed
-            </a>
-
-            <a href="/categories/create" class="action">
-                📂 Add Category
-            </a>
-
-            <a href="/breeds" class="action">
-                🐶 View Breeds
-            </a>
-
-            <a href="/categories" class="action">
-                📋 View Categories
-            </a>
-
-        </div>
-
+      <div class="hero-stats">
+        <a href="/breeds" class="btn-primary">Manage Breeds</a>
+        <a href="/categories" class="btn-primary">Manage Categories</a>
+        <a href="/breeds/create" class="btn-primary">Add Breed</a>
+        <a href="/categories/create" class="btn-primary">Add Category</a>
+      </div>
     </section>
-
-    <section class="welcome">
-
-        <h2>Welcome to Woofy Admin Panel</h2>
-
-        <p>
-
-            Đây là trang quản trị của hệ thống Dog Breed Portal.
-
-            Bạn có thể quản lý giống chó,
-
-            danh mục,
-
-            người dùng,
-
-            và các dữ liệu khác của hệ thống.
-
-        </p>
-
-    </section>
-
-</div>
-
+  </main>
 </body>
-
 </html>

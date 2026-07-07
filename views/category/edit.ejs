@@ -1,60 +1,43 @@
 <!DOCTYPE html>
-
-<html>
+<html lang="en">
 
 <head>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Edit Category</title>
-    <link rel="stylesheet" href="/css/common.css">
-    <link rel="stylesheet" href="/css/category.css">
+    <link rel="stylesheet" href="/css/form-page.css">
 </head>
 
 <body>
+    <% if (currentUser && currentUser.role==="admin" ) { %>
+        <% } %>
+            <div class="form-page">
+                <div class="form-card">
+                    <span class="form-badge">Woofy • Category</span>
+                    <h1 class="form-title">Edit Category</h1>
+                    <p class="form-subtitle">
+                        Cập nhật tên và mô tả cho danh mục giống chó.
+                    </p>
 
-    <h1>Edit Category</h1>
+                    <form action="/categories/update/<%= category._id %>" method="POST">
+                        <div class="form-group">
+                            <label class="form-label">Category Name</label>
+                            <input type="text" name="name" class="form-input" value="<%= category.name %>" required>
+                        </div>
 
-    <form action="/categories/update/<%= category._id %>" method="POST">
+                        <div class="form-group">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-textarea"
+                                placeholder="Nhập mô tả cho category..."><%= category.description || '' %></textarea>
+                        </div>
 
-        <label>
-
-            Category Name
-
-        </label>
-
-        <br>
-
-        <input type="text" name="name" value="<%= category.name %>">
-
-        <br><br>
-
-        <label>
-
-            Description
-
-        </label>
-
-        <br>
-
-        <textarea name="description"><%= category.description %></textarea>
-
-        <br><br>
-
-        <button>
-
-            Update
-
-        </button>
-
-    </form>
-
-    <br>
-
-    <a href="/categories">
-
-        Back
-
-    </a>
-
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">Update Category</button>
+                            <a href="/categories" class="btn-secondary">Back to Categories</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
 </body>
 
 </html>

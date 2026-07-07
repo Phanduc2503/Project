@@ -71,6 +71,6 @@ exports.logout = (req, res) => {
     if (err) {
       console.log(err);
     }
-    res.redirect("/auth/login");
+    res.redirect("/login");
   });
 };

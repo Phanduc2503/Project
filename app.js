@@ -1,49 +1,55 @@
-require("dotenv").config();
-
 const express = require("express");
 const path = require("path");
 const session = require("express-session");
+const dotenv = require("dotenv");
+const mongoose = require("mongoose");
 
-const connectDB = require("./config/db");
-
-const authRoutes = require("./routes/authRoutes");
-const homeRoutes = require("./routes/homeRoutes");
-const categoryRoutes = require("./routes/categoryRoutes");
-const breedRoutes = require("./routes/breedRoutes");
-const adminRoutes = require("./routes/adminRoutes");
+dotenv.config();
 
 const app = express();
 
-connectDB();
+// ===== CONNECT DB =====
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("Mongoose connected"))
+  .catch((err) => console.log(err));
 
-// View Engine
+// ===== IMPORT ROUTES =====
+const homeRoutes = require("./routes/homeRoutes");
+const authRoutes = require("./routes/authRoutes");
+const categoryRoutes = require("./routes/categoryRoutes");
+const breedRoutes = require("./routes/breedRoutes");
+
+// ===== VIEW ENGINE =====
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// Middleware
+// ===== MIDDLEWARE =====
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-
-app.use(express.static("public"));
-
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use(
-    session({
-        secret: process.env.SESSION_SECRET || "mysecretkey",
-        resave: false,
-        saveUninitialized: false,
-    })
+  session({
+    secret: "woofy_secret_key",
+    resave: false,
+    saveUninitialized: false,
+  })
 );
 
+// currentUser cho tất cả EJS
+app.use((req, res, next) => {
+  res.locals.currentUser = req.session.user || null;
+  next();
+});
 
-// Routes
+// ===== ROUTES =====
 app.use("/", homeRoutes);
-app.use("/auth", authRoutes);
-app.use(categoryRoutes);
-app.use(breedRoutes);
-app.use("/admin", adminRoutes);
+app.use("/", authRoutes);
+app.use("/", categoryRoutes);
+app.use("/", breedRoutes);
 
-// Start server
-app.listen(3000, () => {
-    console.log("Server running...");
+// ===== SERVER =====
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });

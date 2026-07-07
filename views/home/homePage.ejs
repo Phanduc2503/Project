@@ -1,142 +1,140 @@
-
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Woofy - Dog Breed Information Portal</title>
-
-    <link rel="stylesheet" href="/css/home.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Woofy - Home</title>
+  <link rel="stylesheet" href="/css/home.css" />
 </head>
-
 <body>
-
-<header class="navbar">
-
-    <div class="logo">
-        🐾 Woofy
+  <header class="navbar">
+    <div class="nav-left">
+      <a href="/" class="logo">🐾 Woofy</a>
     </div>
 
-    <nav>
-        <a href="/">Home</a>
-        <a href="#about">About</a>
-        <a href="#features">Features</a>
-        <a href="#contact">Contact</a>
+    <nav class="menu">
+      <a href="/">Home</a>
+      <a href="/breeds">Breeds</a>
+      <a href="/categories">Categories</a>
+      <a href="/search">Search</a>
     </nav>
 
-    <div class="auth">
-        <a href="/auth/login" class="btn-login">Login</a>
-        <a href="/auth/register" class="btn-register">Register</a>
+    <div class="auth-actions">
+      <% if (currentUser) { %>
+        <span class="welcome-user">Hi, <%= currentUser.username %></span>
+
+        <% if (currentUser.role === "admin") { %>
+          <a href="/admin" class="btn-login">Admin Dashboard</a>
+        <% } %>
+
+        <a href="/logout" class="btn-register">Logout</a>
+      <% } else { %>
+        <a href="/login" class="btn-login">Login</a>
+        <a href="/register" class="btn-register">Register</a>
+      <% } %>
     </div>
+  </header>
 
-</header>
-
-<section class="hero">
-
-    <div class="hero-text">
-
-        <h1>Welcome to Woofy 🐶</h1>
-
+  <main class="container">
+    <section class="hero">
+      <div class="hero-left">
+        <h1>Chào mừng đến với <span>Woofy</span></h1>
         <p>
-            Woofy là hệ thống giúp bạn khám phá hàng trăm giống chó,
-            tìm hiểu đặc điểm, nguồn gốc, tính cách và lựa chọn người
-            bạn bốn chân phù hợp nhất với mình.
+          Nơi tìm kiếm người bạn bốn chân hoàn hảo cho bạn.
+          Khám phá giống chó, danh mục và những thông tin hữu ích về thú cưng.
         </p>
 
-        <div class="hero-buttons">
+        <div class="hero-stats">
+          <div class="stat-box">
+            <h3><%= totalBreeds %>+</h3>
+            <p>Breeds</p>
+          </div>
 
-            <a href="/auth/register" class="btn-primary">
-                Bắt đầu ngay
-            </a>
-
-            <a href="/auth/login" class="btn-secondary">
-                Đăng nhập
-            </a>
-
+          <div class="stat-box">
+            <h3><%= totalCategories %>+</h3>
+            <p>Categories</p>
+          </div>
         </div>
 
-    </div>
+        <a href="/breeds" class="btn-primary">Khám phá ngay</a>
+      </div>
 
-    <div class="hero-image">
+      <div class="hero-right">
+        <img
+          src="https://images.unsplash.com/photo-1517849845537-4d257902454a?q=80&w=1200&auto=format&fit=crop"
+          alt="Dog"
+        />
+      </div>
+    </section>
 
-        <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?q=80&w=1200&auto=format&fit=crop"
-             alt="Dog">
+    <section class="section">
+      <div class="section-header">
+        <h2>📂 Danh mục giống chó</h2>
+      </div>
 
-    </div>
+      <div class="category-grid">
+        <% if (categories.length > 0) { %>
+          <% categories.forEach(category => { %>
+            <div class="category-card">
+              <h3><%= category.name %></h3>
+              <p>
+                <%= category.description ? category.description : "Chưa có mô tả cho category này." %>
+              </p>
+            </div>
+          <% }) %>
+        <% } else { %>
+          <div class="empty-box">
+            <p>Chưa có category nào trong database.</p>
+          </div>
+        <% } %>
+      </div>
+    </section>
 
-</section>
+    <section class="section">
+      <div class="section-header">
+        <h2>🐶 Giống chó nổi bật</h2>
+      </div>
 
-<section id="about" class="section">
+      <div class="breed-grid">
+        <% if (featuredBreeds.length > 0) { %>
+          <% featuredBreeds.forEach(breed => { %>
+            <div class="breed-card">
+              <div class="breed-image">
+                <% if (breed.image && breed.image.trim() !== "") { %>
+                  <img src="<%= breed.image %>" alt="<%= breed.name %>">
+                <% } else { %>
+                  <img src="https://via.placeholder.com/600x400?text=No+Image" alt="No image">
+                <% } %>
+              </div>
 
-    <h2>🐾 Giới thiệu</h2>
+              <div class="breed-content">
+                <h3><%= breed.name %></h3>
 
-    <p>
-        Woofy được xây dựng nhằm cung cấp thông tin đầy đủ về các giống chó,
-        giúp người dùng dễ dàng tìm kiếm và lựa chọn giống chó phù hợp với
-        sở thích và nhu cầu của mình.
-    </p>
+                <p class="breed-category">
+                  Category:
+                  <strong>
+                    <%= breed.categoryId ? breed.categoryId.name : "Không có category" %>
+                  </strong>
+                </p>
 
-</section>
+                <p><strong>Origin:</strong> <%= breed.originCountry %></p>
+                <p><strong>Life:</strong> <%= breed.lifeExpectancy %> years</p>
 
-<section id="features" class="section">
+                <% if (breed.temperament) { %>
+                  <p><strong>Temperament:</strong> <%= breed.temperament %></p>
+                <% } %>
 
-    <h2>✨ Chức năng nổi bật</h2>
-
-    <div class="feature-grid">
-
-        <div class="feature-card">
-            <h3>🐶 Breed Information</h3>
-            <p>
-                Xem thông tin chi tiết về các giống chó.
-            </p>
-        </div>
-
-        <div class="feature-card">
-            <h3>📂 Categories</h3>
-            <p>
-                Phân loại giống chó theo từng nhóm.
-            </p>
-        </div>
-
-        <div class="feature-card">
-            <h3>🔍 Search</h3>
-            <p>
-                Tìm kiếm giống chó nhanh chóng.
-            </p>
-        </div>
-
-        <div class="feature-card">
-            <h3>🤖 AI Recommendation</h3>
-            <p>
-                Gợi ý giống chó phù hợp với bạn.
-            </p>
-        </div>
-
-    </div>
-
-</section>
-
-<section class="cta">
-
-    <h2>Sẵn sàng khám phá thế giới của những chú chó?</h2>
-
-    <p>
-        Đăng ký tài khoản miễn phí để bắt đầu sử dụng Woofy.
-    </p>
-
-    <a href="/auth/register" class="btn-primary">
-        Đăng ký ngay
-    </a>
-
-</section>
-
-<footer id="contact">
-
-    <p>
-        © 2026 Woofy - Dog Breed Information Portal
-    </p>
-
-</footer>
-
+                <a href="/breeds/<%= breed._id %>" class="btn-detail">Xem chi tiết</a>
+              </div>
+            </div>
+          <% }) %>
+        <% } else { %>
+          <div class="empty-box">
+            <p>Chưa có breed nào trong database.</p>
+          </div>
+        <% } %>
+      </div>
+    </section>
+  </main>
 </body>
 </html>

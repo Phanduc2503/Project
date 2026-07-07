@@ -11,53 +11,46 @@
 
     <h1>Category List</h1>
 
-    <a href="/categories/create">
-        Add New Category
-    </a>
+    <% if (currentUser && currentUser.role==="admin" ) { %>
+        <a href="/categories/create">Add Category</a>
+        <% } %>
 
-    <br><br>
+            <br><br>
 
-    <table border="1" cellpadding="10">
+            <table border="1" cellpadding="10">
 
-        <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Action</th>
-        </tr>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Action</th>
+                </tr>
 
-        <% categories.forEach(category=>{ %>
+                <% categories.forEach(category=>{ %>
 
-            <tr>
+                    <tr>
 
-                <td>
-                    <%= category.name %>
-                </td>
+                        <td>
+                            <%= category.name %>
+                        </td>
 
-                <td>
-                    <%= category.description %>
-                </td>
+                        <td>
+                            <%= category.description %>
+                        </td>
 
-                <td>
+                        <td>
 
-                    <a href="/categories/edit/<%= category._id %>">
-                        Edit
-                    </a>
+                            <<% if (currentUser && currentUser.role==="admin" ) { %>
+                                <a href="/categories/edit/<%= category._id %>">Edit</a>
+                                <a href="/categories/delete/<%= category._id %>">Delete</a>
+                                <% } %>
 
-                    |
+                        </td>
 
-                    <a href="/categories/delete/<%= category._id %>" onclick="return confirm('Delete this category?')">
+                    </tr>
 
-                        Delete
+                    <% }) %>
 
-                    </a>
-
-                </td>
-
-            </tr>
-
-            <% }) %>
-
-    </table>
+            </table>
 
 </body>
 

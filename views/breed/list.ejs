@@ -12,91 +12,84 @@
 
     <h1>Breed List</h1>
 
-    <a href="/breeds/create">Add Breed</a>
+    <% if (currentUser && currentUser.role==="admin" ) { %>
+        <a href="/breeds/create">Add Breed</a>
+        <% } %>
 
-    <br><br>
+            <br><br>
 
-    <table border="1" cellpadding="10" class="breed-table">
+            <table border="1" cellpadding="10" class="breed-table">
 
-        <tr>
+                <tr>
 
-            <th>Name</th>
+                    <th>Name</th>
 
-            <th>Category</th>
+                    <th>Category</th>
 
-            <th>Country</th>
+                    <th>Country</th>
 
-            <th>Life</th>
+                    <th>Life</th>
 
-            <th>Action</th>
+                    <th>Action</th>
 
-        </tr>
+                </tr>
 
-        <% breeds.forEach(breed=>{ %>
+                <% breeds.forEach(breed=>{ %>
 
-            <tr>
+                    <tr>
 
-                <td>
+                        <td>
 
-                    <a href="/breeds/<%= breed._id %>">
+                            <a href="/breeds/<%= breed._id %>">
 
-                        <%= breed.name %>
+                                <%= breed.name %>
 
-                    </a>
+                            </a>
 
-                </td>
+                        </td>
 
-                <td>
-                    <%= breed.categoryId.name %>
-                </td>
+                        <td>
+                            <%= breed.categoryId.name %>
+                        </td>
 
-                <td>
-                    <%= breed.originCountry %>
-                </td>
+                        <td>
+                            <%= breed.originCountry %>
+                        </td>
 
-                <td>
-                    <%= breed.lifeExpectancy %>
-                </td>
+                        <td>
+                            <%= breed.lifeExpectancy %>
+                        </td>
 
-                <td>
+                        <td>
 
-                    <a href="/breeds/edit/<%= breed._id %>">
+                            <% if (currentUser && currentUser.role==="admin" ) { %>
+                                <a href="/breeds/edit/<%= breed._id %>">Edit</a>
+                                <a href="/breeds/delete/<%= breed._id %>">Delete</a>
+                                <% } %>
 
-                        Edit
+                        </td>
 
-                    </a>
+                    </tr>
 
-                    |
+                    <% }) %>
 
-                    <a href="/breeds/delete/<%= breed._id %>" onclick="return confirm('Delete Breed?')">
+                        <form action="/search" method="GET">
 
-                        Delete
+                            <input type="text" name="name" placeholder="Breed name">
 
-                    </a>
+                            <input type="text" name="country" placeholder="Country">
 
-                </td>
+                            <input type="text" name="temperament" placeholder="Temperament">
 
-            </tr>
+                            <button>
 
-            <% }) %>
+                                Search
 
-                <form action="/search" method="GET">
+                            </button>
 
-                    <input type="text" name="name" placeholder="Breed name">
+                        </form>
 
-                    <input type="text" name="country" placeholder="Country">
-
-                    <input type="text" name="temperament" placeholder="Temperament">
-
-                    <button>
-
-                        Search
-
-                    </button>
-
-                </form>
-
-    </table>
+            </table>
 
 </body>
 

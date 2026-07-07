@@ -1,26 +1,49 @@
 const Breed = require("../models/Breed");
 const Category = require("../models/Category");
+const User = require("../models/User");
 
-exports.index = async (req, res) => {
-    try {
-        const totalBreeds = await Breed.countDocuments();
-        const totalCategories = await Category.countDocuments();
+exports.homePage = async (req, res) => {
+  try {
+    const categories = await Category.find().sort({ createdAt: -1 }).limit(6);
 
-        const categories = await Category.find().limit(6);
+    const featuredBreeds = await Breed.find()
+      .populate("categoryId")
+      .sort({ createdAt: -1 })
+      .limit(6);
 
-        const featuredBreeds = await Breed.find()
-            .populate("categoryId")
-            .limit(6);
+    const totalBreeds = await Breed.countDocuments();
+    const totalCategories = await Category.countDocuments();
 
-        res.render("home/homePage", {
-            totalBreeds,
-            totalCategories,
-            categories,
-            featuredBreeds,
-            user: req.session.user
-        });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Server Error");
-    }
+    res.render("home/homePage", {
+      categories,
+      featuredBreeds,
+      totalBreeds,
+      totalCategories,
+    });
+  } catch (error) {
+    console.log(error);
+    res.render("home/homePage", {
+      categories: [],
+      featuredBreeds: [],
+      totalBreeds: 0,
+      totalCategories: 0,
+    });
+  }
+};
+
+exports.adminPage = async (req, res) => {
+  try {
+    const totalBreeds = await Breed.countDocuments();
+    const totalCategories = await Category.countDocuments();
+    const totalUsers = await User.countDocuments();
+
+    res.render("home/adminPage", {
+      totalBreeds,
+      totalCategories,
+      totalUsers,
+    });
+  } catch (error) {
+    console.log(error);
+    res.send("Server Error");
+  }
 };
