@@ -11,6 +11,11 @@
 </head>
 
 <body>
+
+
+<%- include("../partials/header") %>
+
+
     <div class="detail-container">
         <div class="detail-card">
 
@@ -78,7 +83,7 @@
                 </div>
 
                 <div class="detail-actions">
-                    <a href="/breeds" class="btn-back">← Back to Breeds</a>
+                    <a href="/user/breeds" class="btn-back">← Back to Breeds</a>
 
                     <% if (currentUser && currentUser.role==="admin" ) { %>
                         <a href="/breeds/edit/<%= breed._id %>" class="btn-edit">Edit Breed</a>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>My Favorite Breeds</title>
+
+    <link rel="stylesheet" href="/css/favorites.css">
+</head>
+
+<body>
+
+    <%- include("../partials/header") %>
+
+        <div class="container">
+
+            <div class="page-title">
+                <h1>❤️ My Favorite Breeds</h1>
+                <p>Danh sách những giống chó bạn đã lưu.</p>
+            </div>
+
+            <% if(favorites.length===0){ %>
+
+                <div class="empty">
+
+                    <img src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png">
+
+                    <h2>Chưa có giống chó yêu thích</h2>
+
+                    <p>Hãy khám phá các giống chó và thêm vào danh sách yêu thích.</p>
+
+                    <a href="/user/breeds" class="browse-btn">
+
+                        Browse Breeds
+
+                    </a>
+
+                </div>
+
+                <% }else{ %>
+
+                    <div class="breed-grid">
+
+                        <% favorites.forEach(item=>{ %>
+
+                            <div class="breed-card">
+
+                                <div class="image-box">
+
+                                    <img src="<%= item.breedId.image && item.breedId.image.trim()!=='' ? item.breedId.image : 'https://via.placeholder.com/600x400?text=No+Image' %>"
+                                        alt="<%= item.breedId.name %>"
+                                        onerror="this.src='https://via.placeholder.com/600x400?text=No+Image'">
+
+                                    <span class="favorite-badge">
+
+                                        ❤️ Favorite
+
+                                    </span>
+
+                                </div>
+
+                                <div class="content">
+
+                                    <h2>
+
+                                        <%= item.breedId.name %>
+
+                                    </h2>
+
+                                    <div class="info-grid">
+
+                                        <div class="info">
+
+                                            <span>Category</span>
+
+                                            <p>
+
+                                                <%= item.breedId.categoryId ? item.breedId.categoryId.name : "Unknown"
+                                                    %>
+
+                                            </p>
+
+                                        </div>
+
+                                        <div class="info">
+
+                                            <span>Origin</span>
+
+                                            <p>
+
+                                                <%= item.breedId.originCountry || "Unknown" %>
+
+                                            </p>
+
+                                        </div>
+
+                                        <div class="info">
+
+                                            <span>Life</span>
+
+                                            <p>
+
+                                                <%= item.breedId.lifeExpectancy %> years
+
+                                            </p>
+
+                                        </div>
+
+                                        <div class="info">
+
+                                            <span>Temperament</span>
+
+                                            <p>
+
+                                                <%= item.breedId.temperament || "Updating..." %>
+
+                                            </p>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="buttons">
+
+                                        <a href="/breeds/<%= item.breedId._id %>" class="detail-btn">
+
+                                            View Detail
+
+                                        </a>
+
+                                        <button class="remove-btn" data-id="<%= item.breedId._id %>">
+                                            Remove
+                                        </button>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <% }) %>
+
+                    </div>
+
+                    <% } %>
+
+        </div>
+        <script src="/js/favorites.js"></script>
+
+        <%- include("../partials/footer") %>
+
+</body>
+
+</html>

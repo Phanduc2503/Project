@@ -1,0 +1,176 @@
+<%- include("../partials/header") %>
+
+    <link rel="stylesheet" href="/css/user-breeds.css">
+
+
+    <div class="breed-container">
+
+
+        <!-- Title -->
+        <div class="page-title">
+
+            <h1>🐶 All Dog Breeds</h1>
+
+            <p>
+                Khám phá các giống chó nổi tiếng trên thế giới.
+            </p>
+
+        </div>
+
+
+
+        <!-- Search + Filter (chuẩn bị cho sau này) -->
+        <div class="breed-toolbar">
+
+            <input type="text" placeholder="🔍 Search breed...">
+
+
+            <select>
+                <option>All Categories</option>
+                <option>Small Dog</option>
+                <option>Large Dog</option>
+            </select>
+
+
+            <select>
+                <option>Sort A-Z</option>
+                <option>Life Expectancy</option>
+            </select>
+
+
+        </div>
+
+
+
+        <!-- Breed List -->
+
+        <div class="breed-grid">
+
+
+            <% breeds.forEach(breed=> { %>
+
+
+                <div class="breed-card">
+
+
+                    <!-- Image -->
+
+                    <div class="breed-image">
+
+
+                        <img src="<%= breed.image && breed.image.trim() !== '' 
+                    ? breed.image 
+                    : 'https://via.placeholder.com/600x400?text=No+Image' %>" alt="<%= breed.name %>"
+                            onerror="this.src='https://via.placeholder.com/600x400?text=No+Image'">
+
+                        <button class="favorite-btn" data-id="<%= breed._id %>">
+
+                            🤍
+
+                        </button>
+
+
+
+                        <!-- Category badge -->
+
+                        <span class="category-badge">
+
+                            <%= breed.categoryId ? breed.categoryId.name : "Unknown" %>
+
+                        </span>
+
+
+                    </div>
+
+
+
+                    <!-- Content -->
+
+                    <div class="breed-content">
+
+
+                        <h2>
+                            <%= breed.name %>
+                        </h2>
+
+
+
+                        <div class="info-grid">
+
+
+                            <div class="info-item">
+
+                                <span>
+                                    🌍 Origin
+                                </span>
+
+                                <p>
+                                    <%= breed.originCountry || "Updating" %>
+                                </p>
+
+                            </div>
+
+
+
+
+                            <div class="info-item">
+
+                                <span>
+                                    ⏳ Life
+                                </span>
+
+                                <p>
+                                    <%= breed.lifeExpectancy || "-" %>
+                                        years
+                                </p>
+
+                            </div>
+
+
+
+
+                            <div class="info-item full">
+
+                                <span>
+                                    🐕 Temperament
+                                </span>
+
+                                <p>
+                                    <%= breed.temperament || "Updating..." %>
+                                </p>
+
+
+                            </div>
+
+
+                        </div>
+
+
+
+
+                        <a href="/breeds/<%= breed._id %>" class="btn-detail">
+
+                            Xem chi tiết
+
+                        </a>
+
+
+
+                    </div>
+
+
+
+                </div>
+
+
+                <% }) %>
+
+
+        </div>
+
+
+    </div>
+    <script src="/js/favorites.js"></script>
+
+
+    <%- include("../partials/footer") %>

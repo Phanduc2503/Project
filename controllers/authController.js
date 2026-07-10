@@ -41,31 +41,50 @@ exports.register = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-    const { username, password } = req.body;
+    try {
+        const { username, password } = req.body;
 
-    const user = await User.findOne({ username });
+        const user = await User.findOne({ username });
 
-    if (!user) return res.send("Sai tài khoản");
+        if (!user) {
+            return res.render("auth/login", {
+                error: "Sai tài khoản",
+                oldData: { username }
+            });
+        }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+        const isMatch = await bcrypt.compare(password, user.password);
 
-    if (!isMatch) return res.send("Sai mật khẩu");
+        if (!isMatch) {
+            return res.render("auth/login", {
+                error: "Sai mật khẩu",
+                oldData: { username }
+            });
+        }
 
-    // lưu session
-    req.session.user = {
-        _id: user._id,
-        username: user.username,
-        role: user.role,
-        
-    };
+        // Lưu session
+        req.session.user = {
+            _id: user._id,
+            username: user.username,
+            role: user.role
+        };
 
-    // 🔥 redirect theo role
-    if (user.role === "admin") {
-        return res.redirect("/admin");
+        // Chuyển hướng theo quyền
+        if (user.role === "admin") {
+            return res.redirect("/admin");
+        }
+
+        return res.redirect("/");
+
+    } catch (err) {
+        console.log(err);
+        return res.render("auth/login", {
+            error: "Có lỗi xảy ra",
+            oldData: {}
+        });
     }
-
-    return res.redirect("/");
 };
+
 exports.logout = (req, res) => {
   req.session.destroy((err) => {
     if (err) {

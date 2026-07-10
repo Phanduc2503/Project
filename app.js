@@ -19,6 +19,8 @@ const homeRoutes = require("./routes/homeRoutes");
 const authRoutes = require("./routes/authRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const breedRoutes = require("./routes/breedRoutes");
+const userRoutes = require("./routes/userRoutes");
+const favoriteRoutes = require("./routes/favoriteRoutes");
 
 // ===== VIEW ENGINE =====
 app.set("view engine", "ejs");
@@ -47,6 +49,8 @@ app.use("/", homeRoutes);
 app.use("/", authRoutes);
 app.use("/", categoryRoutes);
 app.use("/", breedRoutes);
+app.use("/user", userRoutes);
+app.use("/user/favorites", favoriteRoutes);
 
 // ===== SERVER =====
 const PORT = process.env.PORT || 3000;

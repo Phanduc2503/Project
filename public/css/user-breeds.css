@@ -1,0 +1,460 @@
+body{
+
+    background:#faf7f2;
+
+    font-family:Arial,sans-serif;
+
+}
+
+
+/* Container */
+
+.breed-container{
+
+    width:90%;
+
+    margin:40px auto;
+
+}
+
+
+
+/* Title */
+
+.page-title{
+
+    text-align:center;
+
+    margin-bottom:35px;
+
+}
+
+
+.page-title h1{
+
+    font-size:40px;
+
+    color:#5b4034;
+
+}
+
+
+.page-title p{
+
+    color:#777;
+
+}
+
+
+
+/* Toolbar */
+
+.breed-toolbar{
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:15px;
+
+    margin-bottom:35px;
+
+}
+
+
+
+.breed-toolbar input,
+.breed-toolbar select{
+
+    padding:12px 18px;
+
+    border-radius:10px;
+
+    border:1px solid #ddd;
+
+    background:white;
+
+    font-size:15px;
+
+}
+
+
+
+/* Grid */
+
+.breed-grid{
+
+
+    display:grid;
+
+
+    grid-template-columns:
+    repeat(auto-fill,minmax(320px,1fr));
+
+
+    gap:30px;
+
+
+}
+
+
+
+/* Card */
+
+.breed-card{
+
+
+    background:white;
+
+
+    border-radius:20px;
+
+
+    overflow:hidden;
+
+
+    box-shadow:
+    0 10px 30px rgba(0,0,0,.1);
+
+
+    display:flex;
+
+
+    flex-direction:column;
+
+
+    transition:.3s;
+
+
+}
+
+
+
+.breed-card:hover{
+
+    transform:translateY(-8px);
+
+}
+
+
+
+/* Image */
+
+.breed-image{
+
+
+    height:260px;
+
+
+    width:100%;
+
+
+    position:relative;
+
+
+    overflow:hidden;
+
+
+    background:#eee;
+
+
+}
+
+
+
+.breed-image img{
+
+
+    width:100%;
+
+
+    height:100%;
+
+
+    object-fit:cover;
+
+
+    display:block;
+
+
+}
+
+
+
+/* Category */
+
+.category-badge{
+
+
+    position:absolute;
+
+
+    top:15px;
+
+
+    left:15px;
+
+
+    background:#d98b5f;
+
+
+    color:white;
+
+
+    padding:7px 14px;
+
+
+    border-radius:20px;
+
+
+    font-size:13px;
+
+
+}
+
+
+
+/* Content */
+
+.breed-content{
+
+
+    padding:25px;
+
+
+    display:flex;
+
+
+    flex-direction:column;
+
+
+    flex:1;
+
+
+}
+
+
+
+.breed-content h2{
+
+
+    margin-bottom:20px;
+
+
+    color:#5b4034;
+
+
+}
+
+
+
+/* Information box */
+
+.info-grid{
+
+
+    display:grid;
+
+
+    grid-template-columns:1fr 1fr;
+
+
+    gap:12px;
+
+
+    margin-bottom:20px;
+
+
+}
+
+
+
+.info-item{
+
+
+    background:#f8f8f8;
+
+
+    border-radius:12px;
+
+
+    padding:12px;
+
+
+}
+
+
+
+.info-item span{
+
+
+    display:block;
+
+
+    color:#999;
+
+
+    font-size:13px;
+
+
+    margin-bottom:5px;
+
+
+}
+
+
+
+.info-item p{
+
+
+    margin:0;
+
+
+    font-weight:600;
+
+
+    color:#555;
+
+
+}
+
+
+
+.full{
+
+
+    grid-column:
+    1 / span 2;
+
+
+}
+
+
+
+/* Limit text */
+
+.full p{
+
+
+    display:-webkit-box;
+
+
+    -webkit-line-clamp:2;
+
+
+    -webkit-box-orient:vertical;
+
+
+    overflow:hidden;
+
+
+}
+
+
+
+/* Button */
+
+.btn-detail{
+
+
+    margin-top:auto;
+
+
+    text-align:center;
+
+
+    padding:12px 20px;
+
+
+    background:#d98b5f;
+
+
+    color:white;
+
+
+    border-radius:12px;
+
+
+    text-decoration:none;
+
+
+    transition:.3s;
+
+
+}
+
+
+
+.btn-detail:hover{
+
+
+    background:#b96b40;
+
+
+}
+
+
+
+/* Responsive */
+
+@media(max-width:768px){
+
+
+    .breed-toolbar{
+
+        flex-direction:column;
+
+    }
+
+
+    .breed-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+
+}
+
+.breed-image{
+    height:260px;
+    width:100%;
+    position:relative; /* bắt buộc */
+    overflow:hidden;
+    background:#eee;
+}
+
+
+.favorite-btn{
+
+    position:absolute;
+
+    top:15px;
+
+    right:15px;
+
+    width:45px;
+
+    height:45px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:white;
+
+    font-size:22px;
+
+    cursor:pointer;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    z-index:10;
+
+    box-shadow:0 3px 10px rgba(0,0,0,.15);
+
+}

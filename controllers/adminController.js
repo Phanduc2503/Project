@@ -8,7 +8,7 @@ exports.dashboard = async (req, res) => {
         const totalBreeds = await Breed.countDocuments();
         const totalCategories = await Category.countDocuments();
 
-        res.render("home/adminPage", {
+        res.render("admin/adminPage", {
             user: req.session.user,
             totalUsers,
             totalBreeds,

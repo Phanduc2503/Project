@@ -37,7 +37,7 @@ exports.adminPage = async (req, res) => {
     const totalCategories = await Category.countDocuments();
     const totalUsers = await User.countDocuments();
 
-    res.render("home/adminPage", {
+    res.render("admin/adminPage", {
       totalBreeds,
       totalCategories,
       totalUsers,
