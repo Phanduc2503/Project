@@ -3,16 +3,73 @@ const Breed = require("../models/Breed");
 
 exports.index = async (req, res) => {
     try {
-        const categories = await Category.find().sort({ createdAt: -1 });
 
-        res.render("category/list", { categories });
+        const categories = await Category.find();
+
+        res.render("user/category", {
+            categories
+        });
 
     } catch (error) {
-        console.log(error);
 
-        res.send("Sever Error");
+        console.log(error);
+        res.status(500).send("Server Error");
+
     }
-}
+};
+exports.detail = async (req, res) => {
+
+    try {
+
+        const category = await Category.findById(req.params.id);
+
+
+        if(!category){
+            return res.send("Category not found");
+        }
+
+
+        const breeds = await Breed.find({
+            categoryId: category._id
+        });
+
+
+        res.render("user/category-detail", {
+            category,
+            breeds
+        });
+
+
+    } catch(error){
+
+        console.log(error);
+        res.status(500).send("Server Error");
+
+    }
+
+};
+// Admin controller
+exports.adminIndex = async(req,res)=>{
+
+    try{
+
+        const categories = await Category.find();
+
+        res.render("admin/categories/index",{
+            categories
+        });
+
+
+    }catch(error){
+
+        console.log(error);
+        res.status(500).send("Server Error");
+
+    }
+
+};
+
+
 
 exports.create = async (req, res) => {
     res.render("category/create");

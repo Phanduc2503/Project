@@ -1,5 +1,24 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
+const Category = require("../models/Category");
+exports.dashboard = async (req, res) => {
+    try {
+        const totalUsers = await User.countDocuments();
+        const totalBreeds = await Breed.countDocuments();
+        const totalCategories = await Category.countDocuments();
+
+        res.render("admin/adminPage", {
+            user: req.session.user,
+            totalUsers,
+            totalBreeds,
+            totalCategories
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("Server Error");
+    }
+};
 
 exports.showLogin = (req, res) => {
   res.render("auth/login", {
@@ -66,7 +85,8 @@ exports.login = async (req, res) => {
         req.session.user = {
             _id: user._id,
             username: user.username,
-            role: user.role
+            role: user.role,
+            avatar: user.avatar
         };
 
         // Chuyển hướng theo quyền
@@ -92,4 +112,47 @@ exports.logout = (req, res) => {
     }
     res.redirect("/login");
   });
+};
+exports.profile = async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.redirect("/login");
+    }
+
+    const user = await User.findById(req.session.user._id);
+
+    res.render("auth/profile", {
+      user,
+      currentUser: user
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Server Error");
+  }
+};
+
+exports.updateAvatar = async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.redirect("/login");
+    }
+
+    const user = await User.findById(req.session.user._id);
+
+    if (!user) {
+      return res.redirect("/login");
+    }
+
+    if (req.file) {
+      user.avatar = "/uploads/avatars/" + req.file.filename;
+      await user.save();
+
+      req.session.user.avatar = user.avatar;
+    }
+
+    res.redirect("/user/profile");
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Server Error");
+  }
 };

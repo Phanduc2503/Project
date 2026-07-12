@@ -3,8 +3,11 @@ const router = express.Router();
 
 const categoryController = require("../controllers/categoryController");
 
+
 // Danh sách Category
-router.get("/categories", categoryController.index);
+router.get("/category", categoryController.index);
+
+router.get("/category/:id",categoryController.detail);
 
 // Hiển thị form thêm
 router.get("/categories/create", categoryController.create);
