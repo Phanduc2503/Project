@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= category.name %> - Woofy</title>
+  <link rel="stylesheet" href="/css/woofy-theme.css" />
+</head>
+<body>
+  <%- include("../partials/header") %>
+
+  <main class="container">
+    <div class="breadcrumb">
+      <a href="/">Home</a>
+      <span>›</span>
+      <a href="/category">Categories</a>
+      <span>›</span>
+      <span><%= category.name %></span>
+    </div>
+
+    <section class="section">
+      <div class="section-header">
+        <h2>📂 <%= category.name %></h2>
+        <p style="color: var(--text-light); margin-top: 8px;">
+          <%= category.description || "No description available." %>
+        </p>
+      </div>
+
+      <% if (breeds.length === 0) { %>
+        <div class="empty-box">
+          <img src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png" alt="Empty" />
+          <h2>No breeds found in this category</h2>
+          <p>There are no breeds available for this category yet.</p>
+          <a href="/category" class="browse-btn">← Back to Categories</a>
+        </div>
+      <% } else { %>
+        <div class="breed-grid">
+          <% breeds.forEach(breed => { %>
+            <div class="breed-card">
+              <div class="breed-image">
+                <img src="<%= breed.image && breed.image.trim() !== '' ? breed.image : 'https://via.placeholder.com/600x400?text=No+Image' %>"
+                     alt="<%= breed.name %>"
+                     onerror="this.src='https://via.placeholder.com/600x400?text=No+Image'" />
+                <span class="category-badge"><%= category.name %></span>
+              </div>
+              <div class="breed-content">
+                <h3><%= breed.name %></h3>
+                <p><strong>Origin:</strong> <%= breed.originCountry %></p>
+                <p><strong>Life:</strong> <%= breed.lifeExpectancy %> years</p>
+                <% if (breed.temperament) { %>
+                  <p><strong>Temperament:</strong> <%= breed.temperament %></p>
+                <% } %>
+                <a href="/breeds/<%= breed._id %>" class="btn-detail">View Details →</a>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+    </section>
+  </main>
+
+  <%- include("../partials/footer") %>
+</body>
+</html>

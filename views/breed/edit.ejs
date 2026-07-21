@@ -1,91 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Edit Breed</title>
-    <link rel="stylesheet" href="/css/form-page.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit Breed - Woofy Admin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="/css/woofy-theme.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
 </head>
+<body class="admin-body">
+  <%- include("../partials/admin-sidebar", { currentPage: 'breeds' }) %>
 
-<body>
-    <%- include("../partials/header") %>
-    <% if (currentUser && currentUser.role==="admin" ) { %>
-        <% } %>
+  <div class="admin-sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
-            <div class="form-page">
-                <div class="form-card">
-                    <span class="form-badge">Woofy • Breed</span>
-                    <h1 class="form-title">Edit Breed</h1>
-                    <p class="form-subtitle">
-                        Chỉnh sửa thông tin giống chó trong hệ thống Woofy.
-                    </p>
+  <header class="admin-topbar">
+    <div class="admin-topbar-left">
+      <button class="admin-toggle-sidebar" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="admin-topbar-search">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search breeds..." />
+      </div>
+    </div>
+    <div class="admin-topbar-right">
+      <div class="admin-profile">
+        <div class="avatar"><%= (currentUser && currentUser.username) ? currentUser.username.charAt(0).toUpperCase() : 'A' %></div>
+        <span class="name"><%= (currentUser && currentUser.username) ? currentUser.username : 'Admin' %></span>
+      </div>
+    </div>
+  </header>
 
-                    <form action="/breeds/update/<%= breed._id %>" method="POST">
-                        <div class="form-group">
-                            <label class="form-label">Category</label>
-                            <select name="categoryId" class="form-select" required>
-                                <% categories.forEach(category=> { %>
-                                    <option value="<%= category._id %>"
-                                        <%=String(breed.categoryId)===String(category._id) ? "selected" : "" %>>
-                                        <%= category.name %>
-                                    </option>
-                                    <% }) %>
-                            </select>
-                        </div>
+  <main class="admin-main">
+    <div class="admin-card admin-form-card">
+      <div class="admin-card-body">
+        <span class="form-badge">Woofy • Breed</span>
+        <h1 class="form-title">Edit Breed</h1>
+        <p class="form-subtitle">Update breed information in the Woofy database.</p>
 
-                        <div class="form-group">
-                            <label class="form-label">Breed Name</label>
-                            <input type="text" name="name" class="form-input" value="<%= breed.name %>" required>
-                        </div>
+        <form action="/breeds/update/<%= breed._id %>" method="POST">
+          <div class="admin-form-group">
+            <label class="admin-form-label">Category</label>
+            <select name="categoryId" class="admin-form-select" required>
+              <% categories.forEach(category=> { %>
+                <option value="<%= category._id %>"
+                  <%=String(breed.categoryId)===String(category._id) ? "selected" : "" %>>
+                  <%= category.name %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
 
-                        <div class="form-group">
-                            <label class="form-label">Origin Country</label>
-                            <input type="text" name="originCountry" class="form-input"
-                                value="<%= breed.originCountry %>" required>
-                        </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Breed Name</label>
+            <input type="text" name="name" class="admin-form-input" value="<%= breed.name %>" required>
+          </div>
 
-                        <div class="form-group">
-                            <label class="form-label">Life Expectancy</label>
-                            <input type="number" name="lifeExpectancy" class="form-input"
-                                value="<%= breed.lifeExpectancy %>" required>
-                        </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Origin Country</label>
+            <input type="text" name="originCountry" class="admin-form-input" value="<%= breed.originCountry %>" required>
+          </div>
 
-                        <div class="form-group">
-                            <label class="form-label">Temperament</label>
-                            <input type="text" name="temperament" class="form-input"
-                                value="<%= breed.temperament || '' %>">
-                        </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Life Expectancy (years)</label>
+            <input type="number" name="lifeExpectancy" class="admin-form-input" value="<%= breed.lifeExpectancy %>" required>
+          </div>
 
-                        <div class="form-group">
-                            <label class="form-label">Behavior</label>
-                            <textarea name="behavior" class="form-textarea"><%= breed.behavior || '' %></textarea>
-                        </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Temperament</label>
+            <input type="text" name="temperament" class="admin-form-input" value="<%= breed.temperament || '' %>">
+          </div>
 
-                        <div class="form-group">
-                            <label class="form-label">Care Requirements</label>
-                            <textarea name="careRequirements"
-                                class="form-textarea"><%= breed.careRequirements || '' %></textarea>
-                        </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Behavior</label>
+            <textarea name="behavior" class="admin-form-textarea"><%= breed.behavior || '' %></textarea>
+          </div>
 
-                        <div class="form-group">
-                            <label class="form-label">Description</label>
-                            <textarea name="description" class="form-textarea"><%= breed.description || '' %></textarea>
-                        </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Care Requirements</label>
+            <textarea name="careRequirements" class="admin-form-textarea"><%= breed.careRequirements || '' %></textarea>
+          </div>
 
-                        <div class="form-group">
-                            <label class="form-label">Image URL</label>
-                            <input type="text" name="image" class="form-input" value="<%= breed.image || '' %>">
-                        </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Description</label>
+            <textarea name="description" class="admin-form-textarea"><%= breed.description || '' %></textarea>
+          </div>
 
-                        <div class="form-actions">
-                            <button type="submit" class="btn-primary">Update Breed</button>
-                            <a href="/breeds" class="btn-secondary">Back to Breeds</a>
-                        </div>
-                    </form>
-                </div>
-            </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Image URL</label>
+            <input type="text" name="image" class="admin-form-input" value="<%= breed.image || '' %>">
+          </div>
 
+          <div class="admin-form-actions">
+            <button type="submit" class="admin-btn-primary"><i class="fas fa-save"></i> Update Breed</button>
+            <a href="/breeds" class="admin-btn-secondary"><i class="fas fa-arrow-left"></i> Back to Breeds</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function toggleSidebar() {
+      document.getElementById('adminSidebar').classList.toggle('open');
+      document.getElementById('sidebarOverlay').classList.toggle('show');
+    }
+  </script>
 </body>
-
 </html>

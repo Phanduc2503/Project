@@ -1,0 +1,60 @@
+<link rel="stylesheet" href="/css/static-pages.css" />
+<main class="container">
+  <div class="breadcrumb">
+    <a href="/">Home</a><span>›</span><span>Contact</span>
+  </div>
+
+  <div class="static-page">
+    <h1>Contact Us 📬</h1>
+    <p class="lead">Have a question, suggestion, or just want to say hello? We'd love to hear from you!</p>
+
+    <div class="contact-grid">
+      <div class="contact-info">
+        <h3>Get in Touch</h3>
+        <p>Our team is here to help you with any questions about Woofy, dog breeds, or your account. We typically respond within 24 hours.</p>
+
+        <div class="contact-detail">
+          <div class="icon">📧</div>
+          <div>
+            <h4>Email</h4>
+            <p>hello@woofy.com</p>
+          </div>
+        </div>
+
+        <div class="contact-detail">
+          <div class="icon">📍</div>
+          <div>
+            <h4>Location</h4>
+            <p>123 Pet Street, Dogtown, DT 10001</p>
+          </div>
+        </div>
+
+        <div class="contact-detail">
+          <div class="icon">🕐</div>
+          <div>
+            <h4>Hours</h4>
+            <p>Mon - Fri: 9:00 AM - 6:00 PM</p>
+          </div>
+        </div>
+
+        <div class="contact-detail">
+          <div class="icon">📞</div>
+          <div>
+            <h4>Phone</h4>
+            <p>+1 (555) 123-4567</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <form class="contact-form" onsubmit="event.preventDefault(); showToast('Message sent successfully! We\'ll get back to you soon.','success'); this.reset();">
+          <input type="text" placeholder="Your Name" required>
+          <input type="email" placeholder="Your Email" required>
+          <input type="text" placeholder="Subject">
+          <textarea placeholder="Your Message..." required></textarea>
+          <button type="submit" class="btn-primary">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>

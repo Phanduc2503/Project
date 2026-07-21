@@ -21,6 +21,7 @@ const categoryRoutes = require("./routes/categoryRoutes");
 const breedRoutes = require("./routes/breedRoutes");
 const userRoutes = require("./routes/userRoutes");
 const favoriteRoutes = require("./routes/favoriteRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 
 // ===== VIEW ENGINE =====
 app.set("view engine", "ejs");
@@ -51,6 +52,7 @@ app.use("/", categoryRoutes);
 app.use("/", breedRoutes);
 app.use("/user", userRoutes);
 app.use("/user/favorites", favoriteRoutes);
+app.use("/", notificationRoutes);
 
 // ===== SERVER =====
 const PORT = process.env.PORT || 3000;

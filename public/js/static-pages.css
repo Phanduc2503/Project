@@ -1,0 +1,339 @@
+/* =========================
+   STATIC PAGES CSS (About, FAQ, Contact)
+   ========================= */
+
+/* Static Page Container */
+.static-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+}
+
+/* Ensure proper spacing with sticky header */
+.breadcrumb {
+  padding-top: 32px;
+}
+
+/* Page content spacing */
+.static-page h1:first-of-type {
+  margin-top: 16px;
+}
+
+.static-page h1 {
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 16px;
+  color: var(--secondary);
+}
+
+.static-page .lead {
+  font-size: 1.15rem;
+  text-align: center;
+  color: var(--text-soft);
+  margin-bottom: 48px;
+  line-height: 1.7;
+}
+
+.static-page h2 {
+  font-size: 1.8rem;
+  margin-top: 40px;
+  margin-bottom: 16px;
+  color: var(--secondary);
+}
+
+.static-page p {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  margin-bottom: 16px;
+  color: var(--text-soft);
+}
+
+/* =========================
+   ABOUT PAGE STYLES
+   ========================= */
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  margin: 32px 0;
+}
+
+.value-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: var(--shadow);
+}
+
+.value-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 14px 40px rgba(122, 75, 47, 0.18);
+}
+
+.value-card .icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.value-card h3 {
+  font-size: 1.15rem;
+  margin-bottom: 12px;
+  color: var(--secondary);
+}
+
+.value-card p {
+  font-size: 0.95rem;
+  color: var(--text-soft);
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+/* =========================
+   FAQ PAGE STYLES
+   ========================= */
+
+.faq-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: box-shadow 0.3s ease;
+}
+
+.faq-item:hover {
+  box-shadow: 0 12px 35px rgba(122, 75, 47, 0.15);
+}
+
+.faq-question {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 20px 24px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--secondary);
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.3s ease;
+}
+
+.faq-question:hover {
+  background: var(--bg-soft);
+}
+
+.faq-question .arrow {
+  font-size: 0.85rem;
+  transition: transform 0.3s ease;
+  color: var(--primary);
+}
+
+.faq-item.active .faq-question .arrow {
+  transform: rotate(180deg);
+}
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.4s ease;
+  padding: 0 24px;
+  color: var(--text-soft);
+  line-height: 1.7;
+}
+
+.faq-item.active .faq-answer {
+  max-height: 500px;
+  padding: 0 24px 20px;
+}
+
+/* =========================
+   CONTACT PAGE STYLES
+   ========================= */
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 40px;
+  margin-top: 32px;
+}
+
+.contact-info {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px;
+  box-shadow: var(--shadow);
+  height: fit-content;
+}
+
+.contact-info h3 {
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+  color: var(--secondary);
+}
+
+.contact-info > p {
+  margin-bottom: 28px;
+  line-height: 1.7;
+}
+
+.contact-detail {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.contact-detail .icon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-soft);
+  border-radius: 12px;
+}
+
+.contact-detail h4 {
+  font-size: 1rem;
+  margin-bottom: 4px;
+  color: var(--secondary);
+}
+
+.contact-detail p {
+  font-size: 0.95rem;
+  color: var(--text-soft);
+  margin-bottom: 0;
+}
+
+.contact-form {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  background: #fffdfb;
+  color: var(--text);
+  font-size: 15px;
+  outline: none;
+  transition: all 0.25s ease;
+  font-family: inherit;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(255, 145, 77, 0.15);
+}
+
+.contact-form textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.contact-form button {
+  align-self: flex-start;
+  padding: 14px 32px;
+}
+
+/* =========================
+   RESPONSIVE DESIGN
+   ========================= */
+
+@media (max-width: 768px) {
+  .static-page {
+    padding: 24px 16px 40px;
+  }
+
+  .static-page h1 {
+    font-size: 2rem;
+  }
+
+  .static-page .lead {
+    font-size: 1.05rem;
+    margin-bottom: 32px;
+  }
+
+  .static-page h2 {
+    font-size: 1.5rem;
+    margin-top: 28px;
+  }
+
+  .card-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .contact-info,
+  .contact-form {
+    padding: 24px;
+  }
+
+  .faq-question {
+    font-size: 1rem;
+    padding: 16px 20px;
+  }
+
+  .faq-answer {
+    padding: 0 20px;
+  }
+
+  .faq-item.active .faq-answer {
+    padding: 0 20px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .static-page h1 {
+    font-size: 1.7rem;
+  }
+
+  .static-page .lead {
+    font-size: 0.95rem;
+  }
+
+  .value-card {
+    padding: 20px 16px;
+  }
+
+  .value-card .icon {
+    font-size: 2.5rem;
+  }
+
+  .contact-detail {
+    gap: 12px;
+  }
+
+  .contact-detail .icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
+  }
+}

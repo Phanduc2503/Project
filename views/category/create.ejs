@@ -3,28 +3,66 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Create Category</title>
-  <link rel="stylesheet" href="/css/common.css">
-  <link rel="stylesheet" href="/css/category.css">
+  <title>Create Category - Woofy Admin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="/css/woofy-theme.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
 </head>
-<body>
-  <%- include("../partials/header") %>
-  <div class="page-category container">
-    <h1 class="page-title">Them danh muc cho shop cho cun</h1>
-    <p class="page-subtitle">Tao nhom san pham, giong cho, phu kien hoac dich vu thu cung.</p>
+<body class="admin-body">
+  <%- include("../partials/admin-sidebar", { currentPage: 'category-create' }) %>
 
-    <form class="category-form" action="/categories" method="POST">
-      <label for="name">Ten danh muc</label>
-      <input type="text" id="name" name="name" placeholder="Vi du: Thuc an cho cho con">
+  <div class="admin-sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
-      <label for="description">Mo ta</label>
-      <textarea id="description" name="description" placeholder="Nhap mo ta danh muc..."></textarea>
-
-      <div class="actions">
-        <button type="submit">Save</button>
-        <a class="btn btn-secondary" href="/categories">Back</a>
+  <header class="admin-topbar">
+    <div class="admin-topbar-left">
+      <button class="admin-toggle-sidebar" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="admin-topbar-search">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search categories..." />
       </div>
-    </form>
-  </div>
+    </div>
+    <div class="admin-topbar-right">
+      <div class="admin-profile">
+        <div class="avatar"><%= (currentUser && currentUser.username) ? currentUser.username.charAt(0).toUpperCase() : 'A' %></div>
+        <span class="name"><%= (currentUser && currentUser.username) ? currentUser.username : 'Admin' %></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <div class="admin-card admin-form-card">
+      <div class="admin-card-body">
+        <span class="form-badge">Woofy • Category</span>
+        <h1 class="form-title">Create Category</h1>
+        <p class="form-subtitle">Add a new category to organize dog breeds.</p>
+
+        <form action="/categories" method="POST">
+          <div class="admin-form-group">
+            <label class="admin-form-label">Category Name</label>
+            <input type="text" name="name" class="admin-form-input" placeholder="e.g. Working Dogs" required>
+          </div>
+
+          <div class="admin-form-group">
+            <label class="admin-form-label">Description</label>
+            <textarea name="description" class="admin-form-textarea" placeholder="Describe this category..."></textarea>
+          </div>
+
+          <div class="admin-form-actions">
+            <button type="submit" class="admin-btn-primary"><i class="fas fa-save"></i> Save Category</button>
+            <a href="/categories" class="admin-btn-secondary"><i class="fas fa-arrow-left"></i> Back to Categories</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function toggleSidebar() {
+      document.getElementById('adminSidebar').classList.toggle('open');
+      document.getElementById('sidebarOverlay').classList.toggle('show');
+    }
+  </script>
 </body>
 </html>

@@ -1,130 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Woofy - Home</title>
-    <link rel="stylesheet" href="/css/home.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Woofy - Home</title>
+  <link rel="stylesheet" href="/css/woofy-theme.css" />
 </head>
-
 <body>
-    <%- include("../partials/header") %>
+  <%- include("../partials/header") %>
 
-        <main class="container">
-            <section class="hero">
-                <div class="hero-left">
-                    <h1>Chào mừng đến với <span>Woofy</span></h1>
-                    <p>
-                        Nơi tìm kiếm người bạn bốn chân hoàn hảo cho bạn.
-                        Khám phá giống chó, danh mục và những thông tin hữu ích về thú cưng.
-                    </p>
+  <main class="container">
+    <section class="hero">
+      <div class="hero-left">
+        <h1>Chào mừng đến với <span>Woofy</span></h1>
+        <p>
+          Nơi tìm kiếm người bạn bốn chân hoàn hảo cho bạn.
+          Khám phá giống chó, danh mục và những thông tin hữu ích về thú cưng.
+        </p>
 
-                    <div class="hero-stats">
-                        <div class="stat-box">
-                            <h3>
-                                <%= totalBreeds %>+
-                            </h3>
-                            <p>Breeds</p>
-                        </div>
+        <div class="hero-stats">
+          <div class="stat-box">
+            <h3><%= totalBreeds %>+</h3>
+            <p>Breeds</p>
+          </div>
+          <div class="stat-box">
+            <h3><%= totalCategories %>+</h3>
+            <p>Categories</p>
+          </div>
+        </div>
 
-                        <div class="stat-box">
-                            <h3>
-                                <%= totalCategories %>+
-                            </h3>
-                            <p>Categories</p>
-                        </div>
-                    </div>
+        <a href="/user/breeds" class="btn-primary">Khám phá ngay</a>
+      </div>
 
-                    <a href="/user/breeds" class="btn-primary">Khám phá ngay</a>
-                </div>
+      <div class="hero-right">
+        <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?q=80&w=1200&auto=format&fit=crop" alt="Dog" />
+      </div>
+    </section>
 
-                <div class="hero-right">
-                    <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?q=80&w=1200&auto=format&fit=crop"
-                        alt="Dog" />
-                </div>
-            </section>
+    <section class="section">
+      <div class="section-header">
+        <h2>📂 Danh mục giống chó</h2>
+      </div>
 
-            <section class="section">
-                <div class="section-header">
-                    <h2>📂 Danh mục giống chó</h2>
-                </div>
+      <div class="category-grid">
+        <% if (categories.length > 0) { %>
+          <% categories.forEach(category => { %>
+            <div class="category-card">
+              <h3><%= category.name %></h3>
+              <p><%= category.description ? category.description : "Chưa có mô tả cho category này." %></p>
+              <a href="/category/<%= category._id %>" class="btn-detail">Xem giống chó →</a>
+            </div>
+          <% }) %>
+        <% } else { %>
+          <div class="empty-box">
+            <p>Chưa có category nào trong database.</p>
+          </div>
+        <% } %>
+      </div>
+    </section>
 
-                <div class="category-grid">
-                    <% if (categories.length> 0) { %>
-                        <% categories.forEach(category=> { %>
-                            <div class="category-card">
-                                <h3>
-                                    <%= category.name %>
-                                </h3>
-                                <p>
-                                    <%= category.description ? category.description : "Chưa có mô tả cho category này."
-                                        %>
-                                </p>
-                            </div>
-                            <% }) %>
-                                <% } else { %>
-                                    <div class="empty-box">
-                                        <p>Chưa có category nào trong database.</p>
-                                    </div>
-                                    <% } %>
-                </div>
-            </section>
+    <section class="section">
+      <div class="section-header">
+        <h2>🐶 Giống chó nổi bật</h2>
+      </div>
 
-            <section class="section">
-                <div class="section-header">
-                    <h2>🐶 Giống chó nổi bật</h2>
-                </div>
+      <div class="breed-grid">
+        <% if (featuredBreeds.length > 0) { %>
+          <% featuredBreeds.forEach(breed => { %>
+            <div class="breed-card">
+              <div class="breed-image">
+                <% if (breed.image && breed.image.trim() !== "") { %>
+                  <img src="<%= breed.image %>" alt="<%= breed.name %>">
+                <% } else { %>
+                  <img src="https://via.placeholder.com/600x400?text=No+Image" alt="No image">
+                <% } %>
+                <span class="category-badge"><%= breed.categoryId ? breed.categoryId.name : "Không có category" %></span>
+              </div>
 
-                <div class="breed-grid">
-                    <% if (featuredBreeds.length> 0) { %>
-                        <% featuredBreeds.forEach(breed=> { %>
-                            <div class="breed-card">
-                                <div class="breed-image">
-                                    <% if (breed.image && breed.image.trim() !=="" ) { %>
-                                        <img src="<%= breed.image %>" alt="<%= breed.name %>">
-                                        <% } else { %>
-                                            <img src="https://via.placeholder.com/600x400?text=No+Image" alt="No image">
-                                            <% } %>
-                                </div>
+              <div class="breed-content">
+                <h3><%= breed.name %></h3>
+                <p><strong>Origin:</strong> <%= breed.originCountry %></p>
+                <p><strong>Life:</strong> <%= breed.lifeExpectancy %> years</p>
+                <% if (breed.temperament) { %>
+                  <p><strong>Temperament:</strong> <%= breed.temperament %></p>
+                <% } %>
+                <a href="/breeds/<%= breed._id %>" class="btn-detail">Xem chi tiết</a>
+              </div>
+            </div>
+          <% }) %>
+        <% } else { %>
+          <div class="empty-box">
+            <p>Chưa có breed nào trong database.</p>
+          </div>
+        <% } %>
+      </div>
+    </section>
+  </main>
 
-                                <div class="breed-content">
-                                    <h3>
-                                        <%= breed.name %>
-                                    </h3>
-
-                                    <p class="breed-category">
-                                        Category:
-                                        <strong>
-                                            <%= breed.categoryId ? breed.categoryId.name : "Không có category" %>
-                                        </strong>
-                                    </p>
-
-                                    <p><strong>Origin:</strong>
-                                        <%= breed.originCountry %>
-                                    </p>
-                                    <p><strong>Life:</strong>
-                                        <%= breed.lifeExpectancy %> years
-                                    </p>
-
-                                    <% if (breed.temperament) { %>
-                                        <p><strong>Temperament:</strong>
-                                            <%= breed.temperament %>
-                                        </p>
-                                        <% } %>
-
-                                            <a href="/breeds/<%= breed._id %>" class="btn-detail">Xem chi tiết</a>
-                                </div>
-                            </div>
-                            <% }) %>
-                                <% } else { %>
-                                    <div class="empty-box">
-                                        <p>Chưa có breed nào trong database.</p>
-                                    </div>
-                                    <% } %>
-                </div>
-            </section>
-        </main>
+  <%- include("../partials/footer") %>
 </body>
-
 </html>

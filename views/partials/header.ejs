@@ -1,30 +1,95 @@
 <header class="navbar">
   <div class="nav-left">
-    <link rel="stylesheet" href="/css/home.css" />
-    <a href="/" class="logo">🐾 Woofy</a>
+    <a href="/" class="logo">
+      <span class="logo-icon">🐾</span>
+      Woofy
+    </a>
+    <nav class="menu">
+      <a href="/">Home</a>
+      <a href="/user/breeds">Breeds</a>
+      <a href="/category">Categories</a>
+      <a href="/search">Search</a>
+      <% if (currentUser) { %>
+        <a href="/user/favorites">Favorites</a>
+        <a href="/user/profile">Profile</a>
+      <% } %>
+    </nav>
   </div>
-
-  <nav class="menu">
-    <a href="/">Home</a>
-    <a href="/user/breeds">Breeds</a>
-    <a href="/category">Categories</a>
-    <a href="/user/favorites">Favorites</a>
-    <a href="/user/profile">Profile</a>
-  </nav>
 
   <div class="auth-actions">
     <% if (currentUser) { %>
+      <% if (currentUser.role === "admin") { %>
+        <div class="notification-bell" id="notificationBell">
+          <button class="bell-btn" id="bellBtn" aria-label="Notifications">
+            <span class="bell-icon">🔔</span>
+            <span class="bell-badge" id="bellBadge" style="display:none;">0</span>
+          </button>
+          <div class="notification-dropdown" id="notificationDropdown">
+            <div class="notification-header">
+              <h3>Notifications</h3>
+              <div class="notification-actions">
+                <button id="markAllRead" class="notif-action-btn">Mark all read</button>
+                <button id="clearAll" class="notif-action-btn clear">Clear all</button>
+              </div>
+            </div>
+            <div class="notification-list" id="notificationList">
+              <div class="notif-loading">Loading...</div>
+            </div>
+          </div>
+        </div>
+      <% } %>
+      <a href="/user/profile" class="user-avatar-link" title="<%= currentUser.username %>">
+        <img src="<%= currentUser.avatar || 'https://res.cloudinary.com/dxjv0gq1f/image/upload/v1690911873/default-avatar_ow6k7b.png' %>" alt="Avatar" class="nav-avatar" />
+      </a>
       <span class="welcome-user">Hi, <%= currentUser.username %></span>
-
-      <% if (currentUser.role==="admin" ) { %>
-        <a href="/admin" class="btn-login">Admin Dashboard</a>
-        <% } %>
-
-          <a href="/logout" class="btn-register">Logout</a>
-          <% } else { %>
-            <a href="/login" class="btn-login">Login</a>
-            <a href="/register" class="btn-register">Register</a>
-            <% } %>
+      <% if (currentUser.role === "admin") { %>
+        <a href="/admin" class="btn-login">Admin</a>
+      <% } %>
+      <a href="/logout" class="btn-register">Logout</a>
+    <% } else { %>
+      <a href="/login" class="btn-login">Login</a>
+      <a href="/register" class="btn-register">Register</a>
+    <% } %>
   </div>
 
+  <button class="hamburger" onclick="toggleMenu()" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
 </header>
+<script src="/js/notifications.js"></script>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="/">Home</a>
+  <a href="/user/breeds">Breeds</a>
+  <a href="/category">Categories</a>
+  <a href="/search">Search</a>
+  <a href="/faq">FAQ</a>
+  <a href="/contact">Contact</a>
+  <% if (currentUser) { %>
+    <a href="/user/favorites">Favorites</a>
+    <a href="/user/profile">Profile</a>
+  <% } %>
+  <div class="mobile-auth">
+    <% if (currentUser) { %>
+      <% if (currentUser.role === "admin") { %>
+        <div class="notification-bell" id="notificationBellMobile">
+          <button class="bell-btn" id="bellBtnMobile" aria-label="Notifications">
+            <span class="bell-icon">🔔</span>
+            <span class="bell-badge" id="bellBadgeMobile" style="display:none;">0</span>
+          </button>
+        </div>
+      <% } %>
+      <a href="/user/profile" class="user-avatar-link" title="<%= currentUser.username %>">
+        <img src="<%= currentUser.avatar || 'https://res.cloudinary.com/dxjv0gq1f/image/upload/v1690911873/default-avatar_ow6k7b.png' %>" alt="Avatar" class="nav-avatar" />
+      </a>
+      <span class="welcome-user">Hi, <%= currentUser.username %></span>
+      <% if (currentUser.role === "admin") { %>
+        <a href="/admin" class="btn-login">Admin</a>
+      <% } %>
+      <a href="/logout" class="btn-register">Logout</a>
+    <% } else { %>
+      <a href="/login" class="btn-login">Login</a>
+      <a href="/register" class="btn-register">Register</a>
+    <% } %>
+  </div>
+</div>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Dashboard - Woofy</title>
+  <link rel="stylesheet" href="/css/woofy-theme.css" />
+</head>
+<body>
+  <%- include("../partials/header") %>
+
+  <main class="container">
+    <div class="page-title">
+      <h1>👋 Welcome, <%= user.username %></h1>
+      <p>Your Woofy dashboard</p>
+    </div>
+
+    <section class="section" style="padding-top: 0;">
+      <div class="category-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
+        <div class="category-card" style="text-align: center;">
+          <h3 style="font-size: 2rem; color: var(--primary);"><%= totalBreeds %></h3>
+          <p>Total Breeds</p>
+        </div>
+        <div class="category-card" style="text-align: center;">
+          <h3 style="font-size: 2rem; color: var(--primary);"><%= totalCategories %></h3>
+          <p>Total Categories</p>
+        </div>
+      </div>
+    </section>
+
+    <div style="text-align: center; padding: 20px 0;">
+      <a href="/user/breeds" class="btn-primary">Browse Breeds</a>
+      <a href="/user/favorites" class="btn-outline" style="margin-left: 12px;">My Favorites</a>
+    </div>
+  </main>
+
+  <%- include("../partials/footer") %>
+</body>
+</html>

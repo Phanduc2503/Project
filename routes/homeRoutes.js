@@ -2,9 +2,20 @@ const express = require("express");
 const router = express.Router();
 
 const homeController = require("../controllers/homeController");
-const { requireAdmin } = require("../middleware/authMiddleware");
 
 router.get("/", homeController.homePage);
-router.get("/admin", requireAdmin, homeController.adminPage);
+
+// Static pages
+router.get("/about", (req, res) => {
+  res.render("pages/about");
+});
+
+router.get("/faq", (req, res) => {
+  res.render("pages/faq");
+});
+
+router.get("/contact", (req, res) => {
+  res.render("pages/contact");
+});
 
 module.exports = router;

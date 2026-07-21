@@ -4,62 +4,309 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Woofy - Admin Dashboard</title>
-  <link rel="stylesheet" href="/css/home.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="/css/woofy-theme.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
-<body>
-  <header class="navbar">
-    <div class="nav-left">
-      <a href="/" class="logo">🐾 Woofy Admin</a>
+<body class="admin-body">
+  <!-- Sidebar Overlay (mobile) -->
+  <div class="admin-sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <%- include("../partials/admin-sidebar", { currentPage: 'dashboard' }) %>
+
+  <!-- Top Navbar -->
+  <header class="admin-topbar">
+    <div class="admin-topbar-left">
+      <button class="admin-toggle-sidebar" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="admin-topbar-search">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search breeds, users..." />
+      </div>
     </div>
 
-    <nav class="menu">
-      <a href="/">Home</a>
-      <a href="/breeds">Manage Breeds</a>
-      <a href="/categories">Manage Categories</a>
-    </nav>
-
-    <div class="auth-actions">
-      <span class="welcome-user">Admin: <%= currentUser.username %></span>
-      <a href="/logout" class="btn-register">Logout</a>
+    <div class="admin-topbar-right">
+      <div class="admin-profile">
+        <div class="avatar">
+          <% if (currentUser && currentUser.username) { %>
+            <%= currentUser.username.charAt(0).toUpperCase() %>
+          <% } else { %>
+            A
+          <% } %>
+        </div>
+        <span class="name">
+          <% if (currentUser && currentUser.username) { %>
+            <%= currentUser.username %>
+          <% } else { %>
+            Admin
+          <% } %>
+        </span>
+        <i class="fas fa-chevron-down" style="font-size:0.7rem;color:var(--admin-text-muted);"></i>
+      </div>
     </div>
   </header>
 
-  <main class="container">
-    <section class="section">
-      <div class="section-header">
-        <h2>📊 Admin Dashboard</h2>
+  <!-- Main Content -->
+  <main class="admin-main">
+    <!-- Dashboard Header -->
+    <div class="admin-dash-header">
+      <div>
+        <h1>
+          Dashboard
+          <small>Welcome back! Here's what's happening with Woofy.</small>
+        </h1>
       </div>
+      <div class="header-actions">
+        <button class="btn-date">
+          <i class="fas fa-calendar-alt"></i>
+          <span>Today</span>
+          <i class="fas fa-chevron-down" style="font-size:0.65rem;"></i>
+        </button>
+      </div>
+    </div>
 
-      <div class="category-grid">
-        <div class="category-card">
-          <h3><%= totalBreeds %></h3>
-          <p>Total Breeds</p>
+    <!-- Stats Cards -->
+    <div class="admin-stats-row">
+      <div class="admin-stat-card">
+        <div class="stat-icon breeds">
+          <i class="fas fa-paw"></i>
         </div>
-
-        <div class="category-card">
-          <h3><%= totalCategories %></h3>
-          <p>Total Categories</p>
-        </div>
-
-        <div class="category-card">
-          <h3><%= totalUsers %></h3>
-          <p>Total Users</p>
+        <div class="stat-info">
+          <div class="stat-label">Total Breeds</div>
+          <div class="stat-number"><%= totalBreeds %></div>
+          <div class="stat-change up">
+            <i class="fas fa-arrow-up"></i> All breeds in database
+          </div>
         </div>
       </div>
-    </section>
 
-    <section class="section">
-      <div class="section-header">
-        <h2>⚙️ Quản trị hệ thống</h2>
+      <div class="admin-stat-card">
+        <div class="stat-icon categories">
+          <i class="fas fa-folder"></i>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Total Categories</div>
+          <div class="stat-number"><%= totalCategories %></div>
+          <div class="stat-change up">
+            <i class="fas fa-arrow-up"></i> Breed categories
+          </div>
+        </div>
       </div>
 
-      <div class="hero-stats">
-        <a href="/breeds" class="btn-primary">Manage Breeds</a>
-        <a href="/categories" class="btn-primary">Manage Categories</a>
-        <a href="/breeds/create" class="btn-primary">Add Breed</a>
-        <a href="/categories/create" class="btn-primary">Add Category</a>
+      <div class="admin-stat-card">
+        <div class="stat-icon users">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Total Users</div>
+          <div class="stat-number"><%= totalUsers %></div>
+          <div class="stat-change up">
+            <i class="fas fa-arrow-up"></i> Registered accounts
+          </div>
+        </div>
       </div>
-    </section>
+
+      <div class="admin-stat-card">
+        <div class="stat-icon favorites">
+          <i class="fas fa-heart"></i>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Total Favorites</div>
+          <div class="stat-number"><%= totalFavorites %></div>
+          <div class="stat-change up">
+            <i class="fas fa-arrow-up"></i> Saved favorites
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="admin-quick-actions">
+      <a href="/breeds/create" class="admin-quick-action">
+        <div class="qa-icon"><i class="fas fa-plus"></i></div>
+        <div class="qa-label">Add Breed</div>
+        <div class="qa-desc">Create a new breed entry</div>
+      </a>
+      <a href="/category/create" class="admin-quick-action">
+        <div class="qa-icon"><i class="fas fa-plus"></i></div>
+        <div class="qa-label">Add Category</div>
+        <div class="qa-desc">Create a new category</div>
+      </a>
+      <a href="/user/profile" class="admin-quick-action">
+        <div class="qa-icon"><i class="fas fa-users-cog"></i></div>
+        <div class="qa-label">Manage Users</div>
+        <div class="qa-desc">View and manage users</div>
+      </a>
+      <a href="/breeds" class="admin-quick-action">
+        <div class="qa-icon"><i class="fas fa-chart-bar"></i></div>
+        <div class="qa-label">View Reports</div>
+        <div class="qa-desc">Analytics and insights</div>
+      </a>
+    </div>
+
+    <!-- 2-Column Grid: Notifications + Chart -->
+    <div class="admin-grid-2col">
+      <!-- Notifications -->
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <h3><i class="fas fa-bell" style="color:var(--admin-primary);"></i> Notifications</h3>
+        </div>
+        <div class="admin-card-body" style="padding:0;">
+          <% if (recentNotifications && recentNotifications.length > 0) { %>
+            <ul class="admin-notif-list">
+              <% recentNotifications.forEach(function(notif) { %>
+                <li class="admin-notif-item <%= notif.read ? '' : 'unread' %>">
+                  <span class="admin-notif-icon"><%= notif.icon %></span>
+                  <div class="admin-notif-content">
+                    <div class="admin-notif-title"><%= notif.title %></div>
+                    <div class="admin-notif-desc"><%= notif.description %></div>
+                    <div class="admin-notif-time"><%= new Date(notif.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %></div>
+                  </div>
+                  <% if (!notif.read) { %>
+                    <span class="admin-notif-dot"></span>
+                  <% } %>
+                </li>
+              <% }); %>
+            </ul>
+          <% } else { %>
+            <div class="admin-empty" style="padding:32px 20px;">
+              <span class="empty-icon">&#x1F514;</span>
+              <h4>No notifications</h4>
+              <p>Notifications will appear here when actions occur.</p>
+            </div>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Chart -->
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <h3><i class="fas fa-chart-pie" style="color:var(--admin-primary);"></i> Overview</h3>
+        </div>
+        <div class="admin-card-body">
+          <div class="chart-container">
+            <canvas id="dashboardChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Breeds Table -->
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h3><i class="fas fa-paw" style="color:var(--admin-primary);"></i> Recent Breeds</h3>
+        <a href="/breeds" class="card-action">Manage Breeds <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="admin-card-body" style="padding:0;">
+        <% if (recentBreeds && recentBreeds.length > 0) { %>
+          <div class="admin-table-wrapper">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Breed</th>
+                  <th>Category</th>
+                  <th>Origin</th>
+                  <th>Life Span</th>
+                  <th>Status</th>
+                  <th style="text-align:center;">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% recentBreeds.forEach(function(breed) { %>
+                  <tr>
+                    <td>
+                      <span class="breed-name"><%= breed.name %></span>
+                    </td>
+                    <td>
+                      <span class="category-tag"><%= breed.categoryId ? breed.categoryId.name : 'Uncategorized' %></span>
+                    </td>
+                    <td><%= breed.originCountry || '\u2014' %></td>
+                    <td><%= breed.lifeExpectancy ? breed.lifeExpectancy + ' years' : '\u2014' %></td>
+                    <td>
+                      <span class="status-badge active">Active</span>
+                    </td>
+                    <td style="text-align:center;">
+                      <a href="/breeds/<%= breed._id %>" class="table-action" title="View details">
+                        <i class="fas fa-eye"></i>
+                      </a>
+                      <a href="/breeds/edit/<%= breed._id %>" class="table-action" title="Edit">
+                        <i class="fas fa-edit"></i>
+                      </a>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } else { %>
+          <div class="admin-empty">
+            <span class="empty-icon">&#x1F436;</span>
+            <h4>No breeds yet</h4>
+            <p>Start by adding your first breed to the database.</p>
+            <a href="/breeds/create" style="display:inline-block;margin-top:12px;padding:10px 24px;background:var(--admin-primary);color:#fff;border-radius:50px;font-weight:600;font-size:0.88rem;text-decoration:none;">Add First Breed</a>
+          </div>
+        <% } %>
+      </div>
+    </div>
   </main>
+
+  <script>
+    // --- Sidebar Toggle ---
+    function toggleSidebar() {
+      const sidebar = document.getElementById('adminSidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('show');
+    }
+
+    // --- Chart.js ---
+    document.addEventListener('DOMContentLoaded', function() {
+      const ctx = document.getElementById('dashboardChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Breeds', 'Categories', 'Users', 'Favorites'],
+          datasets: [{
+            data: [
+              <%= totalBreeds || 0 %>,
+              <%= totalCategories || 0 %>,
+              <%= totalUsers || 0 %>,
+              <%= totalFavorites || 0 %>
+            ],
+            backgroundColor: [
+              '#c4956a',
+              '#7bc47f',
+              '#6ab0e8',
+              '#e88080'
+            ],
+            borderWidth: 0,
+            hoverOffset: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '65%',
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 16,
+                usePointStyle: true,
+                pointStyle: 'circle',
+                font: {
+                  family: 'Inter, system-ui, sans-serif',
+                  size: 12
+                },
+                color: '#4a3728'
+              }
+            }
+          }
+        }
+      });
+    });
+  </script>
 </body>
 </html>

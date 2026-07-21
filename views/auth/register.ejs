@@ -4,9 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Register - Woofy</title>
+  <link rel="stylesheet" href="/css/woofy-theme.css" />
   <link rel="stylesheet" href="/css/register.css" />
 </head>
 <body>
+  <%- include("../partials/header") %>
+
   <div class="auth-wrapper">
     <div class="auth-box">
       <div class="auth-brand">
@@ -14,53 +17,33 @@
       </div>
 
       <h1>Register</h1>
-      <p class="auth-subtitle">
-        Create an account to explore the world of pets with Woofy
-      </p>
+      <p class="auth-subtitle">Create an account to explore the world of pets with Woofy</p>
 
-      <% if (error) { %>
+      <% if (typeof error !== 'undefined' && error) { %>
         <div class="alert error"><%= error %></div>
       <% } %>
 
-      <% if (success) { %>
+      <% if (typeof success !== 'undefined' && success) { %>
         <div class="alert success"><%= success %></div>
       <% } %>
 
       <form action="/register" method="POST" class="auth-form">
         <div class="form-group">
           <label>Username</label>
-          <input
-            type="text"
-            name="username"
-            placeholder="Nhập tên đăng nhập"
-            value="<%= oldData.username || '' %>"
-          />
+          <input type="text" name="username" placeholder="Enter User Name" value="<%= typeof oldData !== 'undefined' && oldData.username ? oldData.username : '' %>" />
         </div>
-
         <div class="form-group">
           <label>Email</label>
-          <input
-            type="email"
-            name="email"
-            placeholder="Nhập email"
-            value="<%= oldData.email || '' %>"
-          />
+          <input type="email" name="email" placeholder="Enter Email" value="<%= typeof oldData !== 'undefined' && oldData.email ? oldData.email : '' %>" />
         </div>
-
         <div class="form-group">
-          <label>Pass Word</label>
-          <input type="password" name="password" placeholder="Enter Pass Word" />
+          <label>Password</label>
+          <input type="password" name="password" placeholder="Enter Password" />
         </div>
-
         <div class="form-group">
-          <label>Confirm Pass Word</label>
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder="Enter Confirm Pass Word"
-          />
+          <label>Confirm Password</label>
+          <input type="password" name="confirmPassword" placeholder="Confirm Password" />
         </div>
-
         <button type="submit">Register</button>
       </form>
 
@@ -70,5 +53,7 @@
       </p>
     </div>
   </div>
+
+  <%- include("../partials/footer") %>
 </body>
 </html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Woofy - Profile</title>
+  <link rel="stylesheet" href="/css/woofy-theme.css" />
+</head>
+<body>
+
+  <%- include('../partials/header') %>
+
+  <main class="container">
+    <div class="breadcrumb">
+      <a href="/">Home</a>
+      <span>›</span>
+      <span>Profile</span>
+    </div>
+
+    <div class="page-title">
+      <h1>👤 My Profile</h1>
+      <p>Xin chào, <strong><%= user.username %></strong>! Quản lý thông tin tài khoản Woofy của bạn.</p>
+    </div>
+
+    <section style="display: flex; gap: 32px; flex-wrap: wrap; padding-bottom: 40px;">
+      <!-- LEFT COLUMN -->
+      <div style="flex: 1; min-width: 300px;">
+        <div class="category-card" style="padding: 32px; margin-bottom: 24px;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <h2 style="font-size: 1.3rem; margin-bottom: 4px;">Thông tin tài khoản</h2>
+              <p style="color: var(--text-light); font-size: 0.9rem;">Thông tin cơ bản của tài khoản Woofy</p>
+            </div>
+            <span style="background: var(--secondary); color: var(--primary-dark); padding: 4px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;">
+              <%= user.role ? user.role.toUpperCase() : 'USER' %>
+            </span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
+            <div class="info-box">
+              <h4>Username</h4>
+              <p><%= user.username %></p>
+            </div>
+            <div class="info-box">
+              <h4>Email</h4>
+              <p><%= user.email %></p>
+            </div>
+            <div class="info-box">
+              <h4>Role</h4>
+              <p><%= user.role %></p>
+            </div>
+            <div class="info-box">
+              <h4>Joined</h4>
+              <p><%= user.createdAt ? new Date(user.createdAt).toLocaleDateString("vi-VN") : "N/A" %></p>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <a href="/" class="btn-primary">Back Home</a>
+            <a href="/logout" class="btn-outline">Logout</a>
+          </div>
+        </div>
+
+        <div class="category-card" style="padding: 32px;">
+          <h2 style="font-size: 1.3rem; margin-bottom: 4px;">Đổi avatar</h2>
+          <p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 20px;">Chọn ảnh từ máy tính để cập nhật avatar của bạn.</p>
+          <form action="/profile/avatar" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 16px;">
+            <div style="border: 2px dashed var(--accent); border-radius: var(--radius); padding: 32px; text-align: center;">
+              <div style="font-size: 2rem; color: var(--primary); margin-bottom: 8px;">⤴</div>
+              <h3 style="font-size: 1rem; margin-bottom: 4px;">Choose avatar</h3>
+              <p style="color: var(--text-light); font-size: 0.85rem;">Click to browse</p>
+              <input type="file" name="avatar" accept="image/*" required style="margin-top: 12px;" />
+            </div>
+            <button type="submit" class="btn-primary" style="align-self: flex-start;">Cập nhật avatar</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div style="flex: 0 0 320px; display: flex; flex-direction: column; gap: 16px;">
+        <div class="category-card" style="padding: 32px; text-align: center;">
+          <div style="width: 120px; height: 120px; border-radius: 50%; overflow: hidden; margin: 0 auto 16px; border: 4px solid var(--accent);">
+            <img src="<%= user.avatar ? user.avatar : 'https://res.cloudinary.com/dxjv0gq1f/image/upload/v1690911873/default-avatar_ow6k7b.png' %>"
+                 alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;" />
+          </div>
+          <h3 style="margin-bottom: 4px;"><%= user.username %></h3>
+          <p style="color: var(--text-light); font-size: 0.88rem;"><%= user.email %></p>
+        </div>
+
+        <div class="category-card" style="padding: 24px;">
+          <h3 style="font-size: 1.1rem; margin-bottom: 8px;">📌 Current Account</h3>
+          <p style="color: var(--text-light); font-size: 0.9rem;">Logged in as:</p>
+          <strong style="color: var(--primary);"><%= user.email %></strong>
+        </div>
+
+        <div class="category-card" style="padding: 24px;">
+          <h3 style="font-size: 1.1rem; margin-bottom: 8px;">🔒 Account Role</h3>
+          <p style="color: var(--text-light); font-size: 0.9rem;">
+            Your account is:
+            <strong style="color: var(--primary);">
+              <%= user.role === "admin" ? "Administrator" : "Regular user" %>
+            </strong>
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <%- include("../partials/footer") %>
+</body>
+</html>

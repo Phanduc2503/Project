@@ -1,6 +1,7 @@
 const Breed = require("../models/Breed");
 const Category = require("../models/Category");
 const Favorite = require("../models/Favorite");
+const User = require("../models/User");
 
 exports.index = async (req, res) => {
 
@@ -18,11 +19,22 @@ exports.index = async (req, res) => {
     });
 };
 
-exports.profile = (req, res) => {
+exports.profile = async (req, res) => {
 
-    res.render("user/profile", {
-        user: req.session.user
-    });
+    try {
+        const user = await User.findById(req.session.user._id);
+
+        if (!user) {
+            return res.redirect("/login");
+        }
+
+        res.render("user/profile", {
+            user
+        });
+    } catch (error) {
+        console.log(error);
+        res.redirect("/login");
+    }
 
 };
 

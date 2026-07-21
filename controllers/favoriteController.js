@@ -1,4 +1,5 @@
 const Favorite = require("../models/Favorite");
+const { createNotification } = require("./notificationController");
 
 // Hiển thị danh sách
 exports.index = async (req, res) => {
@@ -43,10 +44,21 @@ exports.addFavorite = async (req, res) => {
             });
         }
 
-        await Favorite.create({
+        const fav = await Favorite.create({
             userId,
             breedId
         });
+
+        // Populate breed to get name for notification
+        const populatedFav = await Favorite.findById(fav._id).populate("breedId");
+        const breedName = populatedFav && populatedFav.breedId ? populatedFav.breedId.name : "a breed";
+
+        await createNotification(
+          "new_favorite",
+          "New Favorite Added",
+          `User added "${breedName}" to their favorites.`,
+          "/user/favorites"
+        );
 
         res.json({
             success: true

@@ -1,0 +1,44 @@
+<aside class="admin-sidebar" id="adminSidebar">
+  <div class="admin-sidebar-header">
+    <div class="logo-icon">🐾</div>
+    <div class="logo-text">Woofy <span>Admin</span></div>
+  </div>
+
+  <nav class="admin-sidebar-nav">
+    <div class="nav-label">Main</div>
+    <a href="/admin" class="<%= currentPage === 'dashboard' ? 'active' : '' %>">
+      <i class="fas fa-th-large"></i> Dashboard
+    </a>
+    <a href="/breeds" class="<%= currentPage === 'breeds' ? 'active' : '' %>">
+      <i class="fas fa-paw"></i> Breeds
+    </a>
+    <a href="/categories" class="<%= currentPage === 'categories' ? 'active' : '' %>">
+      <i class="fas fa-folder"></i> Categories
+    </a>
+    <a href="/user/favorites">
+      <i class="fas fa-heart"></i> Favorites
+    </a>
+
+    <div class="nav-label">Management</div>
+    <a href="/breeds/create" class="<%= currentPage === 'breed-create' ? 'active' : '' %>">
+      <i class="fas fa-plus-circle"></i> Add Breed
+    </a>
+    <a href="/categories/create" class="<%= currentPage === 'category-create' ? 'active' : '' %>">
+      <i class="fas fa-plus-circle"></i> Add Category
+    </a>
+    <a href="/user/profile">
+      <i class="fas fa-users-cog"></i> Manage Users
+    </a>
+
+    <div class="nav-label">Reports</div>
+    <a href="/breeds">
+      <i class="fas fa-chart-bar"></i> View Reports
+    </a>
+  </nav>
+
+  <div class="admin-sidebar-footer">
+    <a href="/">
+      <i class="fas fa-arrow-left"></i> Back to Website
+    </a>
+  </div>
+</aside>

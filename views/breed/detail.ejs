@@ -1,98 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>
-        <%= breed.name %> - Breed Detail
-    </title>
-    <link rel="stylesheet" href="/css/breed-detail.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= breed.name %> - Breed Detail</title>
+  <link rel="stylesheet" href="/css/woofy-theme.css" />
 </head>
-
 <body>
+  <%- include("../partials/header") %>
 
-
-<%- include("../partials/header") %>
-
-
-    <div class="detail-container">
-        <div class="detail-card">
-
-            <div class="detail-image">
-                <img src="<%= breed.image && breed.image.trim() !== '' ? breed.image : 'https://via.placeholder.com/800x1000?text=No+Image' %>"
-                    alt="<%= breed.name %>"
-                    onerror="this.onerror=null;this.src='https://via.placeholder.com/800x1000?text=No+Image';" />
-            </div>
-
-            <div class="detail-content">
-                <span class="detail-badge">
-                    <%= breed.categoryId ? breed.categoryId.name : "No Category" %>
-                </span>
-
-                <h1 class="detail-title">
-                    <%= breed.name %>
-                </h1>
-
-                <div class="detail-grid">
-                    <div class="info-box">
-                        <h4>Country</h4>
-                        <p>
-                            <%= breed.originCountry || "Updating..." %>
-                        </p>
-                    </div>
-
-                    <div class="info-box">
-                        <h4>Life Expectancy</h4>
-                        <p>
-                            <%= breed.lifeExpectancy ? breed.lifeExpectancy + " years" : "Updating..." %>
-                        </p>
-                    </div>
-
-                    <div class="info-box">
-                        <h4>Temperament</h4>
-                        <p>
-                            <%= breed.temperament && breed.temperament.trim() !=="" ? breed.temperament
-                                : "No information yet" %>
-                        </p>
-                    </div>
-
-                    <div class="info-box">
-                        <h4>Behavior</h4>
-                        <p>
-                            <%= breed.behavior && breed.behavior.trim() !=="" ? breed.behavior : "No information yet" %>
-                        </p>
-                    </div>
-                </div>
-
-                <div class="detail-section">
-                    <h3>Care Requirements</h3>
-                    <p
-                        class="<%= !breed.careRequirements || breed.careRequirements.trim() === '' ? 'empty-text' : '' %>">
-                        <%= breed.careRequirements && breed.careRequirements.trim() !=="" ? breed.careRequirements
-                            : "No care information yet." %>
-                    </p>
-                </div>
-
-                <div class="detail-section">
-                    <h3>Description</h3>
-                    <p class="<%= !breed.description || breed.description.trim() === '' ? 'empty-text' : '' %>">
-                        <%= breed.description && breed.description.trim() !=="" ? breed.description
-                            : "No description yet." %>
-                    </p>
-                </div>
-
-                <div class="detail-actions">
-                    <a href="/user/breeds" class="btn-back">← Back to Breeds</a>
-
-                    <% if (currentUser && currentUser.role==="admin" ) { %>
-                        <a href="/breeds/edit/<%= breed._id %>" class="btn-edit">Edit Breed</a>
-                        <% } %>
-                </div>
-            </div>
-
-        </div>
+  <main class="detail-container">
+    <div class="breadcrumb" style="padding-top: 0;">
+      <a href="/">Home</a>
+      <span>›</span>
+      <a href="/user/breeds">Breeds</a>
+      <span>›</span>
+      <span><%= breed.name %></span>
     </div>
-</body>
 
+    <div class="detail-card">
+      <div class="detail-image">
+        <img src="<%= breed.image && breed.image.trim() !== '' ? breed.image : 'https://via.placeholder.com/800x1000?text=No+Image' %>"
+             alt="<%= breed.name %>"
+             onerror="this.onerror=null;this.src='https://via.placeholder.com/800x1000?text=No+Image';" />
+      </div>
+
+      <div class="detail-content">
+        <span class="detail-badge">
+          <%= breed.categoryId ? breed.categoryId.name : "No Category" %>
+        </span>
+
+        <h1 class="detail-title"><%= breed.name %></h1>
+
+        <div class="detail-grid">
+          <div class="info-box">
+            <h4>🌍 Country</h4>
+            <p><%= breed.originCountry || "Updating..." %></p>
+          </div>
+          <div class="info-box">
+            <h4>⏳ Life Expectancy</h4>
+            <p><%= breed.lifeExpectancy ? breed.lifeExpectancy + " years" : "Updating..." %></p>
+          </div>
+          <div class="info-box">
+            <h4>🐕 Temperament</h4>
+            <p><%= breed.temperament && breed.temperament.trim() !== "" ? breed.temperament : "No information yet" %></p>
+          </div>
+          <div class="info-box">
+            <h4>🎭 Behavior</h4>
+            <p><%= breed.behavior && breed.behavior.trim() !== "" ? breed.behavior : "No information yet" %></p>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <h3>🛁 Care Requirements</h3>
+          <p class="<%= !breed.careRequirements || breed.careRequirements.trim() === '' ? 'empty-text' : '' %>">
+            <%= breed.careRequirements && breed.careRequirements.trim() !== "" ? breed.careRequirements : "No care information yet." %>
+          </p>
+        </div>
+
+        <div class="detail-section">
+          <h3>📝 Description</h3>
+          <p class="<%= !breed.description || breed.description.trim() === '' ? 'empty-text' : '' %>">
+            <%= breed.description && breed.description.trim() !== "" ? breed.description : "No description yet." %>
+          </p>
+        </div>
+
+        <div class="detail-actions">
+          <a href="/user/breeds" class="btn-back">← Back to Breeds</a>
+          <% if (currentUser && currentUser.role === "admin") { %>
+            <a href="/breeds/edit/<%= breed._id %>" class="btn-edit">✏️ Edit Breed</a>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <%- include("../partials/footer") %>
+</body>
 </html>

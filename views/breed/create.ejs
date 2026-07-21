@@ -1,76 +1,110 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>Create Breed</title>
-    <link rel="stylesheet" href="/css/common.css">
-    <link rel="stylesheet" href="/css/breed.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Breed - Woofy Admin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="/css/woofy-theme.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
 </head>
+<body class="admin-body">
+  <%- include("../partials/admin-sidebar", { currentPage: 'breed-create' }) %>
 
-<body>
-    <%- include("../partials/header") %>
-    <h1>Create Breed</h1>
+  <div class="admin-sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
-    <form action="/breeds" method="POST" class="breed-form">
+  <header class="admin-topbar">
+    <div class="admin-topbar-left">
+      <button class="admin-toggle-sidebar" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="admin-topbar-search">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search breeds..." />
+      </div>
+    </div>
+    <div class="admin-topbar-right">
+      <div class="admin-profile">
+        <div class="avatar"><%= (currentUser && currentUser.username) ? currentUser.username.charAt(0).toUpperCase() : 'A' %></div>
+        <span class="name"><%= (currentUser && currentUser.username) ? currentUser.username : 'Admin' %></span>
+      </div>
+    </div>
+  </header>
 
-        <label>Category</label>
+  <main class="admin-main">
+    <div class="admin-card admin-form-card">
+      <div class="admin-card-body">
+        <span class="form-badge">Woofy • Breed</span>
+        <h1 class="form-title">Create Breed</h1>
+        <p class="form-subtitle">Add a new dog breed to the Woofy database.</p>
 
-        <select name="categoryId" required>
-
-            <option value="">-- Select Category --</option>
-
-            <% categories.forEach(category=> { %>
-
-                <option value="<%= category._id %>">
-                    <%= category.name %>
-                </option>
-
+        <form action="/breeds" method="POST">
+          <div class="admin-form-group">
+            <label class="admin-form-label">Category</label>
+            <select name="categoryId" class="admin-form-select" required>
+              <option value="">-- Select Category --</option>
+              <% if (typeof categories !== 'undefined') { %>
+                <% categories.forEach(category => { %>
+                  <option value="<%= category._id %>"><%= category.name %></option>
                 <% }) %>
+              <% } %>
+            </select>
+          </div>
 
-        </select>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Breed Name</label>
+            <input type="text" name="name" class="admin-form-input" placeholder="e.g. Golden Retriever" required>
+          </div>
 
-        <br><br>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Origin Country</label>
+            <input type="text" name="originCountry" class="admin-form-input" placeholder="e.g. United Kingdom" required>
+          </div>
 
-        <input type="text" name="name" placeholder="Breed Name">
+          <div class="admin-form-group">
+            <label class="admin-form-label">Life Expectancy (years)</label>
+            <input type="number" name="lifeExpectancy" class="admin-form-input" placeholder="e.g. 12" required>
+          </div>
 
-        <br><br>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Temperament</label>
+            <input type="text" name="temperament" class="admin-form-input" placeholder="e.g. Friendly, Intelligent, Loyal">
+          </div>
 
-        <input type="text" name="originCountry" placeholder="Country">
+          <div class="admin-form-group">
+            <label class="admin-form-label">Behavior</label>
+            <textarea name="behavior" class="admin-form-textarea" placeholder="Describe typical behavior..."></textarea>
+          </div>
 
-        <br><br>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Care Requirements</label>
+            <textarea name="careRequirements" class="admin-form-textarea" placeholder="Grooming, exercise, diet..."></textarea>
+          </div>
 
-        <input type="number" name="lifeExpectancy" placeholder="Life Expectancy">
+          <div class="admin-form-group">
+            <label class="admin-form-label">Description</label>
+            <textarea name="description" class="admin-form-textarea" placeholder="A brief description of the breed..."></textarea>
+          </div>
 
-        <br><br>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Image URL</label>
+            <input type="text" name="image" class="admin-form-input" placeholder="https://example.com/dog.jpg">
+          </div>
 
-        <input type="text" name="temperament" placeholder="Temperament">
+          <div class="admin-form-actions">
+            <button type="submit" class="admin-btn-primary"><i class="fas fa-save"></i> Save Breed</button>
+            <a href="/breeds" class="admin-btn-secondary"><i class="fas fa-arrow-left"></i> Back to Breeds</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
 
-        <br><br>
-
-        <input type="text" name="behavior" placeholder="Behavior">
-
-        <br><br>
-
-        <textarea name="careRequirements" placeholder="Care Requirements"></textarea>
-
-        <br><br>
-
-        <textarea name="description" placeholder="Description"></textarea>
-
-        <br><br>
-
-        <input type="file" name="image" accept="image/*">
-
-        <br><br>
-
-        <button type="submit">
-
-            Save
-
-        </button>
-
-    </form>
-
+  <script>
+    function toggleSidebar() {
+      document.getElementById('adminSidebar').classList.toggle('open');
+      document.getElementById('sidebarOverlay').classList.toggle('show');
+    }
+  </script>
 </body>
-
 </html>

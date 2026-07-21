@@ -1,5 +1,6 @@
 const Breed = require("../models/Breed");
 const Category = require("../models/Category");
+const { createNotification } = require("./notificationController");
 
 exports.index = async (req, res) => {
     try {
@@ -43,11 +44,14 @@ exports.store = async (req, res) => {
 
         const breed = new Breed(req.body);
 
-        console.log("Model created");
-
         await breed.save();
 
-        console.log("Saved");
+        await createNotification(
+          "new_breed",
+          "New Breed Added",
+          `Breed "${breed.name}" has been added to the catalog.`,
+          "/breeds"
+        );
 
         res.redirect("/breeds");
 
@@ -88,12 +92,17 @@ exports.update = async (req, res) => {
 
     try {
 
+        const oldBreed = await Breed.findById(req.params.id);
         await Breed.findByIdAndUpdate(
-
             req.params.id,
-
             req.body
+        );
 
+        await createNotification(
+          "breed_updated",
+          "Breed Updated",
+          `Breed "${oldBreed ? oldBreed.name : req.params.id}" has been updated.`,
+          "/breeds"
         );
 
         res.redirect("/breeds");
@@ -112,7 +121,15 @@ exports.destroy = async (req, res) => {
 
     try {
 
+        const deletedBreed = await Breed.findById(req.params.id);
         await Breed.findByIdAndDelete(req.params.id);
+
+        await createNotification(
+          "breed_deleted",
+          "Breed Deleted",
+          `Breed "${deletedBreed ? deletedBreed.name : req.params.id}" has been deleted.`,
+          "/breeds"
+        );
 
         res.redirect("/breeds");
 

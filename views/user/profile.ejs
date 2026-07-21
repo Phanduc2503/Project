@@ -4,139 +4,108 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Woofy - Profile</title>
-
-  <link rel="stylesheet" href="/css/header.css" />
-  <link rel="stylesheet" href="/css/profile.css" />
+  <link rel="stylesheet" href="/css/woofy-theme.css" />
 </head>
 <body>
-
   <%- include('../partials/header') %>
 
-  <main class="profile-page">
-    <div class="profile-container">
+  <main class="container">
+    <div class="breadcrumb">
+      <a href="/">Home</a>
+      <span>›</span>
+      <span>Profile</span>
+    </div>
 
-      <!-- HERO -->
-      <section class="profile-hero">
-        <div class="profile-hero-left">
-          <span class="profile-badge">👤 MY PROFILE</span>
-          <h1>Xin chào, <span><%= user.username %></span></h1>
-          <p>Đây là trang thông tin tài khoản của bạn trên Woofy.</p>
-        </div>
+    <div class="page-title">
+      <h1>👤 My Profile</h1>
+      <p>Xin chào, <strong><%= user.username %></strong>! Đây là trang thông tin tài khoản của bạn trên Woofy.</p>
+    </div>
 
-        <div class="profile-hero-right">
-          <div class="hero-avatar-frame">
-            <img
-              src="<%= user.avatar ? user.avatar : '/images/default-avatar.png' %>"
-              alt="Avatar"
-              class="hero-avatar"
-            />
+    <div class="profile-layout">
+      <!-- LEFT COLUMN -->
+      <div class="profile-main">
+        <!-- Profile Info Card -->
+        <div class="profile-card" style="margin-bottom: 24px;">
+          <div class="profile-card-header">
+            <div>
+              <h2>Thông tin tài khoản</h2>
+              <p>Thông tin cơ bản của tài khoản Woofy</p>
+            </div>
+            <span class="role-badge"><%= user.role ? user.role.toUpperCase() : 'USER' %></span>
           </div>
-        </div>
-      </section>
 
-      <!-- CONTENT -->
-      <section class="profile-content">
-        <!-- LEFT -->
-        <div class="profile-left">
-          <div class="profile-card info-card">
-            <div class="card-top">
-              <div>
-                <h2>Thông tin tài khoản</h2>
-                <p>Thông tin cơ bản của tài khoản Woofy</p>
-              </div>
-              <span class="role-badge">
-                <%= user.role ? user.role.toUpperCase() : 'USER' %>
-              </span>
+          <div class="info-grid-2">
+            <div class="info-box">
+              <h4>Username</h4>
+              <p><%= user.username %></p>
             </div>
-
-            <div class="info-grid">
-              <div class="info-box">
-                <span class="label">Username</span>
-                <strong><%= user.username %></strong>
-              </div>
-
-              <div class="info-box">
-                <span class="label">Email</span>
-                <strong><%= user.email %></strong>
-              </div>
-
-              <div class="info-box">
-                <span class="label">Role</span>
-                <strong><%= user.role %></strong>
-              </div>
-
-              <div class="info-box">
-                <span class="label">Joined</span>
-                <strong>
-                  <%= user.createdAt
-                    ? new Date(user.createdAt).toLocaleDateString("vi-VN")
-                    : "N/A" %>
-                </strong>
-              </div>
+            <div class="info-box">
+              <h4>Email</h4>
+              <p><%= user.email %></p>
             </div>
-
-            <div class="profile-actions">
-              <a href="/" class="btn btn-primary">Back Home</a>
-              <a href="/logout" class="btn btn-outline">Logout</a>
+            <div class="info-box">
+              <h4>Role</h4>
+              <p><%= user.role %></p>
+            </div>
+            <div class="info-box">
+              <h4>Joined</h4>
+              <p><%= user.createdAt ? new Date(user.createdAt).toLocaleDateString("vi-VN") : "N/A" %></p>
             </div>
           </div>
 
-          <!-- CHANGE AVATAR -->
-          <div class="profile-card upload-card">
-            <h2>Đổi avatar</h2>
-            <p>Chọn ảnh từ máy tính để cập nhật avatar của bạn.</p>
-
-            <form
-              action="/profile/avatar"
-              method="POST"
-              enctype="multipart/form-data"
-              class="avatar-form"
-            >
-              <div class="upload-dropzone">
-                <div class="upload-icon">⤴</div>
-                <h3>Choose avatar</h3>
-                <p>Drag and drop or click to browse</p>
-
-                <input type="file" name="avatar" id="avatar" accept="image/*" required />
-              </div>
-
-              <button type="submit" class="btn-upload">Cập nhật avatar</button>
-            </form>
+          <div class="profile-actions">
+            <a href="/" class="btn-primary">Back Home</a>
+            <a href="/logout" class="btn-outline">Logout</a>
           </div>
         </div>
 
-        <!-- RIGHT -->
-        <div class="profile-right">
-          <div class="side-card">
-            <h3>📌 Tài khoản hiện tại</h3>
-            <p>Bạn đang đăng nhập với email:</p>
-            <strong><%= user.email %></strong>
-          </div>
+        <!-- Change Avatar Card -->
+        <div class="profile-card">
+          <h2 style="font-size: 1.25rem; margin-bottom: 4px;">Đổi avatar</h2>
+          <p style="color: var(--text-light); font-size: 0.88rem; margin-bottom: 20px;">Chọn ảnh từ máy tính để cập nhật avatar của bạn.</p>
 
-          <div class="side-card">
-            <h3>🔒 Quyền tài khoản</h3>
-            <p>
-              Tài khoản của bạn là
-              <strong>
-                <%= user.role === "admin" ? "quản trị viên" : "người dùng thông thường" %>
-              </strong>.
-            </p>
-          </div>
+          <form action="/profile/avatar" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 16px;">
+            <div class="upload-area">
+              <div class="upload-icon">⤴</div>
+              <h3>Choose avatar</h3>
+              <p>Drag and drop or click to browse</p>
+              <input type="file" name="avatar" id="avatar" accept="image/*" required />
+            </div>
+            <button type="submit" class="btn-primary" style="align-self: flex-start;">Cập nhật avatar</button>
+          </form>
         </div>
-      </section>
+      </div>
 
+      <!-- RIGHT COLUMN -->
+      <div class="profile-sidebar">
+        <div class="profile-card avatar-card">
+          <div class="avatar-frame">
+            <img src="<%= user.avatar ? user.avatar : 'https://res.cloudinary.com/dxjv0gq1f/image/upload/v1690911873/default-avatar_ow6k7b.png' %>"
+                 alt="Avatar" />
+          </div>
+          <h3 style="margin-bottom: 4px;"><%= user.username %></h3>
+          <p style="color: var(--text-light); font-size: 0.88rem;"><%= user.email %></p>
+        </div>
+
+        <div class="profile-card side-card-content">
+          <h3>📌 Tài khoản hiện tại</h3>
+          <p>Bạn đang đăng nhập với email:</p>
+          <strong><%= user.email %></strong>
+        </div>
+
+        <div class="profile-card side-card-content">
+          <h3>🔒 Quyền tài khoản</h3>
+          <p>
+            Tài khoản của bạn là
+            <strong>
+              <%= user.role === "admin" ? "quản trị viên" : "người dùng thông thường" %>
+            </strong>.
+          </p>
+        </div>
+      </div>
     </div>
   </main>
 
-  <footer class="profile-footer">
-    <div class="footer-left">Woofy</div>
-    <div class="footer-center">© 2024 Woofy. All rights reserved.</div>
-    <div class="footer-right">
-      <a href="#">Privacy Policy</a>
-      <a href="#">Terms of Service</a>
-      <a href="#">Contact Us</a>
-    </div>
-  </footer>
-
+  <%- include("../partials/footer") %>
 </body>
 </html>

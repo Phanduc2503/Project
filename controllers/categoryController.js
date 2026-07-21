@@ -1,5 +1,6 @@
 const Category = require("../models/Category");
 const Breed = require("../models/Breed");
+const { createNotification } = require("./notificationController");
 
 exports.index = async (req, res) => {
     try {
@@ -55,7 +56,7 @@ exports.adminIndex = async(req,res)=>{
 
         const categories = await Category.find();
 
-        res.render("admin/categories/index",{
+        res.render("category/list",{
             categories
         });
 
@@ -97,13 +98,17 @@ exports.store = async (req, res) => {
 
         }
 
-        await Category.create({
-
+        const newCategory = await Category.create({
             name,
-
             description,
-
         });
+
+        await createNotification(
+          "new_category",
+          "New Category Added",
+          `Category "${newCategory.name}" has been created.`,
+          "/categories"
+        );
 
         res.redirect("/categories");
 
@@ -147,18 +152,17 @@ exports.update = async (req,res)=>{
 
         const {name,description}=req.body;
 
+        const oldCategory = await Category.findById(req.params.id);
         await Category.findByIdAndUpdate(
-
             req.params.id,
+            { name, description }
+        );
 
-            {
-
-                name,
-
-                description
-
-            }
-
+        await createNotification(
+          "category_updated",
+          "Category Updated",
+          `Category "${oldCategory ? oldCategory.name : req.params.id}" has been updated.`,
+          "/categories"
         );
 
         res.redirect("/categories");
@@ -189,7 +193,15 @@ exports.destroy = async (req,res)=>{
 
         }
 
+        const deletedCat = await Category.findById(req.params.id);
         await Category.findByIdAndDelete(req.params.id);
+
+        await createNotification(
+          "category_deleted",
+          "Category Deleted",
+          `Category "${deletedCat ? deletedCat.name : req.params.id}" has been deleted.`,
+          "/categories"
+        );
 
         res.redirect("/categories");
 

@@ -1,83 +1,88 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>Search Result</title>
-    <link rel="stylesheet" href="/css/common.css">
-    <link rel="stylesheet" href="/css/search.css">
-    <link rel="stylesheet" href="/css/breed.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search Breeds - Woofy</title>
+  <link rel="stylesheet" href="/css/woofy-theme.css" />
 </head>
-
 <body>
+  <%- include("../partials/header") %>
 
-    <h1>Search Breed</h1>
+  <main class="container">
+    <div class="breadcrumb">
+      <a href="/">Home</a>
+      <span>›</span>
+      <span>Search</span>
+    </div>
 
-    <form action="/search" method="GET">
+    <div class="page-title">
+      <h1>🔍 Search Breeds</h1>
+      <p>Tìm kiếm giống chó theo tên, quốc gia, tính cách hoặc danh mục</p>
+    </div>
 
-        <input type="text" name="name" placeholder="Breed name">
-
-        <input type="text" name="country" placeholder="Country">
-
-        <input type="text" name="temperament" placeholder="Temperament">
-
+    <div class="breed-toolbar" style="max-width: 800px; margin: 0 auto 32px;">
+      <form action="/search" method="GET" style="display: flex; gap: 12px; flex-wrap: wrap; width: 100%;">
+        <input type="text" name="name" placeholder="🔍 Breed name..." value="<%= typeof name !== 'undefined' ? name : '' %>">
+        <input type="text" name="country" placeholder="🌍 Country..." value="<%= typeof country !== 'undefined' ? country : '' %>">
+        <input type="text" name="temperament" placeholder="🐕 Temperament..." value="<%= typeof temperament !== 'undefined' ? temperament : '' %>">
         <select name="category">
-
-            <option value="">All Categories</option>
-
-            <% categories.forEach(category=> { %>
-
-                <option value="<%= category._id %>">
-                    <%= category.name %>
-                </option>
-
-                <% }) %>
-
-        </select>
-
-        <button type="submit">
-            Search
-        </button>
-
-    </form>
-
-    <br>
-
-    <a href="/breeds">Back</a>
-
-    <br><br>
-
-    <table border="1">
-
-        <tr>
-            <th>Name</th>
-            <th>Category</th>
-            <th>Country</th>
-        </tr>
-
-        <% breeds.forEach(breed=> { %>
-
-            <tr>
-
-                <td>
-                    <a href="/breeds/<%= breed._id %>">
-                        <%= breed.name %>
-                    </a>
-                </td>
-
-                <td>
-                    <%= breed.categoryId.name %>
-                </td>
-
-                <td>
-                    <%= breed.originCountry %>
-                </td>
-
-            </tr>
-
+          <option value="">All Categories</option>
+          <% if (typeof categories !== 'undefined' && categories.length > 0) { %>
+            <% categories.forEach(cat => { %>
+              <option value="<%= cat._id %>"
+                <%= (typeof category !== 'undefined' && String(cat._id) === String(category)) ? 'selected' : '' %>>
+                <%= cat.name %>
+              </option>
             <% }) %>
+          <% } %>
+        </select>
+        <button type="submit" class="btn-primary">Search</button>
+      </form>
+    </div>
 
-    </table>
+    <section class="section" style="padding-top: 0;">
+      <% if (typeof breeds !== 'undefined' && breeds.length > 0) { %>
+        <div class="breed-grid large-grid">
+          <% breeds.forEach(breed => { %>
+            <div class="breed-card">
+              <div class="breed-image">
+                <img src="<%= breed.image && breed.image.trim() !== '' ? breed.image : 'https://via.placeholder.com/600x400?text=No+Image' %>"
+                     alt="<%= breed.name %>"
+                     onerror="this.src='https://via.placeholder.com/600x400?text=No+Image'" />
+                <span class="category-badge"><%= breed.categoryId ? breed.categoryId.name : "Unknown" %></span>
+              </div>
+              <div class="breed-content">
+                <h3><%= breed.name %></h3>
+                <div class="info-grid">
+                  <div class="info-item">
+                    <span>🌍 Origin</span>
+                    <p><%= breed.originCountry || "Updating" %></p>
+                  </div>
+                  <div class="info-item">
+                    <span>⏳ Life</span>
+                    <p><%= breed.lifeExpectancy || "-" %> years</p>
+                  </div>
+                  <div class="info-item full">
+                    <span>🐕 Temperament</span>
+                    <p><%= breed.temperament || "Updating..." %></p>
+                  </div>
+                </div>
+                <a href="/breeds/<%= breed._id %>" class="btn-detail">View Details →</a>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <div class="empty-box">
+          <img src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png" alt="Search" />
+          <h2>No results found</h2>
+          <p>Try adjusting your search criteria to find more breeds.</p>
+        </div>
+      <% } %>
+    </section>
+  </main>
 
+  <%- include("../partials/footer") %>
 </body>
-
 </html>

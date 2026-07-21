@@ -1,59 +1,93 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>Category List</title>
-    <link rel="stylesheet" href="/css/common.css">
-    <link rel="stylesheet" href="/css/category.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Categories - Woofy Admin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="/css/woofy-theme.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
 </head>
+<body class="admin-body">
+  <%- include("../partials/admin-sidebar", { currentPage: 'categories' }) %>
 
-<body>
+  <div class="admin-sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
-    <%- include("../partials/header") %>
+  <header class="admin-topbar">
+    <div class="admin-topbar-left">
+      <button class="admin-toggle-sidebar" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="admin-topbar-search">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search categories..." />
+      </div>
+    </div>
+    <div class="admin-topbar-right">
+      <div class="admin-profile">
+        <div class="avatar"><%= (currentUser && currentUser.username) ? currentUser.username.charAt(0).toUpperCase() : 'A' %></div>
+        <span class="name"><%= (currentUser && currentUser.username) ? currentUser.username : 'Admin' %></span>
+      </div>
+    </div>
+  </header>
 
-    <h1>Category List</h1>
+  <main class="admin-main">
+    <div class="admin-page-header">
+      <h1><i class="fas fa-folder" style="color:var(--admin-primary);margin-right:8px;"></i> Categories</h1>
+      <div class="admin-header-actions">
+        <a href="/categories/create" class="admin-btn-primary">
+          <i class="fas fa-plus"></i> Add Category
+        </a>
+      </div>
+    </div>
 
-    <% if (currentUser && currentUser.role==="admin" ) { %>
-        <a href="/categories/create">Add Category</a>
-        <% } %>
-
-            <br><br>
-
-            <table border="1" cellpadding="10">
-
+    <div class="admin-card">
+      <div class="admin-table-wrapper">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th style="text-align:center;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (typeof categories !== 'undefined' && categories.length > 0) { %>
+              <% categories.forEach(category => { %>
                 <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Action</th>
+                  <td><span class="breed-name"><%= category.name %></span></td>
+                  <td><%= category.description || "—" %></td>
+                  <td style="text-align:center;">
+                    <% if (currentUser && currentUser.role === "admin") { %>
+                      <a href="/categories/edit/<%= category._id %>" class="table-action" title="Edit"><i class="fas fa-edit"></i></a>
+                      <a href="/categories/delete/<%= category._id %>" class="table-action" title="Delete" style="color:#e88080;" onclick="return confirm('Delete this category?')"><i class="fas fa-trash"></i></a>
+                    <% } %>
+                  </td>
                 </tr>
+              <% }) %>
+            <% } else { %>
+              <tr>
+                <td colspan="3">
+                  <div class="admin-empty">
+                    <span class="empty-icon">📁</span>
+                    <h4>No categories found</h4>
+                    <p>Create your first category to organize breeds.</p>
+                    <a href="/categories/create" class="admin-btn-primary" style="display:inline-flex;margin-top:12px;">Add Category</a>
+                  </div>
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
 
-                <% categories.forEach(category=>{ %>
-
-                    <tr>
-
-                        <td>
-                            <%= category.name %>
-                        </td>
-
-                        <td>
-                            <%= category.description %>
-                        </td>
-
-                        <td>
-
-                            <<% if (currentUser && currentUser.role==="admin" ) { %>
-                                <a href="/categories/edit/<%= category._id %>">Edit</a>
-                                <a href="/categories/delete/<%= category._id %>">Delete</a>
-                                <% } %>
-
-                        </td>
-
-                    </tr>
-
-                    <% }) %>
-
-            </table>
-
+  <script>
+    function toggleSidebar() {
+      document.getElementById('adminSidebar').classList.toggle('open');
+      document.getElementById('sidebarOverlay').classList.toggle('show');
+    }
+  </script>
 </body>
-
 </html>

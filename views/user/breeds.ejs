@@ -1,176 +1,120 @@
-<%- include("../partials/header") %>
-
-    <link rel="stylesheet" href="/css/user-breeds.css">
-
-
-    <div class="breed-container">
-
-
-        <!-- Title -->
-        <div class="page-title">
-
-            <h1>🐶 All Dog Breeds</h1>
-
-            <p>
-                Khám phá các giống chó nổi tiếng trên thế giới.
-            </p>
-
-        </div>
-
-
-
-        <!-- Search + Filter (chuẩn bị cho sau này) -->
-        <div class="breed-toolbar">
-
-            <input type="text" placeholder="🔍 Search breed...">
-
-
-            <select>
-                <option>All Categories</option>
-                <option>Small Dog</option>
-                <option>Large Dog</option>
-            </select>
-
-
-            <select>
-                <option>Sort A-Z</option>
-                <option>Life Expectancy</option>
-            </select>
-
-
-        </div>
-
-
-
-        <!-- Breed List -->
-
-        <div class="breed-grid">
-
-
-            <% breeds.forEach(breed=> { %>
-
-
-                <div class="breed-card">
-
-
-                    <!-- Image -->
-
-                    <div class="breed-image">
-
-
-                        <img src="<%= breed.image && breed.image.trim() !== '' 
-                    ? breed.image 
-                    : 'https://via.placeholder.com/600x400?text=No+Image' %>" alt="<%= breed.name %>"
-                            onerror="this.src='https://via.placeholder.com/600x400?text=No+Image'">
-
-                        <button class="favorite-btn" data-id="<%= breed._id %>">
-
-                            🤍
-
-                        </button>
-
-
-
-                        <!-- Category badge -->
-
-                        <span class="category-badge">
-
-                            <%= breed.categoryId ? breed.categoryId.name : "Unknown" %>
-
-                        </span>
-
-
-                    </div>
-
-
-
-                    <!-- Content -->
-
-                    <div class="breed-content">
-
-
-                        <h2>
-                            <%= breed.name %>
-                        </h2>
-
-
-
-                        <div class="info-grid">
-
-
-                            <div class="info-item">
-
-                                <span>
-                                    🌍 Origin
-                                </span>
-
-                                <p>
-                                    <%= breed.originCountry || "Updating" %>
-                                </p>
-
-                            </div>
-
-
-
-
-                            <div class="info-item">
-
-                                <span>
-                                    ⏳ Life
-                                </span>
-
-                                <p>
-                                    <%= breed.lifeExpectancy || "-" %>
-                                        years
-                                </p>
-
-                            </div>
-
-
-
-
-                            <div class="info-item full">
-
-                                <span>
-                                    🐕 Temperament
-                                </span>
-
-                                <p>
-                                    <%= breed.temperament || "Updating..." %>
-                                </p>
-
-
-                            </div>
-
-
-                        </div>
-
-
-
-
-                        <a href="/breeds/<%= breed._id %>" class="btn-detail">
-
-                            Xem chi tiết
-
-                        </a>
-
-
-
-                    </div>
-
-
-
-                </div>
-
-
-                <% }) %>
-
-
-        </div>
-
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Dog Breeds - Woofy</title>
+  <link rel="stylesheet" href="/css/woofy-theme.css" />
+</head>
+<body>
+  <%- include("../partials/header") %>
+
+  <main class="container">
+    <div class="breadcrumb">
+      <a href="/">Home</a>
+      <span>›</span>
+      <span>Breeds</span>
     </div>
-    <script src="/js/favorites.js"></script>
 
+    <div class="page-title">
+      <h1>🐶 All Dog Breeds</h1>
+      <p>Khám phá các giống chó nổi tiếng trên thế giới.</p>
+    </div>
 
-    <%- include("../partials/footer") %>
+    <!-- Search & Filter Toolbar -->
+    <div class="breed-toolbar">
+      <input type="text" id="searchInput" placeholder="🔍 Search breed..." onkeyup="filterBreeds()">
+      <select id="categoryFilter" onchange="filterBreeds()">
+        <option value="">All Categories</option>
+        <% if (typeof categories !== 'undefined') { %>
+          <% categories.forEach(category => { %>
+            <option value="<%= category._id %>"><%= category.name %></option>
+          <% }) %>
+        <% } %>
+      </select>
+      <select id="sortSelect" onchange="sortBreeds()">
+        <option value="">Sort by</option>
+        <option value="name">Name A-Z</option>
+        <option value="name-desc">Name Z-A</option>
+        <option value="life">Life Expectancy</option>
+      </select>
+    </div>
+
+    <div class="breed-grid large-grid" id="breedGrid">
+      <% if (typeof breeds !== 'undefined' && breeds.length > 0) { %>
+        <% breeds.forEach(breed => { %>
+          <div class="breed-card" data-category="<%= breed.categoryId ? breed.categoryId._id : '' %>" data-name="<%= breed.name.toLowerCase() %>" data-life="<%= breed.lifeExpectancy || 0 %>">
+            <div class="breed-image">
+              <img src="<%= breed.image && breed.image.trim() !== '' ? breed.image : 'https://via.placeholder.com/600x400?text=No+Image' %>"
+                   alt="<%= breed.name %>"
+                   onerror="this.src='https://via.placeholder.com/600x400?text=No+Image'" />
+              <button class="favorite-btn" data-id="<%= breed._id %>">🤍</button>
+              <span class="category-badge"><%= breed.categoryId ? breed.categoryId.name : "Unknown" %></span>
+            </div>
+            <div class="breed-content">
+              <h3><%= breed.name %></h3>
+              <div class="info-grid">
+                <div class="info-item">
+                  <span>🌍 Origin</span>
+                  <p><%= breed.originCountry || "Updating" %></p>
+                </div>
+                <div class="info-item">
+                  <span>⏳ Life</span>
+                  <p><%= breed.lifeExpectancy || "-" %> years</p>
+                </div>
+                <div class="info-item full">
+                  <span>🐕 Temperament</span>
+                  <p><%= breed.temperament || "Updating..." %></p>
+                </div>
+              </div>
+              <a href="/breeds/<%= breed._id %>" class="btn-detail">Xem chi tiết</a>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <div class="empty-box" style="grid-column: 1 / -1;">
+          <img src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png" alt="Empty" />
+          <h2>No breeds found</h2>
+          <p>Chưa có giống chó nào trong hệ thống.</p>
+        </div>
+      <% } %>
+    </div>
+  </main>
+
+  <script src="/js/favorites.js"></script>
+  <script>
+  function filterBreeds() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const category = document.getElementById('categoryFilter').value;
+    const cards = document.querySelectorAll('.breed-card');
+
+    cards.forEach(card => {
+      const name = card.dataset.name || '';
+      const cat = card.dataset.category || '';
+      const matchSearch = name.includes(search);
+      const matchCategory = !category || cat === category;
+      card.style.display = matchSearch && matchCategory ? '' : 'none';
+    });
+  }
+
+  function sortBreeds() {
+    const sort = document.getElementById('sortSelect').value;
+    const grid = document.getElementById('breedGrid');
+    const cards = Array.from(grid.querySelectorAll('.breed-card'));
+
+    if (!sort) return;
+
+    cards.sort((a, b) => {
+      if (sort === 'name') return a.dataset.name.localeCompare(b.dataset.name);
+      if (sort === 'name-desc') return b.dataset.name.localeCompare(a.dataset.name);
+      if (sort === 'life') return (parseFloat(b.dataset.life) || 0) - (parseFloat(a.dataset.life) || 0);
+      return 0;
+    });
+
+    cards.forEach(card => grid.appendChild(card));
+  }
+  </script>
+
+  <%- include("../partials/footer") %>
+</body>
+</html>

@@ -1,17 +1,41 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const Category = require("../models/Category");
+const Breed = require("../models/Breed");
+const Favorite = require("../models/Favorite");
+const Notification = require("../models/Notification");
+const { createNotification } = require("./notificationController");
 exports.dashboard = async (req, res) => {
     try {
         const totalUsers = await User.countDocuments();
         const totalBreeds = await Breed.countDocuments();
         const totalCategories = await Category.countDocuments();
+        const totalFavorites = await Favorite.countDocuments();
+
+        const recentFavorites = await Favorite.find()
+            .populate("userId", "username")
+            .populate("breedId", "name")
+            .sort({ createdAt: -1 })
+            .limit(5);
+
+        const recentBreeds = await Breed.find()
+            .populate("categoryId", "name")
+            .sort({ createdAt: -1 })
+            .limit(5);
+
+        const recentNotifications = await Notification.find()
+            .sort({ createdAt: -1 })
+            .limit(10);
 
         res.render("admin/adminPage", {
             user: req.session.user,
             totalUsers,
             totalBreeds,
-            totalCategories
+            totalCategories,
+            totalFavorites,
+            recentFavorites,
+            recentBreeds,
+            recentNotifications
         });
 
     } catch (error) {
@@ -22,7 +46,8 @@ exports.dashboard = async (req, res) => {
 
 exports.showLogin = (req, res) => {
   res.render("auth/login", {
-    error: null
+    error: null,
+    oldData: { username: "" }
   });
 };
 
@@ -33,7 +58,6 @@ exports.showRegister = (req, res) => {
     oldData: {
       username: "",
       email: "",
-      password: "",
     },
   });
 };
@@ -44,31 +68,74 @@ exports.index = (req, res) => {
 };
 
 exports.register = async (req, res) => {
-  const { username, email, password } =
-    req.body;
+  try {
+    const { username, email, password } = req.body;
 
-  const hashedPassword =
-    await bcrypt.hash(password, 10);
+    // Validation
+    if (!username || !email || !password) {
+      return res.render("auth/register", {
+        error: "All fields are required",
+        success: null,
+        oldData: { username: username || "", email: email || "" }
+      });
+    }
 
-  await User.create({
-    username,
-    email,
-    password: hashedPassword,
-  });
+    const existingUser = await User.findOne({
+      $or: [{ username }, { email }]
+    });
 
-  res.redirect("/login");
+    if (existingUser) {
+      return res.render("auth/register", {
+        error: "Username or email already exists",
+        success: null,
+        oldData: { username: username || "", email: email || "" }
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await User.create({
+      username,
+      email,
+      password: hashedPassword,
+    });
+
+    await createNotification(
+      "new_user",
+      "New User Registered",
+      `User "${username}" (${email}) has created an account.`,
+      "/admin"
+    );
+
+    res.redirect("/login");
+  } catch (err) {
+    console.log(err);
+    return res.render("auth/register", {
+      error: "Registration failed. Please try again.",
+      success: null,
+      oldData: req.body
+    });
+  }
 };
 
 exports.login = async (req, res) => {
     try {
         const { username, password } = req.body;
 
+        // Validate input
+        if (!username || !password) {
+            return res.render("auth/login", {
+                error: "Username and password are required",
+                oldData: { username: username || "" }
+            });
+        }
+
         const user = await User.findOne({ username });
 
         if (!user) {
             return res.render("auth/login", {
-                error: "Sai tài khoản",
-                oldData: { username }
+                error: "Invalid username or password",
+                oldData: { username: username || "" }
             });
         }
 
@@ -76,12 +143,12 @@ exports.login = async (req, res) => {
 
         if (!isMatch) {
             return res.render("auth/login", {
-                error: "Sai mật khẩu",
-                oldData: { username }
+                error: "Invalid username or password",
+                oldData: { username: username || "" }
             });
         }
 
-        // Lưu session
+        // Save session
         req.session.user = {
             _id: user._id,
             username: user.username,
@@ -89,18 +156,29 @@ exports.login = async (req, res) => {
             avatar: user.avatar
         };
 
-        // Chuyển hướng theo quyền
-        if (user.role === "admin") {
-            return res.redirect("/admin");
-        }
+        // Save session explicitly
+        req.session.save((err) => {
+            if (err) {
+                console.log("Session save error:", err);
+                return res.render("auth/login", {
+                    error: "Login failed due to a server error",
+                    oldData: { username }
+                });
+            }
 
-        return res.redirect("/");
+            // Redirect based on role
+            if (user.role === "admin") {
+                return res.redirect("/admin");
+            }
+
+            return res.redirect("/");
+        });
 
     } catch (err) {
         console.log(err);
         return res.render("auth/login", {
-            error: "Có lỗi xảy ra",
-            oldData: {}
+            error: "An error occurred. Please try again.",
+            oldData: { username: req.body.username || "" }
         });
     }
 };
