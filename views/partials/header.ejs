@@ -18,26 +18,6 @@
 
   <div class="auth-actions">
     <% if (currentUser) { %>
-      <% if (currentUser.role === "admin") { %>
-        <div class="notification-bell" id="notificationBell">
-          <button class="bell-btn" id="bellBtn" aria-label="Notifications">
-            <span class="bell-icon">🔔</span>
-            <span class="bell-badge" id="bellBadge" style="display:none;">0</span>
-          </button>
-          <div class="notification-dropdown" id="notificationDropdown">
-            <div class="notification-header">
-              <h3>Notifications</h3>
-              <div class="notification-actions">
-                <button id="markAllRead" class="notif-action-btn">Mark all read</button>
-                <button id="clearAll" class="notif-action-btn clear">Clear all</button>
-              </div>
-            </div>
-            <div class="notification-list" id="notificationList">
-              <div class="notif-loading">Loading...</div>
-            </div>
-          </div>
-        </div>
-      <% } %>
       <a href="/user/profile" class="user-avatar-link" title="<%= currentUser.username %>">
         <img src="<%= currentUser.avatar || 'https://res.cloudinary.com/dxjv0gq1f/image/upload/v1690911873/default-avatar_ow6k7b.png' %>" alt="Avatar" class="nav-avatar" />
       </a>
@@ -56,7 +36,6 @@
     <span></span><span></span><span></span>
   </button>
 </header>
-<script src="/js/notifications.js"></script>
 
 <div class="mobile-menu" id="mobileMenu">
   <a href="/">Home</a>
@@ -71,14 +50,6 @@
   <% } %>
   <div class="mobile-auth">
     <% if (currentUser) { %>
-      <% if (currentUser.role === "admin") { %>
-        <div class="notification-bell" id="notificationBellMobile">
-          <button class="bell-btn" id="bellBtnMobile" aria-label="Notifications">
-            <span class="bell-icon">🔔</span>
-            <span class="bell-badge" id="bellBadgeMobile" style="display:none;">0</span>
-          </button>
-        </div>
-      <% } %>
       <a href="/user/profile" class="user-avatar-link" title="<%= currentUser.username %>">
         <img src="<%= currentUser.avatar || 'https://res.cloudinary.com/dxjv0gq1f/image/upload/v1690911873/default-avatar_ow6k7b.png' %>" alt="Avatar" class="nav-avatar" />
       </a>

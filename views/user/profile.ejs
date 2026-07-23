@@ -3,104 +3,150 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Woofy - Profile</title>
+  <title>Woofy - <%= user.username %>'s Profile</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <link rel="stylesheet" href="/css/woofy-theme.css" />
+  <link rel="stylesheet" href="/css/profile.css" />
 </head>
 <body>
   <%- include('../partials/header') %>
 
-  <main class="container">
-    <div class="breadcrumb">
-      <a href="/">Home</a>
-      <span>›</span>
-      <span>Profile</span>
-    </div>
+  <main class="profile-page">
+    <div class="profile-container">
+      <!-- Profile Header -->
+      <div class="profile-header">
+        <img src="<%= user.avatar ? user.avatar : 'https://res.cloudinary.com/dxjv0gq1f/image/upload/v1690911873/default-avatar_ow6k7b.png' %>" alt="<%= user.username %>" class="profile-avatar" />
+        <h1><%= user.username %></h1>
+        <p class="profile-email"><%= user.email %></p>
+        <span class="profile-role-badge <%= user.role === 'admin' ? 'admin' : 'member' %>">
+          <i class="fas fa-<%= user.role === 'admin' ? 'crown' : 'user' %>"></i>
+          <%= user.role === 'admin' ? 'Administrator' : 'Member' %>
+        </span>
 
-    <div class="page-title">
-      <h1>👤 My Profile</h1>
-      <p>Xin chào, <strong><%= user.username %></strong>! Đây là trang thông tin tài khoản của bạn trên Woofy.</p>
-    </div>
-
-    <div class="profile-layout">
-      <!-- LEFT COLUMN -->
-      <div class="profile-main">
-        <!-- Profile Info Card -->
-        <div class="profile-card" style="margin-bottom: 24px;">
-          <div class="profile-card-header">
-            <div>
-              <h2>Thông tin tài khoản</h2>
-              <p>Thông tin cơ bản của tài khoản Woofy</p>
-            </div>
-            <span class="role-badge"><%= user.role ? user.role.toUpperCase() : 'USER' %></span>
-          </div>
-
-          <div class="info-grid-2">
-            <div class="info-box">
-              <h4>Username</h4>
-              <p><%= user.username %></p>
-            </div>
-            <div class="info-box">
-              <h4>Email</h4>
-              <p><%= user.email %></p>
-            </div>
-            <div class="info-box">
-              <h4>Role</h4>
-              <p><%= user.role %></p>
-            </div>
-            <div class="info-box">
-              <h4>Joined</h4>
-              <p><%= user.createdAt ? new Date(user.createdAt).toLocaleDateString("vi-VN") : "N/A" %></p>
-            </div>
-          </div>
-
-          <div class="profile-actions">
-            <a href="/" class="btn-primary">Back Home</a>
-            <a href="/logout" class="btn-outline">Logout</a>
-          </div>
-        </div>
-
-        <!-- Change Avatar Card -->
-        <div class="profile-card">
-          <h2 style="font-size: 1.25rem; margin-bottom: 4px;">Đổi avatar</h2>
-          <p style="color: var(--text-light); font-size: 0.88rem; margin-bottom: 20px;">Chọn ảnh từ máy tính để cập nhật avatar của bạn.</p>
-
-          <form action="/profile/avatar" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 16px;">
-            <div class="upload-area">
-              <div class="upload-icon">⤴</div>
-              <h3>Choose avatar</h3>
-              <p>Drag and drop or click to browse</p>
-              <input type="file" name="avatar" id="avatar" accept="image/*" required />
-            </div>
-            <button type="submit" class="btn-primary" style="align-self: flex-start;">Cập nhật avatar</button>
-          </form>
+        <div class="profile-actions">
+          <a href="/user/favorites" class="btn btn-primary"><i class="fas fa-heart"></i> Favorites</a>
+          <a href="/" class="btn btn-outline"><i class="fas fa-home"></i> Home</a>
+          <a href="/logout" class="btn btn-ghost"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </div>
       </div>
 
-      <!-- RIGHT COLUMN -->
-      <div class="profile-sidebar">
-        <div class="profile-card avatar-card">
-          <div class="avatar-frame">
-            <img src="<%= user.avatar ? user.avatar : 'https://res.cloudinary.com/dxjv0gq1f/image/upload/v1690911873/default-avatar_ow6k7b.png' %>"
-                 alt="Avatar" />
+      <!-- Profile Grid -->
+      <div class="profile-grid">
+        <!-- Left Column -->
+        <div class="profile-main">
+          <!-- Account Info -->
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-id-card" style="color:var(--primary-dark);"></i> Account Information</h3>
+            </div>
+            <div class="card-body">
+              <div class="info-grid">
+                <div class="info-item">
+                  <div class="info-label">Username</div>
+                  <div class="info-value"><%= user.username %></div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Email</div>
+                  <div class="info-value"><%= user.email %></div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Role</div>
+                  <div class="info-value"><%= user.role === 'admin' ? 'Administrator' : 'Member' %></div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Joined</div>
+                  <div class="info-value"><%= user.createdAt ? new Date(user.createdAt).toLocaleDateString("en-US", { month: 'long', day: 'numeric', year: 'numeric' }) : "Recently" %></div>
+                </div>
+              </div>
+            </div>
           </div>
-          <h3 style="margin-bottom: 4px;"><%= user.username %></h3>
-          <p style="color: var(--text-light); font-size: 0.88rem;"><%= user.email %></p>
+
+          <!-- Update Avatar -->
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-camera" style="color:var(--primary-dark);"></i> Update Avatar</h3>
+            </div>
+            <div class="card-body">
+              <form action="/profile/avatar" method="POST" enctype="multipart/form-data">
+                <div class="upload-area">
+                  <h4>Choose a new photo</h4>
+                  <p>Upload a square image from your computer</p>
+                  <input type="file" name="avatar" id="avatar" accept="image/*" required />
+                </div>
+                <button type="submit" class="upload-btn"><i class="fas fa-upload"></i> Update Avatar</button>
+              </form>
+            </div>
+          </div>
         </div>
 
-        <div class="profile-card side-card-content">
-          <h3>📌 Tài khoản hiện tại</h3>
-          <p>Bạn đang đăng nhập với email:</p>
-          <strong><%= user.email %></strong>
-        </div>
+        <!-- Right Column -->
+        <div class="profile-sidebar">
+          <!-- Favorite Breeds -->
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-heart" style="color:var(--primary-dark);"></i> Favorite Breeds</h3>
+              <% if (favorites && favorites.length > 0) { %>
+                <a href="/user/favorites" class="card-link">View All <i class="fas fa-arrow-right"></i></a>
+              <% } %>
+            </div>
+            <div class="card-body">
+              <% if (favorites && favorites.length > 0) { %>
+                <div class="breed-mini-list">
+                  <% favorites.slice(0, 4).forEach(function(item) { %>
+                    <a href="/breeds/<%= item.breedId._id %>" class="breed-mini-item">
+                      <img src="<%= item.breedId.image && item.breedId.image.trim() !== '' ? item.breedId.image : 'https://via.placeholder.com/600x400?text=No+Image' %>" alt="<%= item.breedId.name %>" class="mini-img" onerror="this.src='https://via.placeholder.com/600x400?text=No+Image'" />
+                      <div class="mini-info">
+                        <h4><%= item.breedId.name %></h4>
+                        <span><%= item.breedId.originCountry || 'Unknown' %></span>
+                      </div>
+                    </a>
+                  <% }); %>
+                </div>
+              <% } else { %>
+                <div class="empty-state">
+                  <span class="empty-icon">❤️</span>
+                  <p>No favorites yet.</p>
+                  <a href="/user/breeds">Browse breeds to get started</a>
+                </div>
+              <% } %>
+            </div>
+          </div>
 
-        <div class="profile-card side-card-content">
-          <h3>🔒 Quyền tài khoản</h3>
-          <p>
-            Tài khoản của bạn là
-            <strong>
-              <%= user.role === "admin" ? "quản trị viên" : "người dùng thông thường" %>
-            </strong>.
-          </p>
+          <!-- Recent Activity -->
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-clock" style="color:var(--primary-dark);"></i> Recent Activity</h3>
+            </div>
+            <div class="card-body">
+              <ul class="activity-list">
+                <li class="activity-item">
+                  <div class="activity-dot success"></div>
+                  <div class="activity-text">
+                    <p><span class="activity-title">Account Created</span> — Welcome to Woofy!</p>
+                    <span class="activity-time"><%= user.createdAt ? new Date(user.createdAt).toLocaleDateString("en-US", { month: 'long', day: 'numeric', year: 'numeric' }) : "Today" %></span>
+                  </div>
+                </li>
+                <% if (favorites && favorites.length > 0) { %>
+                  <% favorites.slice(0, 2).forEach(function(item) { %>
+                    <li class="activity-item">
+                      <div class="activity-dot brand"></div>
+                      <div class="activity-text">
+                        <p><span class="activity-title">Added to Favorites</span> — <%= item.breedId.name %></p>
+                        <span class="activity-time"><%= item.createdAt ? new Date(item.createdAt).toLocaleDateString("en-US", { month: 'short', day: 'numeric' }) : "Recently" %></span>
+                      </div>
+                    </li>
+                  <% }); %>
+                <% } %>
+                <li class="activity-item">
+                  <div class="activity-dot brand"></div>
+                  <div class="activity-text">
+                    <p><span class="activity-title">Profile Updated</span> — Avatar and account details</p>
+                    <span class="activity-time">Just now</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>

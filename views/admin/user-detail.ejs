@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Woofy - User: <%= viewUser.username %></title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="/css/woofy-theme.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+</head>
+<body class="admin-body">
+  <div class="admin-sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <%- include("../partials/admin-sidebar", { currentPage: 'users' }) %>
+
+  <header class="admin-topbar">
+    <div class="admin-topbar-left">
+      <button class="admin-toggle-sidebar" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="admin-topbar-search">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search..." disabled />
+      </div>
+    </div>
+    <div class="admin-topbar-right">
+      <div class="admin-profile">
+        <div class="avatar">
+          <%= currentUser ? currentUser.username.charAt(0).toUpperCase() : 'A' %>
+        </div>
+        <span class="name"><%= currentUser ? currentUser.username : 'Admin' %></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <div style="margin-bottom:24px;">
+      <a href="/admin/users" style="display:inline-flex;align-items:center;gap:6px;color:var(--admin-text-light);text-decoration:none;font-size:0.88rem;font-weight:500;margin-bottom:12px;">
+        <i class="fas fa-arrow-left"></i> Back to Users
+      </a>
+    </div>
+
+    <div class="admin-grid-2col" style="grid-template-columns:1fr 1.5fr;">
+      <!-- User Profile Card -->
+      <div class="admin-card">
+        <div class="admin-card-body" style="text-align:center;padding:36px 24px;">
+          <div style="width:80px;height:80px;border-radius:50%;overflow:hidden;margin:0 auto 16px;background:linear-gradient(135deg,var(--admin-primary),var(--admin-primary-dark));">
+            <% if (viewUser.avatar) { %>
+              <img src="<%= viewUser.avatar %>" alt="<%= viewUser.username %>" style="width:100%;height:100%;object-fit:cover;" />
+            <% } else { %>
+              <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.5rem;font-weight:700;"><%= viewUser.username.charAt(0).toUpperCase() %></div>
+            <% } %>
+          </div>
+          <h2 style="font-size:1.3rem;font-weight:700;color:var(--admin-text);margin-bottom:4px;"><%= viewUser.username %></h2>
+          <p style="color:var(--admin-text-light);font-size:0.88rem;margin-bottom:16px;"><%= viewUser.email %></p>
+
+          <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+            <span class="category-tag" style="<%= viewUser.role === 'admin' ? 'background:rgba(196,149,106,0.15);color:var(--admin-primary-dark);' : '' %>">
+              <i class="fas fa-<%= viewUser.role === 'admin' ? 'crown' : 'user' %>"></i>
+              <%= viewUser.role === 'admin' ? 'Admin' : 'User' %>
+            </span>
+            <% if (viewUser.status === 'active') { %>
+              <span class="status-badge active"><i class="fas fa-check-circle"></i> Active</span>
+            <% } else { %>
+              <span class="status-badge pending" style="background:rgba(232,128,128,0.12);color:#c0392b;"><i class="fas fa-ban"></i> Suspended</span>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Details Card -->
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <h3><i class="fas fa-info-circle" style="color:var(--admin-primary);"></i> User Details</h3>
+        </div>
+        <div class="admin-card-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div>
+              <div style="font-size:0.75rem;font-weight:600;color:var(--admin-text-muted);text-transform:uppercase;letter-spacing:0.3px;margin-bottom:4px;">User ID</div>
+              <div style="font-size:0.85rem;color:var(--admin-text);word-break:break-all;"><%= viewUser._id %></div>
+            </div>
+            <div>
+              <div style="font-size:0.75rem;font-weight:600;color:var(--admin-text-muted);text-transform:uppercase;letter-spacing:0.3px;margin-bottom:4px;">Username</div>
+              <div style="font-size:0.95rem;font-weight:600;color:var(--admin-text);"><%= viewUser.username %></div>
+            </div>
+            <div>
+              <div style="font-size:0.75rem;font-weight:600;color:var(--admin-text-muted);text-transform:uppercase;letter-spacing:0.3px;margin-bottom:4px;">Email</div>
+              <div style="font-size:0.9rem;color:var(--admin-text);"><%= viewUser.email %></div>
+            </div>
+            <div>
+              <div style="font-size:0.75rem;font-weight:600;color:var(--admin-text-muted);text-transform:uppercase;letter-spacing:0.3px;margin-bottom:4px;">Role</div>
+              <div style="font-size:0.9rem;font-weight:600;color:var(--admin-text);"><%= viewUser.role === 'admin' ? 'Administrator' : 'Member' %></div>
+            </div>
+            <div>
+              <div style="font-size:0.75rem;font-weight:600;color:var(--admin-text-muted);text-transform:uppercase;letter-spacing:0.3px;margin-bottom:4px;">Status</div>
+              <div style="font-size:0.9rem;font-weight:600;color:<%= viewUser.status === 'active' ? '#5aad5e' : '#c0392b' %>;"><%= viewUser.status === 'active' ? 'Active' : 'Suspended' %></div>
+            </div>
+            <div>
+              <div style="font-size:0.75rem;font-weight:600;color:var(--admin-text-muted);text-transform:uppercase;letter-spacing:0.3px;margin-bottom:4px;">Favorites</div>
+              <div style="font-size:0.9rem;font-weight:600;color:var(--admin-text);"><%= favoritesCount %> saved</div>
+            </div>
+            <div>
+              <div style="font-size:0.75rem;font-weight:600;color:var(--admin-text-muted);text-transform:uppercase;letter-spacing:0.3px;margin-bottom:4px;">Joined</div>
+              <div style="font-size:0.9rem;color:var(--admin-text);"><%= new Date(viewUser.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %></div>
+            </div>
+            <div>
+              <div style="font-size:0.75rem;font-weight:600;color:var(--admin-text-muted);text-transform:uppercase;letter-spacing:0.3px;margin-bottom:4px;">Account Age</div>
+              <div style="font-size:0.9rem;color:var(--admin-text);">
+                <%= (() => { const diff = new Date() - new Date(viewUser.createdAt); const days = Math.floor(diff / (1000 * 60 * 60 * 24)); if (days < 30) return days + ' days'; const months = Math.floor(days / 30); return months + ' month' + (months > 1 ? 's' : ''); })() %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;">
+      <a href="/admin/users" class="admin-btn-secondary" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+        <i class="fas fa-arrow-left"></i> Back to User List
+      </a>
+    </div>
+  </main>
+
+  <script>
+    function toggleSidebar() {
+      document.getElementById('adminSidebar').classList.toggle('open');
+      document.getElementById('sidebarOverlay').classList.toggle('show');
+    }
+  </script>
+</body>
+</html>

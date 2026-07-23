@@ -32,27 +32,61 @@ exports.homePage = async (req, res) => {
   }
 };
 
+// Helper to get date range filter
+function getDateFilter(range) {
+  const now = new Date();
+  let start;
+
+  switch (range) {
+    case "today":
+      start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      break;
+    case "week":
+      start = new Date(now);
+      start.setDate(now.getDate() - now.getDay());
+      start.setHours(0, 0, 0, 0);
+      break;
+    case "month":
+      start = new Date(now.getFullYear(), now.getMonth(), 1);
+      break;
+    case "year":
+      start = new Date(now.getFullYear(), 0, 1);
+      break;
+    default:
+      return {};
+  }
+
+  return { $gte: start, $lte: now };
+}
+
 exports.adminPage = async (req, res) => {
   try {
-    const totalBreeds = await Breed.countDocuments();
-    const totalCategories = await Category.countDocuments();
-    const totalUsers = await User.countDocuments();
-    const totalFavorites = await Favorite.countDocuments();
+    const range = req.query.range || "all";
+    const dateFilter = range !== "all" ? { createdAt: getDateFilter(range) } : {};
 
-    const recentBreeds = await Breed.find()
+    const totalBreeds = await Breed.countDocuments(dateFilter);
+    const totalCategories = await Category.countDocuments(dateFilter);
+    const totalUsers = await User.countDocuments(dateFilter);
+    const totalFavorites = await Favorite.countDocuments(dateFilter);
+
+    const recentBreeds = await Breed.find(dateFilter)
       .populate("categoryId")
       .sort({ createdAt: -1 })
       .limit(8);
 
-    const recentUsers = await User.find()
+    const recentUsers = await User.find(dateFilter)
       .sort({ createdAt: -1 })
       .limit(5);
 
-    const recentFavorites = await Favorite.find()
+    const recentFavorites = await Favorite.find(dateFilter)
       .populate("userId", "username email")
       .populate("breedId", "name")
       .sort({ createdAt: -1 })
       .limit(6);
+
+    const recentNotifications = await require("../models/Notification").find()
+      .sort({ createdAt: -1 })
+      .limit(10);
 
     res.render("admin/adminPage", {
       totalBreeds,
@@ -62,6 +96,8 @@ exports.adminPage = async (req, res) => {
       recentBreeds,
       recentUsers,
       recentFavorites,
+      recentNotifications,
+      currentRange: range,
     });
   } catch (error) {
     console.log(error);
@@ -73,6 +109,88 @@ exports.adminPage = async (req, res) => {
       recentBreeds: [],
       recentUsers: [],
       recentFavorites: [],
+      recentNotifications: [],
+      currentRange: "all",
     });
+  }
+};
+
+// Admin search API - searches breeds, categories, and users
+exports.adminSearch = async (req, res) => {
+  try {
+    const q = req.query.q || "";
+    if (!q || q.length < 1) {
+      return res.json({ results: [] });
+    }
+
+    const regex = { $regex: q, $options: "i" };
+
+    const [breeds, categories, users] = await Promise.all([
+      Breed.find({
+        $or: [
+          { name: regex },
+          { originCountry: regex },
+          { temperament: regex },
+        ]
+      })
+      .select("name originCountry image")
+      .limit(5)
+      .lean(),
+
+      Category.find({ name: regex })
+        .select("name description")
+        .limit(5)
+        .lean(),
+
+      User.find({
+        $or: [
+          { username: regex },
+          { email: regex },
+        ]
+      })
+        .select("username email avatar")
+        .limit(5)
+        .lean(),
+    ]);
+
+    const results = [];
+
+    breeds.forEach(b => {
+      results.push({
+        type: "breed",
+        label: b.name,
+        sublabel: b.originCountry || "Unknown origin",
+        image: b.image || null,
+        url: "/breeds/" + b._id,
+        icon: "fa-paw",
+      });
+    });
+
+    categories.forEach(c => {
+      results.push({
+        type: "category",
+        label: c.name,
+        sublabel: c.description ? c.description.substring(0, 60) : "Category",
+        image: null,
+        url: "/categories/edit/" + c._id,
+        icon: "fa-folder",
+      });
+    });
+
+    users.forEach(u => {
+      results.push({
+        type: "user",
+        label: u.username,
+        sublabel: u.email,
+        image: u.avatar || null,
+        url: "/user/profile",
+        icon: "fa-user",
+      });
+    });
+
+    res.json({ results });
+  } catch (error) {
+    console.error("Admin search error:", error);
+    res.status(500).json({ results: [], error: "Search failed" });
   }
 };

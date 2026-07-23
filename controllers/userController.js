@@ -28,8 +28,21 @@ exports.profile = async (req, res) => {
             return res.redirect("/login");
         }
 
+        // Get user's favorite breeds for preview
+        const favorites = await Favorite.find({
+            userId: user._id
+        }).populate("breedId")
+        .then(data => data.filter(item => item.breedId));
+
+        // Get total counts for stats
+        const totalFavorites = favorites.length;
+        const totalBreeds = await Breed.countDocuments();
+
         res.render("user/profile", {
-            user
+            user,
+            favorites,
+            totalFavorites,
+            totalBreeds
         });
     } catch (error) {
         console.log(error);

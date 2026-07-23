@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Woofy - Manage Users</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="/css/woofy-theme.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+</head>
+<body class="admin-body">
+  <div class="admin-sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <%- include("../partials/admin-sidebar", { currentPage: 'users' }) %>
+
+  <!-- Top Navbar -->
+  <header class="admin-topbar">
+    <div class="admin-topbar-left">
+      <button class="admin-toggle-sidebar" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="admin-topbar-search">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search..." disabled />
+      </div>
+    </div>
+    <div class="admin-topbar-right">
+      <div class="admin-profile">
+        <div class="avatar">
+          <%= currentUser ? currentUser.username.charAt(0).toUpperCase() : 'A' %>
+        </div>
+        <span class="name"><%= currentUser ? currentUser.username : 'Admin' %></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <!-- Breadcrumb -->
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;font-size:0.85rem;color:var(--admin-text-muted);">
+      <a href="/admin" style="color:var(--admin-text-muted);text-decoration:none;transition:var(--admin-transition);"><i class="fas fa-th-large"></i> Dashboard</a>
+      <span style="font-size:0.7rem;">&#9654;</span>
+      <span style="color:var(--admin-text-light);font-weight:500;"><i class="fas fa-users"></i> Users</span>
+    </div>
+
+    <!-- Page Header -->
+    <div class="admin-page-header">
+      <div>
+        <h1><i class="fas fa-users-cog" style="color:var(--admin-primary);margin-right:10px;"></i> Manage Users</h1>
+        <p style="color:var(--admin-text-light);font-size:0.9rem;margin-top:4px;">
+          <%= totalAllUsers %> user<%= totalAllUsers !== 1 ? 's' : '' %> total
+          <% if (search) { %> matching "<strong><%= search %></strong>"<% } %>
+        </p>
+      </div>
+    </div>
+
+    <!-- Alert Messages -->
+    <% if (success) { %>
+      <div class="admin-alert success" id="alertSuccess">
+        <i class="fas fa-check-circle"></i> <%= success %>
+        <button onclick="this.parentElement.remove()" style="margin-left:auto;background:none;border:none;color:inherit;cursor:pointer;font-size:1rem;">&times;</button>
+      </div>
+    <% } %>
+    <% if (error) { %>
+      <div class="admin-alert error" id="alertError">
+        <i class="fas fa-exclamation-circle"></i> <%= error %>
+        <button onclick="this.parentElement.remove()" style="margin-left:auto;background:none;border:none;color:inherit;cursor:pointer;font-size:1rem;">&times;</button>
+      </div>
+    <% } %>
+
+    <!-- Stats Cards -->
+    <div class="admin-stats-row">
+      <div class="admin-stat-card">
+        <div class="stat-icon users">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Total Users</div>
+          <div class="stat-number"><%= totalAllUsers %></div>
+          <div class="stat-change up">
+            <i class="fas fa-arrow-up"></i> All registered accounts
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-stat-card">
+        <div class="stat-icon" style="background:linear-gradient(135deg, #c4956a, #a67b5b);">
+          <i class="fas fa-crown"></i>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Admins</div>
+          <div class="stat-number"><%= adminCount %></div>
+          <div class="stat-change up">
+            <i class="fas fa-arrow-up"></i> With admin privileges
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-stat-card">
+        <div class="stat-icon" style="background:linear-gradient(135deg, #7bc47f, #5aad5e);">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Active</div>
+          <div class="stat-number"><%= activeCount %></div>
+          <div class="stat-change up">
+            <i class="fas fa-arrow-up"></i> Currently active accounts
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-stat-card">
+        <div class="stat-icon" style="background:linear-gradient(135deg, #6ab0e8, #4a90d9);">
+          <i class="fas fa-user-plus"></i>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">New (30d)</div>
+          <div class="stat-number"><%= newUsersCount %></div>
+          <div class="stat-change up">
+            <i class="fas fa-arrow-up"></i> Joined in last 30 days
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search & Filters -->
+    <div class="admin-search-bar">
+      <form method="GET" action="/admin/users" style="display:flex;gap:12px;flex-wrap:wrap;width:100%;align-items:center;">
+        <div style="position:relative;flex:1;min-width:180px;">
+          <i class="fas fa-search" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--admin-text-muted);font-size:0.9rem;pointer-events:none;"></i>
+          <input type="text" name="search" placeholder="Search by username or email..." value="<%= search %>" style="padding-left:38px;width:100%;box-sizing:border-box;" />
+        </div>
+        <select name="role" style="min-width:130px;">
+          <option value="">All Roles</option>
+          <option value="user" <%= roleFilter === 'user' ? 'selected' : '' %>>Users</option>
+          <option value="admin" <%= roleFilter === 'admin' ? 'selected' : '' %>>Admins</option>
+        </select>
+        <select name="status" style="min-width:130px;">
+          <option value="">All Status</option>
+          <option value="active" <%= statusFilter === 'active' ? 'selected' : '' %>>Active</option>
+          <option value="suspended" <%= statusFilter === 'suspended' ? 'selected' : '' %>>Suspended</option>
+        </select>
+        <select name="sort" style="min-width:130px;">
+          <option value="newest" <%= sort === 'newest' ? 'selected' : '' %>>Newest First</option>
+          <option value="oldest" <%= sort === 'oldest' ? 'selected' : '' %>>Oldest First</option>
+        </select>
+        <button type="submit"><i class="fas fa-filter"></i> Filter</button>
+        <% if (search || roleFilter || statusFilter) { %>
+          <a href="/admin/users" style="padding:10px 20px;background:#fff;color:var(--admin-text-light);border:1px solid var(--admin-border);border-radius:50px;text-decoration:none;font-size:0.88rem;font-weight:600;transition:var(--admin-transition);display:inline-flex;align-items:center;gap:6px;">
+            <i class="fas fa-times"></i> Clear
+          </a>
+        <% } %>
+      </form>
+    </div>
+
+    <!-- Users Table -->
+    <div class="admin-card">
+      <div class="admin-card-body" style="padding:0;">
+        <% if (users && users.length > 0) { %>
+          <div class="admin-table-wrapper">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th style="min-width:180px;">User</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Joined</th>
+                  <th style="text-align:center;min-width:140px;">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% users.forEach(function(u) { %>
+                  <tr>
+                    <td>
+                      <div style="display:flex;align-items:center;gap:12px;">
+                        <div style="width:38px;height:38px;border-radius:50%;overflow:hidden;flex-shrink:0;background:linear-gradient(135deg,var(--admin-primary),var(--admin-primary-dark));box-shadow:0 2px 8px rgba(166,123,91,0.2);">
+                          <% if (u.avatar) { %>
+                            <img src="<%= u.avatar %>" alt="<%= u.username %>" style="width:100%;height:100%;object-fit:cover;" />
+                          <% } else { %>
+                            <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.85rem;font-weight:700;"><%= u.username.charAt(0).toUpperCase() %></div>
+                          <% } %>
+                        </div>
+                        <a href="/admin/users/<%= u._id %>" class="breed-name" style="text-decoration:none;"><%= u.username %></a>
+                      </div>
+                    </td>
+                    <td><span style="color:var(--admin-text-light);font-size:0.85rem;"><%= u.email %></span></td>
+                    <td>
+                      <span class="category-tag" style="<%= u.role === 'admin' ? 'background:rgba(196,149,106,0.15);color:var(--admin-primary-dark);' : '' %>">
+                        <i class="fas fa-<%= u.role === 'admin' ? 'crown' : 'user' %>"></i>
+                        <%= u.role === 'admin' ? 'Admin' : 'User' %>
+                      </span>
+                    </td>
+                    <td>
+                      <% if (u.status === 'active') { %>
+                        <span class="status-badge active"><i class="fas fa-check-circle"></i> Active</span>
+                      <% } else { %>
+                        <span class="status-badge" style="background:rgba(232,128,128,0.12);color:#c0392b;display:inline-block;padding:3px 12px;border-radius:50px;font-size:0.75rem;font-weight:600;"><i class="fas fa-ban"></i> Suspended</span>
+                      <% } %>
+                    </td>
+                    <td><span style="color:var(--admin-text-muted);font-size:0.82rem;"><%= new Date(u.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></span></td>
+                    <td style="text-align:center;">
+                      <div style="display:flex;gap:2px;justify-content:center;flex-wrap:wrap;">
+                        <a href="/admin/users/<%= u._id %>" class="table-action" title="View details"><i class="fas fa-eye"></i></a>
+
+                        <!-- Role toggle -->
+                        <form method="POST" action="/admin/users/<%= u._id %>/role" style="display:inline;" class="role-form">
+                          <input type="hidden" name="role" value="<%= u.role === 'admin' ? 'user' : 'admin' %>" />
+                          <button type="button" class="table-action btn-toggle-role" title="Change to <%= u.role === 'admin' ? 'User' : 'Admin' %>" style="background:none;border:none;cursor:pointer;font-size:1rem;padding:4px 8px;border-radius:6px;color:var(--admin-text-muted);transition:var(--admin-transition);font-family:inherit;" data-username="<%= u.username %>" data-newrole="<%= u.role === 'admin' ? 'user' : 'admin' %>">
+                            <i class="fas fa-exchange-alt"></i>
+                          </button>
+                        </form>
+
+                        <!-- Status toggle & Delete (disabled for self) -->
+                        <% if (u._id.toString() !== currentUser._id.toString()) { %>
+                          <form method="POST" action="/admin/users/<%= u._id %>/status" style="display:inline;" class="status-form">
+                            <button type="button" class="table-action btn-toggle-status" title="<%= u.status === 'active' ? 'Suspend' : 'Activate' %>" style="background:none;border:none;cursor:pointer;font-size:1rem;padding:4px 8px;border-radius:6px;color:var(--admin-text-muted);transition:var(--admin-transition);font-family:inherit;" data-username="<%= u.username %>" data-action="<%= u.status === 'active' ? 'suspend' : 'activate' %>">
+                              <i class="fas fa-<%= u.status === 'active' ? 'pause' : 'play' %>"></i>
+                            </button>
+                          </form>
+
+                          <form method="POST" action="/admin/users/<%= u._id %>/delete" style="display:inline;" class="delete-form">
+                            <button type="button" class="table-action btn-delete-user" title="Delete user" style="background:none;border:none;cursor:pointer;font-size:1rem;padding:4px 8px;border-radius:6px;color:#e88080;transition:var(--admin-transition);font-family:inherit;" data-username="<%= u.username %>">
+                              <i class="fas fa-trash-alt"></i>
+                            </button>
+                          </form>
+                        <% } else { %>
+                          <span class="table-action" title="You cannot modify your own account" style="opacity:0.35;cursor:not-allowed;"><i class="fas fa-lock"></i></span>
+                        <% } %>
+                      </div>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } else { %>
+          <div class="admin-empty">
+            <span class="empty-icon">&#x1F465;</span>
+            <h4>No users found</h4>
+            <p><% if (search || roleFilter || statusFilter) { %>Try adjusting your search or filter criteria to find what you're looking for.<% } else { %>There are no users in the database yet. Users will appear here once they register.<% } %></p>
+            <% if (!search && !roleFilter && !statusFilter) { %>
+              <div style="margin-top:16px;font-size:0.85rem;color:var(--admin-text-muted);">
+                <i class="fas fa-info-circle"></i> New registrations will appear here automatically.
+              </div>
+            <% } %>
+          </div>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <% if (totalPages > 1) { %>
+      <div class="admin-pagination">
+        <% if (currentPage > 1) { %>
+          <a href="/admin/users?page=<%= currentPage - 1 %><%= search ? '&search=' + search : '' %><%= roleFilter ? '&role=' + roleFilter : '' %><%= statusFilter ? '&status=' + statusFilter : '' %><%= sort ? '&sort=' + sort : '' %>" class="admin-btn-secondary page-link">
+            <i class="fas fa-chevron-left"></i>
+          </a>
+        <% } %>
+        
+        <% 
+          const maxVisible = 5;
+          let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+          let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+          if (endPage - startPage + 1 < maxVisible) {
+            startPage = Math.max(1, endPage - maxVisible + 1);
+          }
+        %>
+        
+        <% if (startPage > 1) { %>
+          <a href="/admin/users?page=1<%= search ? '&search=' + search : '' %><%= roleFilter ? '&role=' + roleFilter : '' %><%= statusFilter ? '&status=' + statusFilter : '' %><%= sort ? '&sort=' + sort : '' %>" class="admin-pagination-btn">1</a>
+          <% if (startPage > 2) { %>
+            <span class="admin-pagination-ellipsis">&hellip;</span>
+          <% } %>
+        <% } %>
+        
+        <% for (let p = startPage; p <= endPage; p++) { %>
+          <a href="/admin/users?page=<%= p %><%= search ? '&search=' + search : '' %><%= roleFilter ? '&role=' + roleFilter : '' %><%= statusFilter ? '&status=' + statusFilter : '' %><%= sort ? '&sort=' + sort : '' %>" class="admin-pagination-btn <%= p === currentPage ? 'active' : '' %>"><%= p %></a>
+        <% } %>
+        
+        <% if (endPage < totalPages) { %>
+          <% if (endPage < totalPages - 1) { %>
+            <span class="admin-pagination-ellipsis">&hellip;</span>
+          <% } %>
+          <a href="/admin/users?page=<%= totalPages %><%= search ? '&search=' + search : '' %><%= roleFilter ? '&role=' + roleFilter : '' %><%= statusFilter ? '&status=' + statusFilter : '' %><%= sort ? '&sort=' + sort : '' %>" class="admin-pagination-btn"><%= totalPages %></a>
+        <% } %>
+        
+        <% if (currentPage < totalPages) { %>
+          <a href="/admin/users?page=<%= currentPage + 1 %><%= search ? '&search=' + search : '' %><%= roleFilter ? '&role=' + roleFilter : '' %><%= statusFilter ? '&status=' + statusFilter : '' %><%= sort ? '&sort=' + sort : '' %>" class="admin-btn-secondary page-link">
+            <i class="fas fa-chevron-right"></i>
+          </a>
+        <% } %>
+      </div>
+    <% } %>
+  </main>
+
+  <!-- Custom Confirm Dialog -->
+  <div class="admin-modal-overlay" id="confirmModal">
+    <div class="admin-modal">
+      <div class="admin-modal-icon" id="modalIcon">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <h3 class="admin-modal-title" id="modalTitle">Are you sure?</h3>
+      <p class="admin-modal-message" id="modalMessage">This action cannot be undone.</p>
+      <div class="admin-modal-actions">
+        <button class="admin-btn-secondary" id="modalCancelBtn" onclick="closeModal()">
+          <i class="fas fa-times"></i> Cancel
+        </button>
+        <button class="admin-btn-danger" id="modalConfirmBtn">
+          <i class="fas fa-check"></i> Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* Alert messages */
+    .admin-alert {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 20px;
+      border-radius: var(--admin-radius-sm);
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      animation: adminFadeUp 0.3s ease;
+    }
+    .admin-alert.success { background: rgba(123,196,127,0.12); color: #2d7a31; border: 1px solid rgba(123,196,127,0.2); }
+    .admin-alert.error { background: rgba(232,128,128,0.12); color: #991b1b; border: 1px solid rgba(232,128,128,0.2); }
+    .admin-alert i { font-size: 1.1rem; }
+
+    /* Pagination */
+    .admin-pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+    .admin-pagination-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 40px;
+      height: 40px;
+      padding: 0 10px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.88rem;
+      background: #fff;
+      color: var(--admin-text-light);
+      border: 1px solid var(--admin-border);
+      transition: var(--admin-transition);
+    }
+    .admin-pagination-btn:hover {
+      border-color: var(--admin-primary-light);
+      background: var(--admin-accent);
+      color: var(--admin-primary-dark);
+    }
+    .admin-pagination-btn.active {
+      background: linear-gradient(135deg, var(--admin-primary), var(--admin-primary-dark));
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 4px 12px rgba(166,123,91,0.25);
+    }
+    .admin-pagination-ellipsis {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      color: var(--admin-text-muted);
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    .page-link {
+      min-width: 40px;
+      height: 40px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+    }
+
+    /* Custom Confirm Modal */
+    .admin-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: adminFadeIn 0.2s ease;
+    }
+    .admin-modal-overlay.show {
+      display: flex;
+    }
+    .admin-modal {
+      background: #fff;
+      border-radius: var(--admin-radius);
+      padding: 36px 32px 28px;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+      animation: adminModalSlideUp 0.3s ease;
+    }
+    .admin-modal-icon {
+      font-size: 2.2rem;
+      margin-bottom: 16px;
+      color: #e88080;
+    }
+    .admin-modal-icon.info {
+      color: var(--admin-primary);
+    }
+    .admin-modal-icon.warning {
+      color: #e88080;
+    }
+    .admin-modal-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--admin-text);
+      margin-bottom: 8px;
+    }
+    .admin-modal-message {
+      font-size: 0.9rem;
+      color: var(--admin-text-light);
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+    .admin-modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+    .admin-modal-actions .admin-btn-secondary,
+    .admin-modal-actions .admin-btn-danger {
+      padding: 10px 24px;
+      font-size: 0.88rem;
+    }
+    .admin-modal-actions .admin-btn-secondary {
+      min-width: 100px;
+      justify-content: center;
+    }
+    .admin-modal-actions .admin-btn-danger {
+      min-width: 100px;
+      justify-content: center;
+    }
+
+    @keyframes adminFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes adminModalSlideUp {
+      from { opacity: 0; transform: translateY(20px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .admin-modal {
+        padding: 28px 20px 24px;
+      }
+      .admin-modal-actions {
+        flex-direction: column;
+      }
+      .admin-modal-actions .admin-btn-secondary,
+      .admin-modal-actions .admin-btn-danger {
+        width: 100%;
+      }
+    }
+  </style>
+
+  <script>
+    function toggleSidebar() {
+      document.getElementById('adminSidebar').classList.toggle('open');
+      document.getElementById('sidebarOverlay').classList.toggle('show');
+    }
+
+    // ===== Custom Confirmation Modal =====
+    (function() {
+      var modal = document.getElementById('confirmModal');
+      var modalIcon = document.getElementById('modalIcon');
+      var modalTitle = document.getElementById('modalTitle');
+      var modalMessage = document.getElementById('modalMessage');
+      var confirmBtn = document.getElementById('modalConfirmBtn');
+      var cancelBtn = document.getElementById('modalCancelBtn');
+      var currentForm = null;
+
+      window.openModal = function(icon, title, message, confirmClass, confirmText, form) {
+        modalIcon.innerHTML = icon;
+        modalIcon.className = 'admin-modal-icon ' + (confirmClass === 'danger' ? 'warning' : 'info');
+        modalTitle.textContent = title;
+        modalMessage.textContent = message;
+        confirmBtn.className = confirmClass === 'danger' ? 'admin-btn-danger' : 'admin-btn-primary';
+        confirmBtn.innerHTML = '<i class="fas fa-check"></i> ' + confirmText;
+        currentForm = form;
+        modal.classList.add('show');
+      };
+
+      window.closeModal = function() {
+        modal.classList.remove('show');
+        currentForm = null;
+      };
+
+      confirmBtn.addEventListener('click', function() {
+        if (currentForm) {
+          currentForm.submit();
+        }
+        closeModal();
+      });
+
+      cancelBtn.addEventListener('click', closeModal);
+
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+          closeModal();
+        }
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.classList.contains('show')) {
+          closeModal();
+        }
+      });
+
+      // Wire up action buttons
+      document.addEventListener('click', function(e) {
+        // Role toggle
+        var roleBtn = e.target.closest('.btn-toggle-role');
+        if (roleBtn) {
+          e.preventDefault();
+          var username = roleBtn.getAttribute('data-username');
+          var newRole = roleBtn.getAttribute('data-newrole');
+          var form = roleBtn.closest('.role-form');
+          openModal(
+            '<i class="fas fa-exchange-alt"></i>',
+            'Change Role',
+            'Are you sure you want to change "' + username + '" role to ' + newRole.charAt(0).toUpperCase() + newRole.slice(1) + '?',
+            'info',
+            'Change Role',
+            form
+          );
+        }
+
+        // Status toggle
+        var statusBtn = e.target.closest('.btn-toggle-status');
+        if (statusBtn) {
+          e.preventDefault();
+          var username = statusBtn.getAttribute('data-username');
+          var action = statusBtn.getAttribute('data-action');
+          var form = statusBtn.closest('.status-form');
+          openModal(
+            '<i class="fas fa-' + (action === 'suspend' ? 'pause' : 'play') + '"></i>',
+            (action === 'suspend' ? 'Suspend' : 'Activate') + ' User',
+            'Are you sure you want to ' + action + ' "' + username + '"?',
+            'info',
+            'Yes, ' + (action === 'suspend' ? 'Suspend' : 'Activate'),
+            form
+          );
+        }
+
+        // Delete
+        var deleteBtn = e.target.closest('.btn-delete-user');
+        if (deleteBtn) {
+          e.preventDefault();
+          var username = deleteBtn.getAttribute('data-username');
+          var form = deleteBtn.closest('.delete-form');
+          openModal(
+            '<i class="fas fa-trash-alt"></i>',
+            'Delete User',
+            'Are you sure you want to permanently delete "' + username + '"? This action cannot be undone. All their saved favorites will also be deleted.',
+            'danger',
+            'Delete',
+            form
+          );
+        }
+      });
+    })();
+
+    // Auto-hide alerts after 5 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(function() {
+        document.querySelectorAll('.admin-alert').forEach(function(el) { el.remove(); });
+      }, 5000);
+    });
+  </script>
+</body>
+</html>

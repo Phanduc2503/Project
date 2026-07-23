@@ -5,20 +5,50 @@ const Breed = require("../models/Breed");
 const Favorite = require("../models/Favorite");
 const Notification = require("../models/Notification");
 const { createNotification } = require("./notificationController");
+// Helper to get date range filter
+function getDateFilter(range) {
+  const now = new Date();
+  let start;
+
+  switch (range) {
+    case "today":
+      start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      break;
+    case "week":
+      start = new Date(now);
+      start.setDate(now.getDate() - now.getDay());
+      start.setHours(0, 0, 0, 0);
+      break;
+    case "month":
+      start = new Date(now.getFullYear(), now.getMonth(), 1);
+      break;
+    case "year":
+      start = new Date(now.getFullYear(), 0, 1);
+      break;
+    default:
+      return {};
+  }
+
+  return { $gte: start, $lte: now };
+}
+
 exports.dashboard = async (req, res) => {
     try {
-        const totalUsers = await User.countDocuments();
-        const totalBreeds = await Breed.countDocuments();
-        const totalCategories = await Category.countDocuments();
-        const totalFavorites = await Favorite.countDocuments();
+        const range = req.query.range || "all";
+        const dateFilter = range !== "all" ? { createdAt: getDateFilter(range) } : {};
 
-        const recentFavorites = await Favorite.find()
+        const totalUsers = await User.countDocuments(dateFilter);
+        const totalBreeds = await Breed.countDocuments(dateFilter);
+        const totalCategories = await Category.countDocuments(dateFilter);
+        const totalFavorites = await Favorite.countDocuments(dateFilter);
+
+        const recentFavorites = await Favorite.find(dateFilter)
             .populate("userId", "username")
             .populate("breedId", "name")
             .sort({ createdAt: -1 })
             .limit(5);
 
-        const recentBreeds = await Breed.find()
+        const recentBreeds = await Breed.find(dateFilter)
             .populate("categoryId", "name")
             .sort({ createdAt: -1 })
             .limit(5);
@@ -35,7 +65,8 @@ exports.dashboard = async (req, res) => {
             totalFavorites,
             recentFavorites,
             recentBreeds,
-            recentNotifications
+            recentNotifications,
+            currentRange: range,
         });
 
     } catch (error) {

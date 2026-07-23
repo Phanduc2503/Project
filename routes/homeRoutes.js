@@ -18,4 +18,7 @@ router.get("/contact", (req, res) => {
   res.render("pages/contact");
 });
 
+// Admin search API
+router.get("/api/admin/search", homeController.adminSearch);
+
 module.exports = router;

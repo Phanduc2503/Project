@@ -1,60 +1,145 @@
+<link rel="stylesheet" href="/css/woofy-theme.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 <link rel="stylesheet" href="/css/static-pages.css" />
+<%- include("../partials/header") %>
+
 <main class="container">
-  <div class="breadcrumb">
-    <a href="/">Home</a><span>›</span><span>Contact</span>
+  <!-- Hero Banner -->
+  <div class="static-hero">
+    <div class="hero-badge"><i class="fas fa-envelope"></i> Get in Touch</div>
+    <h1>We'd Love to <span>Hear From You</span></h1>
+    <p>Have a question, suggestion, or just want to say hello? Our team is here to help you with anything you need.</p>
   </div>
 
-  <div class="static-page">
-    <h1>Contact Us 📬</h1>
-    <p class="lead">Have a question, suggestion, or just want to say hello? We'd love to hear from you!</p>
+  <!-- Contact Layout -->
+  <div class="contact-layout">
+    <!-- Contact Info -->
+    <div class="contact-info-card">
+      <h3><i class="fas fa-comment-dots" style="color:var(--primary-dark);margin-right:8px;"></i> Contact Information</h3>
+      <p>Reach out to us through any of the channels below. We typically respond within 24 hours.</p>
 
-    <div class="contact-grid">
-      <div class="contact-info">
-        <h3>Get in Touch</h3>
-        <p>Our team is here to help you with any questions about Woofy, dog breeds, or your account. We typically respond within 24 hours.</p>
-
-        <div class="contact-detail">
-          <div class="icon">📧</div>
-          <div>
-            <h4>Email</h4>
-            <p>hello@woofy.com</p>
-          </div>
-        </div>
-
-        <div class="contact-detail">
-          <div class="icon">📍</div>
-          <div>
-            <h4>Location</h4>
-            <p>123 Pet Street, Dogtown, DT 10001</p>
-          </div>
-        </div>
-
-        <div class="contact-detail">
-          <div class="icon">🕐</div>
-          <div>
-            <h4>Hours</h4>
-            <p>Mon - Fri: 9:00 AM - 6:00 PM</p>
-          </div>
-        </div>
-
-        <div class="contact-detail">
-          <div class="icon">📞</div>
-          <div>
-            <h4>Phone</h4>
-            <p>+1 (555) 123-4567</p>
-          </div>
+      <div class="contact-detail-item">
+        <div class="cd-icon"><i class="fas fa-envelope"></i></div>
+        <div class="cd-content">
+          <h4>Email</h4>
+          <p>hello@woofy.com</p>
         </div>
       </div>
 
-      <div>
-        <form class="contact-form" onsubmit="event.preventDefault(); showToast('Message sent successfully! We\'ll get back to you soon.','success'); this.reset();">
-          <input type="text" placeholder="Your Name" required>
-          <input type="email" placeholder="Your Email" required>
-          <input type="text" placeholder="Subject">
-          <textarea placeholder="Your Message..." required></textarea>
-          <button type="submit" class="btn-primary">Send Message</button>
-        </form>
+      <div class="contact-detail-item">
+        <div class="cd-icon"><i class="fas fa-phone-alt"></i></div>
+        <div class="cd-content">
+          <h4>Phone</h4>
+          <p>+1 (555) 123-4567</p>
+        </div>
+      </div>
+
+      <div class="contact-detail-item">
+        <div class="cd-icon"><i class="fas fa-map-marker-alt"></i></div>
+        <div class="cd-content">
+          <h4>Address</h4>
+          <p>123 Pet Street, Dogtown, DT 10001</p>
+        </div>
+      </div>
+
+      <div class="contact-detail-item">
+        <div class="cd-icon"><i class="fas fa-globe"></i></div>
+        <div class="cd-content">
+          <h4>Website</h4>
+          <p>www.woofy.com</p>
+        </div>
+      </div>
+
+      <!-- Social Links -->
+      <div class="contact-social">
+        <h4><i class="fas fa-share-alt"></i> Follow Us</h4>
+        <div class="social-links">
+          <a href="#" class="social-link" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social-link" title="Twitter"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="social-link" title="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-link" title="YouTube"><i class="fab fa-youtube"></i></a>
+          <a href="#" class="social-link" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+      </div>
+
+      <!-- Business Hours -->
+      <div class="contact-hours">
+        <h4><i class="fas fa-clock"></i> Business Hours</h4>
+        <div class="hours-row">
+          <span class="day">Monday - Friday</span>
+          <span class="time">9:00 AM - 6:00 PM</span>
+        </div>
+        <div class="hours-row">
+          <span class="day">Saturday</span>
+          <span class="time">10:00 AM - 4:00 PM</span>
+        </div>
+        <div class="hours-row">
+          <span class="day">Sunday</span>
+          <span class="time closed">Closed</span>
+        </div>
+        <div class="hours-row">
+          <span class="day">Holidays</span>
+          <span class="time closed">Closed</span>
+        </div>
       </div>
     </div>
+
+    <!-- Contact Form -->
+    <div class="contact-form-card">
+      <h3><i class="fas fa-paper-plane" style="color:var(--primary-dark);margin-right:8px;"></i> Send Us a Message</h3>
+      <p>Fill out the form below and we'll get back to you as soon as possible.</p>
+
+      <form class="contact-form" onsubmit="event.preventDefault(); showToast('Message sent successfully! We\'ll get back to you soon.','success'); this.reset();">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Full Name <span class="required">*</span></label>
+            <input type="text" id="name" placeholder="John Doe" required />
+          </div>
+          <div class="form-group">
+            <label for="email">Email Address <span class="required">*</span></label>
+            <input type="email" id="email" placeholder="john@example.com" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" placeholder="+1 (555) 000-0000" />
+          </div>
+          <div class="form-group">
+            <label for="subject">Subject</label>
+            <select id="subject">
+              <option value="">Select a topic...</option>
+              <option value="general">General Inquiry</option>
+              <option value="breed">Breed Information</option>
+              <option value="account">Account Support</option>
+              <option value="suggestion">Suggestion</option>
+              <option value="bug">Report a Bug</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="message">Your Message <span class="required">*</span></label>
+          <textarea id="message" placeholder="Tell us how we can help you..." required></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit"><i class="fas fa-paper-plane"></i> Send Message</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Google Maps Embed -->
+  <div class="contact-map">
+    <iframe
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.966309591936!2d-73.98542868459375!3d40.748817979328!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c259a9b3117469%3A0xd134e199a405a2d!2sEmpire%20State%20Building!5e0!3m2!1sen!2sus!4v1690000000000"
+      allowfullscreen=""
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+      title="Woofy Office Location">
+    </iframe>
   </div>
 </main>
+
+<%- include("../partials/footer") %>

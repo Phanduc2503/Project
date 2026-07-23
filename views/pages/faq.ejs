@@ -1,46 +1,170 @@
+<link rel="stylesheet" href="/css/woofy-theme.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 <link rel="stylesheet" href="/css/static-pages.css" />
+<%- include("../partials/header") %>
+
 <main class="container">
-  <div class="breadcrumb">
-    <a href="/">Home</a><span>›</span><span>FAQ</span>
+  <!-- Hero Banner -->
+  <div class="static-hero">
+    <div class="hero-badge"><i class="fas fa-question-circle"></i> Frequently Asked Questions</div>
+    <h1>Everything You Need to <span>Know</span></h1>
+    <p>Find answers to the most common questions about Woofy, our breed database, and how to make the most of your experience.</p>
   </div>
 
-  <div class="static-page">
-    <h1>Frequently Asked Questions ❓</h1>
-    <p class="lead">Everything you need to know about Woofy and finding your perfect furry companion.</p>
+  <!-- Search FAQ -->
+  <div class="faq-search-wrapper">
+    <i class="fas fa-search"></i>
+    <input type="text" id="faqSearch" placeholder="Search questions..." onkeyup="filterFaq()" />
+  </div>
 
-    <div class="faq-item">
-      <button class="faq-question">What is Woofy? <span class="arrow">▼</span></button>
-      <div class="faq-answer">Woofy is a comprehensive dog breed discovery platform. We help you explore hundreds of dog breeds, compare their characteristics, and find the perfect match for your lifestyle and family.</div>
+  <!-- FAQ Categories -->
+  <div class="faq-categories" id="faqCategories">
+    <button class="faq-cat-btn active" data-cat="all" onclick="filterFaqByCat('all', this)">
+      <i class="fas fa-list"></i> All <span class="cat-count">8</span>
+    </button>
+    <button class="faq-cat-btn" data-cat="general" onclick="filterFaqByCat('general', this)">
+      <i class="fas fa-info-circle"></i> General <span class="cat-count">2</span>
+    </button>
+    <button class="faq-cat-btn" data-cat="breeds" onclick="filterFaqByCat('breeds', this)">
+      <i class="fas fa-paw"></i> Breeds <span class="cat-count">2</span>
+    </button>
+    <button class="faq-cat-btn" data-cat="account" onclick="filterFaqByCat('account', this)">
+      <i class="fas fa-user"></i> Account <span class="cat-count">2</span>
+    </button>
+    <button class="faq-cat-btn" data-cat="privacy" onclick="filterFaqByCat('privacy', this)">
+      <i class="fas fa-shield-alt"></i> Privacy <span class="cat-count">2</span>
+    </button>
+  </div>
+
+  <!-- FAQ Accordion -->
+  <div class="faq-list" id="faqList">
+    <!-- General -->
+    <div class="faq-item" data-category="general">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        <span><span class="faq-q-icon">❓</span> What is Woofy?</span>
+        <span class="faq-arrow"><i class="fas fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-answer">Woofy is a comprehensive dog breed discovery platform. We help you explore hundreds of dog breeds, compare their characteristics, and find the perfect match for your lifestyle and family. Our database includes detailed information on temperament, size, origin, life expectancy, and care requirements for each breed.</div>
     </div>
 
-    <div class="faq-item">
-      <button class="faq-question">How do I search for breeds? <span class="arrow">▼</span></button>
-      <div class="faq-answer">You can use our search page to filter breeds by name, country of origin, temperament, or category. You can also browse all breeds and use the live search and category filter on the breeds page.</div>
+    <div class="faq-item" data-category="general">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        <span><span class="faq-q-icon">💰</span> Is Woofy free to use?</span>
+        <span class="faq-arrow"><i class="fas fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-answer">Yes! Woofy is completely free to use. You can browse breeds, search, and save favorites without any cost. Simply create a free account to access all features including saving your favorite breeds and creating personalized comparisons.</div>
     </div>
 
-    <div class="faq-item">
-      <button class="faq-question">How do I save my favorite breeds? <span class="arrow">▼</span></button>
-      <div class="faq-answer">Simply click the heart icon on any breed card to add it to your favorites. You can view all your saved breeds on the Favorites page. You need to be logged in to use this feature.</div>
+    <!-- Breeds -->
+    <div class="faq-item" data-category="breeds">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        <span><span class="faq-q-icon">🔍</span> How do I search for breeds?</span>
+        <span class="faq-arrow"><i class="fas fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-answer">You can use our search page to filter breeds by name, country of origin, temperament, or category. You can also browse all breeds and use the live search and category filter on the breeds page. Our smart search makes it easy to find exactly what you're looking for.</div>
     </div>
 
-    <div class="faq-item">
-      <button class="faq-question">Is Woofy free to use? <span class="arrow">▼</span></button>
-      <div class="faq-answer">Yes! Woofy is completely free to use. You can browse breeds, search, and save favorites without any cost. Simply create a free account to access all features.</div>
+    <div class="faq-item" data-category="breeds">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        <span><span class="faq-q-icon">➕</span> Can I add new breeds to the database?</span>
+        <span class="faq-arrow"><i class="fas fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-answer">Currently, breed additions are managed by our administrators to ensure accuracy and quality of information. If you have suggestions for breeds to add, please contact us through our Contact page. We value community input and regularly review suggestions.</div>
     </div>
 
-    <div class="faq-item">
-      <button class="faq-question">How can I update my profile? <span class="arrow">▼</span></button>
-      <div class="faq-answer">Visit your Profile page after logging in. You can update your avatar and view your account information there. More profile customization options coming soon!</div>
+    <!-- Account -->
+    <div class="faq-item" data-category="account">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        <span><span class="faq-q-icon">❤️</span> How do I save my favorite breeds?</span>
+        <span class="faq-arrow"><i class="fas fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-answer">Simply click the heart icon on any breed card to add it to your favorites. You can view all your saved breeds on the Favorites page. You need to be logged in to use this feature. Favorites make it easy to compare breeds side by side and keep track of ones you love.</div>
     </div>
 
-    <div class="faq-item">
-      <button class="faq-question">Can I add new breeds to the database? <span class="arrow">▼</span></button>
-      <div class="faq-answer">Currently, breed additions are managed by our administrators. If you have suggestions for breeds to add, please contact us through our Contact page.</div>
+    <div class="faq-item" data-category="account">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        <span><span class="faq-q-icon">👤</span> How can I update my profile?</span>
+        <span class="faq-arrow"><i class="fas fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-answer">Visit your Profile page after logging in. You can update your avatar and view your account information there. More profile customization options including bio, preferences, and notification settings are coming soon! Stay tuned for updates.</div>
     </div>
 
-    <div class="faq-item">
-      <button class="faq-question">Is my data safe? <span class="arrow">▼</span></button>
-      <div class="faq-answer">We take your privacy seriously. Your account information is encrypted and stored securely. We never share your personal data with third parties without your consent.</div>
+    <!-- Privacy -->
+    <div class="faq-item" data-category="privacy">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        <span><span class="faq-q-icon">🔒</span> Is my data safe with Woofy?</span>
+        <span class="faq-arrow"><i class="fas fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-answer">We take your privacy seriously. Your account information is encrypted and stored securely. We never share your personal data with third parties without your explicit consent. We use industry-standard security practices to protect your information and ensure a safe browsing experience.</div>
     </div>
+
+    <div class="faq-item" data-category="privacy">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        <span><span class="faq-q-icon">📧</span> How do you use my email address?</span>
+        <span class="faq-arrow"><i class="fas fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-answer">Your email is used solely for account-related communications such as password resets and important updates. We do not send marketing emails without your permission. You can manage your email preferences in your account settings at any time.</div>
+    </div>
+  </div>
+
+  <!-- Support Section -->
+  <div class="faq-support">
+    <h3><i class="fas fa-headset"></i> Still Have Questions?</h3>
+    <p>Our support team is here to help you with any questions not covered in our FAQ. We typically respond within 24 hours.</p>
+    <a href="/contact" class="btn-contact"><i class="fas fa-envelope"></i> Contact Support</a>
   </div>
 </main>
+
+<script>
+// FAQ Accordion Toggle
+function toggleFaq(btn) {
+  const item = btn.parentElement;
+  const isActive = item.classList.contains('active');
+
+  // Close all open items
+  document.querySelectorAll('.faq-item.active').forEach(el => {
+    el.classList.remove('active');
+  });
+
+  // Open clicked item if it wasn't already open
+  if (!isActive) {
+    item.classList.add('active');
+  }
+}
+
+// FAQ Search
+function filterFaq() {
+  const search = document.getElementById('faqSearch').value.toLowerCase();
+  const items = document.querySelectorAll('.faq-item');
+
+  items.forEach(item => {
+    const question = item.querySelector('.faq-question').textContent.toLowerCase();
+    const answer = item.querySelector('.faq-answer').textContent.toLowerCase();
+    const match = question.includes(search) || answer.includes(search);
+    item.style.display = match ? '' : 'none';
+  });
+}
+
+// FAQ Category Filter
+function filterFaqByCat(category, btn) {
+  // Update active button
+  document.querySelectorAll('.faq-cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  const items = document.querySelectorAll('.faq-item');
+  items.forEach(item => {
+    if (category === 'all') {
+      item.style.display = '';
+    } else {
+      item.style.display = item.dataset.category === category ? '' : 'none';
+    }
+  });
+
+  // Close all open items when filtering
+  document.querySelectorAll('.faq-item.active').forEach(el => {
+    el.classList.remove('active');
+  });
+}
+</script>
+
+<%- include("../partials/footer") %>

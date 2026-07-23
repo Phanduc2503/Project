@@ -21,14 +21,15 @@
       <button class="admin-toggle-sidebar" onclick="toggleSidebar()" aria-label="Toggle sidebar">
         <i class="fas fa-bars"></i>
       </button>
-      <div class="admin-topbar-search">
+      <div class="admin-topbar-search" id="globalSearch">
         <i class="fas fa-search"></i>
-        <input type="text" placeholder="Search breeds, users..." />
+        <input type="text" id="searchInput" placeholder="Search breeds, users, categories..." autocomplete="off" />
+        <div class="admin-search-dropdown" id="searchDropdown"></div>
       </div>
     </div>
 
     <div class="admin-topbar-right">
-      <div class="admin-profile">
+      <div class="admin-profile" id="profileDropdownToggle">
         <div class="avatar">
           <% if (currentUser && currentUser.username) { %>
             <%= currentUser.username.charAt(0).toUpperCase() %>
@@ -45,6 +46,14 @@
         </span>
         <i class="fas fa-chevron-down" style="font-size:0.7rem;color:var(--admin-text-muted);"></i>
       </div>
+      <!-- Profile Dropdown -->
+      <div class="admin-profile-dropdown" id="profileDropdown">
+        <a href="/user/profile" class="dropdown-item"><i class="fas fa-user"></i> My Profile</a>
+        <a href="/admin" class="dropdown-item"><i class="fas fa-th-large"></i> Dashboard</a>
+        <a href="/breeds" class="dropdown-item"><i class="fas fa-paw"></i> Breeds</a>
+        <div class="dropdown-divider"></div>
+        <a href="/logout" class="dropdown-item dropdown-danger"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </div>
     </div>
   </header>
 
@@ -59,17 +68,32 @@
         </h1>
       </div>
       <div class="header-actions">
-        <button class="btn-date">
-          <i class="fas fa-calendar-alt"></i>
-          <span>Today</span>
-          <i class="fas fa-chevron-down" style="font-size:0.65rem;"></i>
-        </button>
+        <div class="admin-date-picker">
+          <button class="btn-date" id="dateFilterBtn">
+            <i class="fas fa-calendar-alt"></i>
+            <span id="dateLabel">
+              <% if (currentRange === 'today') { %>Today<% }
+              else if (currentRange === 'week') { %>This Week<% }
+              else if (currentRange === 'month') { %>This Month<% }
+              else if (currentRange === 'year') { %>This Year<% }
+              else { %>All Time<% } %>
+            </span>
+            <i class="fas fa-chevron-down" style="font-size:0.65rem;"></i>
+          </button>
+          <div class="admin-date-dropdown" id="dateDropdown">
+            <a href="/admin?range=all" class="dropdown-item <%= currentRange === 'all' ? 'active' : '' %>" data-range="all"><i class="fas fa-infinity"></i> All Time</a>
+            <a href="/admin?range=today" class="dropdown-item <%= currentRange === 'today' ? 'active' : '' %>" data-range="today"><i class="fas fa-sun"></i> Today</a>
+            <a href="/admin?range=week" class="dropdown-item <%= currentRange === 'week' ? 'active' : '' %>" data-range="week"><i class="fas fa-calendar-week"></i> This Week</a>
+            <a href="/admin?range=month" class="dropdown-item <%= currentRange === 'month' ? 'active' : '' %>" data-range="month"><i class="fas fa-calendar-alt"></i> This Month</a>
+            <a href="/admin?range=year" class="dropdown-item <%= currentRange === 'year' ? 'active' : '' %>" data-range="year"><i class="fas fa-calendar-check"></i> This Year</a>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- Stats Cards -->
     <div class="admin-stats-row">
-      <div class="admin-stat-card">
+      <a href="/breeds" class="admin-stat-card" style="text-decoration:none;cursor:pointer;">
         <div class="stat-icon breeds">
           <i class="fas fa-paw"></i>
         </div>
@@ -80,9 +104,9 @@
             <i class="fas fa-arrow-up"></i> All breeds in database
           </div>
         </div>
-      </div>
+      </a>
 
-      <div class="admin-stat-card">
+      <a href="/categories" class="admin-stat-card" style="text-decoration:none;cursor:pointer;">
         <div class="stat-icon categories">
           <i class="fas fa-folder"></i>
         </div>
@@ -93,9 +117,9 @@
             <i class="fas fa-arrow-up"></i> Breed categories
           </div>
         </div>
-      </div>
+      </a>
 
-      <div class="admin-stat-card">
+      <a href="/admin/users" class="admin-stat-card" style="text-decoration:none;cursor:pointer;">
         <div class="stat-icon users">
           <i class="fas fa-users"></i>
         </div>
@@ -106,9 +130,9 @@
             <i class="fas fa-arrow-up"></i> Registered accounts
           </div>
         </div>
-      </div>
+      </a>
 
-      <div class="admin-stat-card">
+      <a href="/user/favorites" class="admin-stat-card" style="text-decoration:none;cursor:pointer;">
         <div class="stat-icon favorites">
           <i class="fas fa-heart"></i>
         </div>
@@ -119,7 +143,7 @@
             <i class="fas fa-arrow-up"></i> Saved favorites
           </div>
         </div>
-      </div>
+      </a>
     </div>
 
     <!-- Quick Actions -->
@@ -129,12 +153,12 @@
         <div class="qa-label">Add Breed</div>
         <div class="qa-desc">Create a new breed entry</div>
       </a>
-      <a href="/category/create" class="admin-quick-action">
+      <a href="/categories/create" class="admin-quick-action">
         <div class="qa-icon"><i class="fas fa-plus"></i></div>
         <div class="qa-label">Add Category</div>
         <div class="qa-desc">Create a new category</div>
       </a>
-      <a href="/user/profile" class="admin-quick-action">
+      <a href="/admin/users" class="admin-quick-action">
         <div class="qa-icon"><i class="fas fa-users-cog"></i></div>
         <div class="qa-label">Manage Users</div>
         <div class="qa-desc">View and manage users</div>
@@ -152,6 +176,7 @@
       <div class="admin-card">
         <div class="admin-card-header">
           <h3><i class="fas fa-bell" style="color:var(--admin-primary);"></i> Notifications</h3>
+          <a href="/admin/notifications" class="card-action" style="display:none;">View All <i class="fas fa-arrow-right"></i></a>
         </div>
         <div class="admin-card-body" style="padding:0;">
           <% if (recentNotifications && recentNotifications.length > 0) { %>
@@ -252,8 +277,134 @@
     </div>
   </main>
 
+  <style>
+    /* Search dropdown */
+    .admin-search-dropdown {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      background: #fff;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--admin-radius-sm);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+      z-index: 2000;
+      display: none;
+      max-height: 360px;
+      overflow-y: auto;
+    }
+    .admin-search-dropdown.show { display: block; }
+    .admin-search-dropdown .search-result-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      text-decoration: none;
+      color: var(--admin-text);
+      transition: background 0.15s ease;
+      border-bottom: 1px solid rgba(237,229,221,0.3);
+    }
+    .admin-search-dropdown .search-result-item:last-child { border-bottom: none; }
+    .admin-search-dropdown .search-result-item:hover { background: var(--admin-accent); }
+    .admin-search-dropdown .search-result-item .sr-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+    .admin-search-dropdown .search-result-item .sr-icon.type-breed { background: rgba(196,149,106,0.12); color: var(--admin-primary-dark); }
+    .admin-search-dropdown .search-result-item .sr-icon.type-category { background: rgba(123,196,127,0.15); color: #5aad5e; }
+    .admin-search-dropdown .search-result-item .sr-icon.type-user { background: rgba(106,176,232,0.15); color: #4a90d9; }
+    .admin-search-dropdown .search-result-item .sr-info { flex: 1; min-width: 0; }
+    .admin-search-dropdown .search-result-item .sr-info .sr-label { font-size: 0.85rem; font-weight: 600; color: var(--admin-text); }
+    .admin-search-dropdown .search-result-item .sr-info .sr-sublabel { font-size: 0.75rem; color: var(--admin-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .admin-search-dropdown .search-result-item .sr-type { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: var(--admin-text-muted); letter-spacing: 0.3px; flex-shrink: 0; }
+    .admin-search-dropdown .search-no-results { padding: 20px; text-align: center; color: var(--admin-text-muted); font-size: 0.85rem; }
+    .admin-search-dropdown .search-loading { padding: 16px; text-align: center; color: var(--admin-text-muted); font-size: 0.85rem; }
+
+    /* Date picker dropdown */
+    .admin-date-picker { position: relative; }
+    .admin-date-dropdown {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      width: 220px;
+      background: #fff;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--admin-radius-sm);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+      z-index: 2000;
+      display: none;
+      padding: 6px;
+    }
+    .admin-date-dropdown.show { display: block; }
+    .admin-date-dropdown .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--admin-text-light);
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: background 0.15s ease;
+    }
+    .admin-date-dropdown .dropdown-item:hover { background: var(--admin-accent); color: var(--admin-primary-dark); }
+    .admin-date-dropdown .dropdown-item.active { background: var(--admin-sidebar-active); color: var(--admin-primary-dark); font-weight: 600; }
+    .admin-date-dropdown .dropdown-item i { width: 18px; text-align: center; font-size: 0.9rem; }
+
+    /* Profile dropdown */
+    .admin-profile {
+      position: relative;
+      cursor: pointer;
+    }
+    .admin-profile-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      width: 200px;
+      background: #fff;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--admin-radius-sm);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+      z-index: 2000;
+      display: none;
+      padding: 6px;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    .admin-profile-dropdown.show {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .admin-profile-dropdown .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--admin-text-light);
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: background 0.15s ease;
+    }
+    .admin-profile-dropdown .dropdown-item:hover { background: var(--admin-accent); color: var(--admin-primary-dark); }
+    .admin-profile-dropdown .dropdown-item i { width: 18px; text-align: center; }
+    .admin-profile-dropdown .dropdown-divider { height: 1px; background: var(--admin-border); margin: 4px 0; }
+    .admin-profile-dropdown .dropdown-danger { color: #e88080; }
+    .admin-profile-dropdown .dropdown-danger:hover { background: #fee2e2 !important; color: #991b1b !important; }
+  </style>
+
   <script>
-    // --- Sidebar Toggle ---
+    // ===== SIDEBAR TOGGLE =====
     function toggleSidebar() {
       const sidebar = document.getElementById('adminSidebar');
       const overlay = document.getElementById('sidebarOverlay');
@@ -261,9 +412,127 @@
       overlay.classList.toggle('show');
     }
 
-    // --- Chart.js ---
+    // ===== SEARCH FUNCTIONALITY =====
+    (function() {
+      const searchInput = document.getElementById('searchInput');
+      const searchDropdown = document.getElementById('searchDropdown');
+      let searchTimeout = null;
+
+      if (searchInput) {
+        searchInput.addEventListener('input', function() {
+          const q = this.value.trim();
+          clearTimeout(searchTimeout);
+
+          if (q.length === 0) {
+            searchDropdown.classList.remove('show');
+            searchDropdown.innerHTML = '';
+            return;
+          }
+
+          searchDropdown.innerHTML = '<div class="search-loading"><i class="fas fa-spinner fa-spin"></i> Searching...</div>';
+          searchDropdown.classList.add('show');
+
+          searchTimeout = setTimeout(function() {
+            fetch('/api/admin/search?q=' + encodeURIComponent(q))
+              .then(function(res) { return res.json(); })
+              .then(function(data) {
+                if (!data.results || data.results.length === 0) {
+                  searchDropdown.innerHTML = '<div class="search-no-results"><i class="fas fa-search"></i> No results found for "' + q + '"</div>';
+                  return;
+                }
+
+                var html = '';
+                data.results.forEach(function(item) {
+                  html += '<a href="' + item.url + '" class="search-result-item">' +
+                    '<div class="sr-icon type-' + item.type + '"><i class="fas ' + item.icon + '"></i></div>' +
+                    '<div class="sr-info">' +
+                      '<div class="sr-label">' + escapeHtml(item.label) + '</div>' +
+                      '<div class="sr-sublabel">' + escapeHtml(item.sublabel) + '</div>' +
+                    '</div>' +
+                    '<div class="sr-type">' + item.type + '</div>' +
+                  '</a>';
+                });
+                searchDropdown.innerHTML = html;
+              })
+              .catch(function() {
+                searchDropdown.innerHTML = '<div class="search-no-results">Search failed. Please try again.</div>';
+              });
+          }, 300);
+        });
+
+        // Close search on outside click
+        document.addEventListener('click', function(e) {
+          var searchWrapper = document.getElementById('globalSearch');
+          if (searchWrapper && !searchWrapper.contains(e.target)) {
+            searchDropdown.classList.remove('show');
+          }
+        });
+
+        // Keyboard: Enter to navigate first result
+        searchInput.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') {
+            var firstLink = searchDropdown.querySelector('.search-result-item');
+            if (firstLink) {
+              window.location.href = firstLink.getAttribute('href');
+            }
+          }
+          if (e.key === 'Escape') {
+            searchDropdown.classList.remove('show');
+            searchInput.blur();
+          }
+        });
+      }
+    })();
+
+    function escapeHtml(text) {
+      var div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ===== PROFILE DROPDOWN =====
+    (function() {
+      const toggle = document.getElementById('profileDropdownToggle');
+      const dropdown = document.getElementById('profileDropdown');
+
+      if (toggle && dropdown) {
+        toggle.addEventListener('click', function(e) {
+          e.stopPropagation();
+          dropdown.classList.toggle('show');
+        });
+
+        document.addEventListener('click', function(e) {
+          if (!toggle.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.remove('show');
+          }
+        });
+      }
+    })();
+
+    // ===== DATE FILTER DROPDOWN =====
+    (function() {
+      const btn = document.getElementById('dateFilterBtn');
+      const dropdown = document.getElementById('dateDropdown');
+
+      if (btn && dropdown) {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          dropdown.classList.toggle('show');
+        });
+
+        document.addEventListener('click', function(e) {
+          if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.remove('show');
+          }
+        });
+      }
+    })();
+
+    // ===== CHART.JS =====
     document.addEventListener('DOMContentLoaded', function() {
-      const ctx = document.getElementById('dashboardChart').getContext('2d');
+      const canvas = document.getElementById('dashboardChart');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
       new Chart(ctx, {
         type: 'doughnut',
         data: {
@@ -275,12 +544,7 @@
               <%= totalUsers || 0 %>,
               <%= totalFavorites || 0 %>
             ],
-            backgroundColor: [
-              '#c4956a',
-              '#7bc47f',
-              '#6ab0e8',
-              '#e88080'
-            ],
+            backgroundColor: ['#c4956a', '#7bc47f', '#6ab0e8', '#e88080'],
             borderWidth: 0,
             hoverOffset: 8
           }]
@@ -296,10 +560,7 @@
                 padding: 16,
                 usePointStyle: true,
                 pointStyle: 'circle',
-                font: {
-                  family: 'Inter, system-ui, sans-serif',
-                  size: 12
-                },
+                font: { family: 'Inter, system-ui, sans-serif', size: 12 },
                 color: '#4a3728'
               }
             }
