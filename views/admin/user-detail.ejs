@@ -34,11 +34,7 @@
   </header>
 
   <main class="admin-main">
-    <div style="margin-bottom:24px;">
-      <a href="/admin/users" style="display:inline-flex;align-items:center;gap:6px;color:var(--admin-text-light);text-decoration:none;font-size:0.88rem;font-weight:500;margin-bottom:12px;">
-        <i class="fas fa-arrow-left"></i> Back to Users
-      </a>
-    </div>
+    <%- include("../partials/admin-breadcrumb", { pageTitle: 'User Details', pageIcon: 'fas fa-user' }) %>
 
     <div class="admin-grid-2col" style="grid-template-columns:1fr 1.5fr;">
       <!-- User Profile Card -->

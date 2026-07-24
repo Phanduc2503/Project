@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Woofy - Manage Favorites</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="/css/woofy-theme.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body class="admin-body">
+  <div class="admin-sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+  <%- include("../partials/admin-sidebar", { currentPage: 'favorites' }) %>
+  <header class="admin-topbar">
+    <div class="admin-topbar-left">
+      <button class="admin-toggle-sidebar" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="admin-topbar-search">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search favorites..." disabled />
+      </div>
+    </div>
+    <div class="admin-topbar-right">
+      <div class="admin-profile" id="profileDropdownToggle">
+        <div class="avatar"><%= currentUser ? currentUser.username.charAt(0).toUpperCase() : 'A' %></div>
+        <span class="name"><%= currentUser ? currentUser.username : 'Admin' %></span>
+        <i class="fas fa-chevron-down" style="font-size:0.7rem;color:var(--admin-text-muted);"></i>
+      </div>
+      <div class="admin-profile-dropdown" id="profileDropdown">
+        <a href="/user/profile" class="dropdown-item"><i class="fas fa-user"></i> My Profile</a>
+        <a href="/admin" class="dropdown-item"><i class="fas fa-th-large"></i> Dashboard</a>
+        <a href="/breeds" class="dropdown-item"><i class="fas fa-paw"></i> Breeds</a>
+        <div class="dropdown-divider"></div>
+        <a href="/logout" class="dropdown-item dropdown-danger"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </div>
+    </div>
+  </header>
+  <main class="admin-main">
+    <%- include("../partials/admin-breadcrumb", { pageTitle: 'Manage Favorites', pageIcon: 'fas fa-heart' }) %>
+    <div class="admin-page-header">
+      <div>
+        <h1><i class="fas fa-heart" style="color:var(--admin-primary);margin-right:10px;"></i> Manage Favorites</h1>
+        <p style="color:var(--admin-text-light);font-size:0.9rem;margin-top:4px;"><%= totalAllFavorites %> favorite<%= totalAllFavorites !== 1 ? 's' : '' %> total<% if (search) { %> matching "<strong><%= search %></strong>"<% } %></p>
+      </div>
+      <div class="admin-header-actions">
+        <a href="/admin/favorites/export/csv" class="admin-btn-secondary" style="padding:10px 20px;text-decoration:none;"><i class="fas fa-download"></i> Export CSV</a>
+        <a href="/admin/favorites" class="admin-btn-secondary" style="padding:10px 20px;text-decoration:none;"><i class="fas fa-sync-alt"></i> Refresh</a>
+      </div>
+    </div>
+    <% if (success) { %><div class="admin-alert success" id="alertSuccess"><i class="fas fa-check-circle"></i> <%= success %><button onclick="this.parentElement.remove()" style="margin-left:auto;background:none;border:none;color:inherit;cursor:pointer;font-size:1rem;">&times;</button></div><% } %>
+    <% if (error) { %><div class="admin-alert error" id="alertError"><i class="fas fa-exclamation-circle"></i> <%= error %><button onclick="this.parentElement.remove()" style="margin-left:auto;background:none;border:none;color:inherit;cursor:pointer;font-size:1rem;">&times;</button></div><% } %>
+    <div class="admin-stats-row">
+      <div class="admin-stat-card">
+        <div class="stat-icon" style="background:linear-gradient(135deg, #e88080, #d46060);"><i class="fas fa-heart"></i></div>
+        <div class="stat-info">
+          <div class="stat-label">Total Favorites</div>
+          <div class="stat-number"><%= totalAllFavorites %></div>
+          <div class="stat-change up"><i class="fas fa-arrow-up"></i> All saved favorites</div>
+        </div>
+      </div>
+      <div class="admin-stat-card">
+        <div class="stat-icon" style="background:linear-gradient(135deg, #6ab0e8, #4a90d9);"><i class="fas fa-users"></i></div>
+        <div class="stat-info">
+          <div class="stat-label">Users with Favorites</div>
+          <div class="stat-number"><%= totalUsersWithFavorites %></div>
+          <div class="stat-change up"><i class="fas fa-arrow-up"></i> Active users</div>
+        </div>
+      </div>
+      <div class="admin-stat-card">
+        <div class="stat-icon" style="background:linear-gradient(135deg, #c4956a, #a67b5b);"><i class="fas fa-crown"></i></div>
+        <div class="stat-info">
+          <div class="stat-label">Most Favorited</div>
+          <div class="stat-number" style="font-size:1.1rem;"><%= mostFavBreedName %></div>
+          <div class="stat-change up"><i class="fas fa-arrow-up"></i> <%= mostFavBreedCount %> favorite<%= mostFavBreedCount !== 1 ? 's' : '' %></div>
+        </div>
+      </div>
+      <div class="admin-stat-card">
+        <div class="stat-icon" style="background:linear-gradient(135deg, #7bc47f, #5aad5e);"><i class="fas fa-calendar-day"></i></div>
+        <div class="stat-info">
+          <div class="stat-label">Today / This Week</div>
+          <div class="stat-number"><%= todayFavs %> <span style="font-size:0.9rem;color:var(--admin-text-muted);font-weight:400;">/ <%= weekFavs %></span></div>
+          <div class="stat-change up"><i class="fas fa-arrow-up"></i> Added today / this week</div>
+        </div>
+      </div>
+    </div>
+    <div class="admin-grid-3col" style="margin-bottom:24px;">
+      <div class="admin-card">
+        <div class="admin-card-header"><h3><i class="fas fa-chart-bar" style="color:var(--admin-primary);"></i> Top Breeds</h3></div>
+        <div class="admin-card-body"><div class="chart-container" style="height:220px;"><canvas id="breedsChart"></canvas></div></div>
+      </div>
+      <div class="admin-card">
+        <div class="admin-card-header"><h3><i class="fas fa-chart-pie" style="color:var(--admin-primary);"></i> By Category</h3></div>
+        <div class="admin-card-body"><div class="chart-container" style="height:220px;"><canvas id="categoryChart"></canvas></div></div>
+      </div>
+      <div class="admin-card">
+        <div class="admin-card-header"><h3><i class="fas fa-chart-line" style="color:var(--admin-primary);"></i> Last 7 Days</h3></div>
+        <div class="admin-card-body"><div class="chart-container" style="height:220px;"><canvas id="timelineChart"></canvas></div></div>
+      </div>
+    </div>
+    <div class="admin-search-bar">
+      <form method="GET" action="/admin/favorites" style="display:flex;gap:12px;flex-wrap:wrap;width:100%;align-items:center;" id="filterForm">
+        <div style="position:relative;flex:1;min-width:180px;">
+          <i class="fas fa-search" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--admin-text-muted);font-size:0.9rem;pointer-events:none;"></i>
+          <input type="text" name="search" placeholder="Search by username or breed..." value="<%= search %>" style="padding-left:38px;width:100%;box-sizing:border-box;" />
+        </div>
+        <select name="userId" style="min-width:140px;padding:10px 16px;border:1px solid var(--admin-border);border-radius:var(--admin-radius-sm);font-size:0.88rem;outline:none;background:var(--admin-bg);color:var(--admin-text);font-family:inherit;cursor:pointer;transition:var(--admin-transition);">
+          <option value="">All Users</option>
+          <% (allUsers || []).forEach(function(u) { %>
+            <option value="<%= u._id %>" <%= userId === u._id.toString() ? 'selected' : '' %>><%= u.username %></option>
+          <% }); %>
+        </select>
+        <select name="breedId" style="min-width:140px;padding:10px 16px;border:1px solid var(--admin-border);border-radius:var(--admin-radius-sm);font-size:0.88rem;outline:none;background:var(--admin-bg);color:var(--admin-text);font-family:inherit;cursor:pointer;transition:var(--admin-transition);">
+          <option value="">All Breeds</option>
+          <% (allBreeds || []).forEach(function(b) { %>
+            <option value="<%= b._id %>" <%= breedId === b._id.toString() ? 'selected' : '' %>><%= b.name %></option>
+          <% }); %>
+        </select>
+        <select name="sort" style="min-width:130px;padding:10px 16px;border:1px solid var(--admin-border);border-radius:var(--admin-radius-sm);font-size:0.88rem;outline:none;background:var(--admin-bg);color:var(--admin-text);font-family:inherit;cursor:pointer;transition:var(--admin-transition);">
+          <option value="newest" <%= sort === 'newest' ? 'selected' : '' %>>Newest First</option>
+          <option value="oldest" <%= sort === 'oldest' ? 'selected' : '' %>>Oldest First</option>
+        </select>
+        <button type="submit"><i class="fas fa-filter"></i> Filter</button>
+        <% if (search || userId || breedId) { %>
+          <a href="/admin/favorites" class="admin-btn-secondary" style="padding:10px 20px;text-decoration:none;"><i class="fas fa-times"></i> Clear</a>
+        <% } %>
+      </form>
+    </div>
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h3><i class="fas fa-heart" style="color:var(--admin-primary);"></i> Favorites List</h3>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button class="admin-btn-danger" id="bulkDeleteBtn" style="display:none;padding:8px 16px;font-size:0.82rem;" onclick="bulkDelete()"><i class="fas fa-trash-alt"></i> Delete Selected</button>
+        </div>
+      </div>
+      <div class="admin-card-body" style="padding:0;">
+        <% if (favorites && favorites.length > 0) { %>
+          <form id="bulkForm" method="POST" action="/admin/favorites/bulk-delete">
+            <div class="admin-table-wrapper">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th style="width:40px;text-align:center;"><input type="checkbox" id="selectAll" onchange="toggleAllCheckboxes()" style="cursor:pointer;width:16px;height:16px;accent-color:var(--admin-primary);" /></th>
+                    <th style="min-width:160px;">User</th>
+                    <th style="min-width:160px;">Breed</th>
+                    <th>Category</th>
+                    <th>Date Added</th>
+                    <th style="text-align:center;min-width:120px;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% favorites.forEach(function(f) { %>
+                    <tr>
+                      <td style="text-align:center;"><input type="checkbox" name="ids" value="<%= f._id %>" class="fav-checkbox" onchange="updateBulkButton()" style="cursor:pointer;width:16px;height:16px;accent-color:var(--admin-primary);" /></td>
+                      <td>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                          <div style="width:34px;height:34px;border-radius:50%;overflow:hidden;flex-shrink:0;background:linear-gradient(135deg,var(--admin-primary),var(--admin-primary-dark));box-shadow:0 2px 6px rgba(166,123,91,0.15);">
+                            <% if (f.userId && f.userId.avatar) { %><img src="<%= f.userId.avatar %>" alt="<%= f.userId.username %>" style="width:100%;height:100%;object-fit:cover;" /><% } else { %><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.8rem;font-weight:700;"><%= f.userId ? f.userId.username.charAt(0).toUpperCase() : '?' %></div><% } %>
+                          </div>
+                          <a href="/admin/users/<%= f.userId._id %>" class="breed-name" style="text-decoration:none;font-size:0.88rem;"><%= f.userId ? f.userId.username : 'Deleted User' %></a>
+                        </div>
+                      </td>
+                      <td>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                          <div style="width:40px;height:40px;border-radius:8px;overflow:hidden;flex-shrink:0;background:var(--admin-accent);">
+                            <% if (f.breedId && f.breedId.image) { %><img src="<%= f.breedId.image %>" alt="<%= f.breedId.name %>" style="width:100%;height:100%;object-fit:cover;" /><% } else { %><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--admin-primary);font-size:1rem;"><i class="fas fa-paw"></i></div><% } %>
+                          </div>
+                          <a href="/breeds/<%= f.breedId._id %>" class="breed-name" style="text-decoration:none;font-size:0.88rem;"><%= f.breedId ? f.breedId.name : 'Deleted Breed' %></a>
+                        </div>
+                      </td>
+                      <td><span class="category-tag"><%= (f.breedId && f.breedId.categoryId) ? f.breedId.categoryId.name : '—' %></span></td>
+                      <td><span style="color:var(--admin-text-muted);font-size:0.82rem;"><%= new Date(f.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></span></td>
+                      <td style="text-align:center;">
+                        <div style="display:flex;gap:2px;justify-content:center;flex-wrap:wrap;">
+                          <a href="/breeds/<%= f.breedId._id %>" class="table-action" title="View Breed"><i class="fas fa-paw"></i></a>
+                          <a href="/admin/users/<%= f.userId._id %>" class="table-action" title="View User"><i class="fas fa-user"></i></a>
+                          <form method="POST" action="/admin/favorites/delete/<%= f._id %>" style="display:inline;" class="delete-fav-form">
+                            <button type="button" class="table-action btn-delete-fav" title="Remove Favorite" style="background:none;border:none;cursor:pointer;font-size:1rem;padding:4px 8px;border-radius:6px;color:#e88080;transition:var(--admin-transition);font-family:inherit;" data-username="<%= f.userId ? f.userId.username : 'Unknown' %>" data-breed="<%= f.breedId ? f.breedId.name : 'Unknown' %>"><i class="fas fa-trash-alt"></i></button>
+                          </form>
+                        </div>
+                      </td>
+                    </tr>
+                  <% }); %>
+                </tbody>
+              </table>
+            </div>
+          </form>
+        <% } else { %>
+          <div class="admin-empty" style="padding:60px 20px;">
+            <span class="empty-icon" style="font-size:4rem;opacity:0.15;display:block;margin-bottom:16px;">💔</span>
+            <h4 style="font-size:1.15rem;margin-bottom:8px;"><% if (search || userId || breedId) { %>No favorites match your criteria<% } else { %>No favorites yet<% } %></h4>
+            <p style="color:var(--admin-text-muted);font-size:0.92rem;max-width:400px;margin:0 auto 20px;line-height:1.6;">
+              <% if (search || userId || breedId) { %>Try adjusting your search or filter criteria. No favorites match the current filters.<% } else { %>Users haven't added any favorites yet. Favorites will appear here once users save breeds they love.<% } %>
+            </p>
+            <% if (search || userId || breedId) { %>
+              <a href="/admin/favorites" class="admin-btn-primary" style="text-decoration:none;display:inline-flex;"><i class="fas fa-times"></i> Clear All Filters</a>
+            <% } else { %>
+              <div style="display:flex;align-items:center;justify-content:center;gap:8px;font-size:0.88rem;color:var(--admin-text-muted);background:var(--admin-accent);padding:12px 24px;border-radius:50px;width:fit-content;margin:0 auto;"><i class="fas fa-info-circle" style="color:var(--admin-primary);"></i> Favorites appear here when users save breeds</div>
+            <% } %>
+          </div>
+        <% } %>
+      </div>
+    </div>
+    <% if (totalPages > 1) { %>
+      <div class="admin-pagination">
+        <% if (currentPage > 1) { %><a href="/admin/favorites?page=<%= currentPage - 1 %><%= search ? '&search=' + search : '' %><%= userId ? '&userId=' + userId : '' %><%= breedId ? '&breedId=' + breedId : '' %><%= sort ? '&sort=' + sort : '' %>" class="admin-pagination-btn page-link" title="Previous page"><i class="fas fa-chevron-left"></i></a><% } %>
+        <% const maxVisible = 5; let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2)); let endPage = Math.min(totalPages, startPage + maxVisible - 1); if (endPage - startPage + 1 < maxVisible) { startPage = Math.max(1, endPage - maxVisible + 1); } %>
+        <% if (startPage > 1) { %><a href="/admin/favorites?page=1<%= search ? '&search=' + search : '' %><%= userId ? '&userId=' + userId : '' %><%= breedId ? '&breedId=' + breedId : '' %><%= sort ? '&sort=' + sort : '' %>" class="admin-pagination-btn">1</a><% if (startPage > 2) { %><span class="admin-pagination-ellipsis">&hellip;</span><% } %><% } %>
+        <% for (let p = startPage; p <= endPage; p++) { %><a href="/admin/favorites?page=<%= p %><%= search ? '&search=' + search : '' %><%= userId ? '&userId=' + userId : '' %><%= breedId ? '&breedId=' + breedId : '' %><%= sort ? '&sort=' + sort : '' %>" class="admin-pagination-btn <%= p === currentPage ? 'active' : '' %>"><%= p %></a><% } %>
+        <% if (endPage < totalPages) { %><% if (endPage < totalPages - 1) { %><span class="admin-pagination-ellipsis">&hellip;</span><% } %><a href="/admin/favorites?page=<%= totalPages %><%= search ? '&search=' + search : '' %><%= userId ? '&userId=' + userId : '' %><%= breedId ? '&breedId=' + breedId : '' %><%= sort ? '&sort=' + sort : '' %>" class="admin-pagination-btn"><%= totalPages %></a><% } %>
+        <% if (currentPage < totalPages) { %><a href="/admin/favorites?page=<%= currentPage + 1 %><%= search ? '&search=' + search : '' %><%= userId ? '&userId=' + userId : '' %><%= breedId ? '&breedId=' + breedId : '' %><%= sort ? '&sort=' + sort : '' %>" class="admin-pagination-btn page-link" title="Next page"><i class="fas fa-chevron-right"></i></a><% } %>
+      </div>
+      <div style="text-align:center;margin-top:12px;font-size:0.82rem;color:var(--admin-text-muted);">Page <%= currentPage %> of <%= totalPages %> &middot; Showing <%= ((currentPage - 1) * 10) + 1 %>&ndash;<%= Math.min(currentPage * 10, totalFavorites) %> of <%= totalFavorites %> favorites</div>
+    <% } %>
+    <div class="admin-card" style="margin-top:24px;">
+      <div class="admin-card-header"><h3><i class="fas fa-history" style="color:var(--admin-primary);"></i> Recent Activity</h3></div>
+      <div class="admin-card-body" style="padding:0;">
+        <% if (activityLog && activityLog.length > 0) { %>
+          <ul class="activity-list">
+            <% activityLog.forEach(function(log) { %>
+              <li class="activity-item">
+                <span class="activity-dot fav"></span>
+                <div class="activity-text">
+                  <p><strong><%= log.username %></strong> favorited <strong><%= log.breedName %></strong></p>
+                  <span class="activity-time"><%= new Date(log.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }) %></span>
+                </div>
+              </li>
+            <% }); %>
+          </ul>
+        <% } else { %>
+          <div class="admin-empty" style="padding:24px;"><span class="empty-icon">📭</span><h4>No recent activity</h4><p>Activity will appear here as users save their favorite breeds.</p></div>
+        <% } %>
+      </div>
+    </div>
+  </main>
+  <div class="admin-modal-overlay" id="confirmModal">
+    <div class="admin-modal">
+      <div class="admin-modal-icon" id="modalIcon"><i class="fas fa-exclamation-triangle"></i></div>
+      <h3 class="admin-modal-title" id="modalTitle">Are you sure?</h3>
+      <p class="admin-modal-message" id="modalMessage">This action cannot be undone.</p>
+      <div class="admin-modal-actions">
+        <button class="admin-btn-secondary" id="modalCancelBtn" onclick="closeModal()"><i class="fas fa-times"></i> Cancel</button>
+        <button class="admin-btn-danger" id="modalConfirmBtn"><i class="fas fa-check"></i> Confirm</button>
+      </div>
+    </div>
+  </div>
+  <style>
+    .admin-alert { display:flex; align-items:center; gap:10px; padding:14px 20px; border-radius:var(--admin-radius-sm); margin-bottom:20px; font-size:0.9rem; font-weight:500; animation:adminFadeUp 0.3s ease; }
+    .admin-alert.success { background:rgba(123,196,127,0.12); color:#2d7a31; border:1px solid rgba(123,196,127,0.2); }
+    .admin-alert.error { background:rgba(232,128,128,0.12); color:#991b1b; border:1px solid rgba(232,128,128,0.2); }
+    .admin-alert i { font-size:1.1rem; }
+    .admin-pagination { display:flex; justify-content:center; align-items:center; gap:6px; margin-top:24px; flex-wrap:wrap; }
+    .admin-pagination-btn { display:inline-flex; align-items:center; justify-content:center; min-width:40px; height:40px; padding:0 10px; border-radius:10px; text-decoration:none; font-weight:600; font-size:0.88rem; background:#fff; color:var(--admin-text-light); border:1px solid var(--admin-border); transition:var(--admin-transition); }
+    .admin-pagination-btn:hover { border-color:var(--admin-primary-light); background:var(--admin-accent); color:var(--admin-primary-dark); }
+    .admin-pagination-btn.active { background:linear-gradient(135deg,var(--admin-primary),var(--admin-primary-dark)); color:#fff; border-color:transparent; box-shadow:0 4px 12px rgba(166,123,91,0.25); }
+    .admin-pagination-ellipsis { display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; color:var(--admin-text-muted); font-size:1.1rem; font-weight:600; }
+    .page-link { min-width:40px; height:40px; padding:0; display:inline-flex; align-items:center; justify-content:center; text-decoration:none; }
+    .admin-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); z-index:10000; display:none; align-items:center; justify-content:center; padding:20px; animation:adminFadeIn 0.2s ease; }
+    .admin-modal-overlay.show { display:flex; }
+    .admin-modal { background:#fff; border-radius:var(--admin-radius); padding:36px 32px 28px; max-width:420px; width:100%; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.15); animation:adminModalSlideUp 0.3s ease; }
+    .admin-modal-icon { font-size:2.2rem; margin-bottom:16px; color:#e88080; }
+    .admin-modal-icon.info { color:var(--admin-primary); }
+    .admin-modal-icon.warning { color:#e88080; }
+    .admin-modal-title { font-size:1.2rem; font-weight:700; color:var(--admin-text); margin-bottom:8px; }
+    .admin-modal-message { font-size:0.9rem; color:var(--admin-text-light); margin-bottom:24px; line-height:1.6; }
+    .admin-modal-actions { display:flex; gap:10px; justify-content:center; }
+    .admin-modal-actions .admin-btn-secondary, .admin-modal-actions .admin-btn-danger { padding:10px 24px; font-size:0.88rem; min-width:100px; justify-content:center; }
+    .admin-profile { position:relative; cursor:pointer; }
+    .admin-profile-dropdown { position:absolute; top:calc(100% + 8px); right:0; width:200px; background:#fff; border:1px solid var(--admin-border); border-radius:var(--admin-radius-sm); box-shadow:0 8px 30px rgba(0,0,0,0.1); z-index:2000; display:none; padding:6px; opacity:0; transform:translateY(-4px); transition:opacity 0.2s ease, transform 0.2s ease; }
+    .admin-profile-dropdown.show { display:block; opacity:1; transform:translateY(0); }
+    .admin-profile-dropdown .dropdown-item { display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:8px; text-decoration:none; color:var(--admin-text-light); font-size:0.88rem; font-weight:500; transition:background 0.15s ease; }
+    .admin-profile-dropdown .dropdown-item:hover { background:var(--admin-accent); color:var(--admin-primary-dark); }
+    .admin-profile-dropdown .dropdown-item i { width:18px; text-align:center; }
+    .admin-profile-dropdown .dropdown-divider { height:1px; background:var(--admin-border); margin:4px 0; }
+    .admin-profile-dropdown .dropdown-danger { color:#e88080; }
+    .admin-profile-dropdown .dropdown-danger:hover { background:#fee2e2 !important; color:#991b1b !important; }
+    .admin-search-bar select:focus { border-color:var(--admin-primary) !important; box-shadow:0 0 0 3px rgba(196,149,106,0.1) !important; background:#fff !important; }
+    @keyframes adminFadeIn { from{opacity:0} to{opacity:1} }
+    @keyframes adminModalSlideUp { from{opacity:0;transform:translateY(20px) scale(0.95)} to{opacity:1;transform:translateY(0) scale(1)} }
+    @media (max-width:768px) { .admin-modal { padding:28px 20px 24px; } .admin-modal-actions { flex-direction:column; } .admin-modal-actions .admin-btn-secondary, .admin-modal-actions .admin-btn-danger { width:100%; } }
+  </style>
+  <script>
+    function toggleSidebar() { document.getElementById('adminSidebar').classList.toggle('open'); document.getElementById('sidebarOverlay').classList.toggle('show'); }
+    (function(){var t=document.getElementById('profileDropdownToggle'),d=document.getElementById('profileDropdown');if(t&&d){t.addEventListener('click',function(e){e.stopPropagation();d.classList.toggle('show')});document.addEventListener('click',function(e){if(!t.contains(e.target)&&!d.contains(e.target)){d.classList.remove('show')}})}})();
+    function toggleAllCheckboxes(){var sa=document.getElementById('selectAll');document.querySelectorAll('.fav-checkbox').forEach(function(cb){cb.checked=sa.checked});updateBulkButton()}
+    function updateBulkButton(){var c=document.querySelectorAll('.fav-checkbox:checked'),b=document.getElementById('bulkDeleteBtn');if(c.length>0){b.style.display='inline-flex';b.innerHTML='<i class="fas fa-trash-alt"></i> Delete ('+c.length+')'}else{b.style.display='none'}}
+    var currentBulkForm=null;
+    function bulkDelete(){var c=document.querySelectorAll('.fav-checkbox:checked');if(c.length===0)return;var f=document.getElementById('bulkForm');currentBulkForm=f;openModal('<i class="fas fa-trash-alt"></i>','Delete Favorites','Are you sure you want to permanently delete '+c.length+' favorite(s)? This action cannot be undone.','danger','Delete All',f)}
+    (function(){var m=document.getElementById('confirmModal'),mi=document.getElementById('modalIcon'),mt=document.getElementById('modalTitle'),mm=document.getElementById('modalMessage'),cb=document.getElementById('modalConfirmBtn'),cc=document.getElementById('modalCancelBtn'),cf=null;window.openModal=function(i,t,msg,cls,txt,f){mi.innerHTML=i;mi.className='admin-modal-icon '+(cls==='danger'?'warning':'info');mt.textContent=t;mm.textContent=msg;cb.className=cls==='danger'?'admin-btn-danger':'admin-btn-primary';cb.innerHTML='<i class="fas fa-check"></i> '+txt;cf=f;m.classList.add('show')};window.closeModal=function(){m.classList.remove('show');cf=null};cb.addEventListener('click',function(){if(cf)cf.submit();closeModal()});cc.addEventListener('click',closeModal);m.addEventListener('click',function(e){if(e.target===m)closeModal()});document.addEventListener('keydown',function(e){if(e.key==='Escape'&&m.classList.contains('show'))closeModal()});document.addEventListener('click',function(e){var db=e.target.closest('.btn-delete-fav');if(db){e.preventDefault();var u=db.getAttribute('data-username'),b=db.getAttribute('data-breed'),f=db.closest('.delete-fav-form');openModal('<i class="fas fa-trash-alt"></i>','Remove Favorite','Are you sure you want to remove "'+b+'" from "'+u+'\'s" favorites?','danger','Remove',f)}})})();
+    document.addEventListener('DOMContentLoaded',function(){setTimeout(function(){document.querySelectorAll('.admin-alert').forEach(function(el){el.remove()})},5000)});
+    document.addEventListener('DOMContentLoaded',function(){
+      var bc=document.getElementById('breedsChart');
+      if(bc){new Chart(bc.getContext('2d'),{type:'bar',data:{labels:<%= JSON.stringify(chartBreeds.map(b=>b.name)) %>,datasets:[{label:'Favorites',data:<%= JSON.stringify(chartBreeds.map(b=>b.count)) %>,backgroundColor:'rgba(196,149,106,0.7)',borderColor:'rgba(166,123,91,1)',borderWidth:1,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}},x:{ticks:{font:{size:10}}}}}})}
+      var cc=document.getElementById('categoryChart');
+      if(cc){new Chart(cc.getContext('2d'),{type:'doughnut',data:{labels:<%= JSON.stringify(chartCategories.map(c=>c.name)) %>,datasets:[{data:<%= JSON.stringify(chartCategories.map(c=>c.count)) %>,backgroundColor:['#c4956a','#7bc47f','#6ab0e8','#e88080','#f0c060','#a67b5b','#d46060','#5aad5e'],borderWidth:0,hoverOffset:8}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'bottom',labels:{padding:8,usePointStyle:true,pointStyle:'circle',font:{size:10}}}}}})}
+      var tc=document.getElementById('timelineChart');
+      if(tc){new Chart(tc.getContext('2d'),{type:'line',data:{labels:<%= JSON.stringify(chartDayLabels) %>,datasets:[{label:'Favorites',data:<%= JSON.stringify(chartDayCounts) %>,borderColor:'#e88080',backgroundColor:'rgba(232,128,128,0.1)',fill:true,tension:0.3,pointBackgroundColor:'#e88080',pointRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}}})
+    });
+  </script>
+</body>
+</html>

@@ -13,6 +13,7 @@ exports.index = async (req, res) => {
     const roleFilter = req.query.role || "";
     const statusFilter = req.query.status || "";
     const sort = req.query.sort || "newest";
+    const range = req.query.range || "";
 
     // Build filter
     const filter = {};
@@ -24,6 +25,11 @@ exports.index = async (req, res) => {
     }
     if (roleFilter) filter.role = roleFilter;
     if (statusFilter) filter.status = statusFilter;
+    if (range === "new") {
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      filter.createdAt = { $gte: thirtyDaysAgo };
+    }
 
     // Build sort
     let sortOption = {};
@@ -57,6 +63,7 @@ exports.index = async (req, res) => {
       roleFilter,
       statusFilter,
       sort,
+      range,
       success: req.query.success || null,
       error: req.query.error || null,
       totalAllUsers,

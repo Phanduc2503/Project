@@ -1,0 +1,7 @@
+<div class="breadcrumb" style="padding-top:0;margin-bottom:20px;">
+  <a href="/admin"><i class="fas fa-th-large"></i> Dashboard</a>
+  <span>▶</span>
+  <% if (locals.pageTitle) { %>
+    <span><i class="<%= locals.pageIcon || 'fas fa-circle' %>" style="font-size:0.5rem;vertical-align:middle;"></i> <%= pageTitle %></span>
+  <% } %>
+</div>
