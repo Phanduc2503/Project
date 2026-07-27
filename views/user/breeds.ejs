@@ -18,7 +18,7 @@
 
     <div class="page-title">
       <h1>🐶 All Dog Breeds</h1>
-      <p>Khám phá các giống chó nổi tiếng trên thế giới.</p>
+      <p>Discover famous dog breeds from around the world.</p>
     </div>
 
     <!-- Search & Filter Toolbar -->
@@ -67,7 +67,7 @@
                   <p><%= breed.temperament || "Updating..." %></p>
                 </div>
               </div>
-              <a href="/breeds/<%= breed._id %>" class="btn-detail">Xem chi tiết</a>
+              <a href="/breeds/<%= breed._id %>" class="btn-detail">View Details</a>
             </div>
           </div>
         <% }) %>
@@ -75,7 +75,7 @@
         <div class="empty-box" style="grid-column: 1 / -1;">
           <img src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png" alt="Empty" />
           <h2>No breeds found</h2>
-          <p>Chưa có giống chó nào trong hệ thống.</p>
+          <p>No breeds in the system yet.</p>
         </div>
       <% } %>
     </div>

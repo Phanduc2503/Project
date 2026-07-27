@@ -13,23 +13,7 @@
 
   <div class="admin-sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
-  <header class="admin-topbar">
-    <div class="admin-topbar-left">
-      <button class="admin-toggle-sidebar" onclick="toggleSidebar()" aria-label="Toggle sidebar">
-        <i class="fas fa-bars"></i>
-      </button>
-      <div class="admin-topbar-search">
-        <i class="fas fa-search"></i>
-        <input type="text" placeholder="Search breeds..." />
-      </div>
-    </div>
-    <div class="admin-topbar-right">
-      <div class="admin-profile">
-        <div class="avatar"><%= (currentUser && currentUser.username) ? currentUser.username.charAt(0).toUpperCase() : 'A' %></div>
-        <span class="name"><%= (currentUser && currentUser.username) ? currentUser.username : 'Admin' %></span>
-      </div>
-    </div>
-  </header>
+  <%- include("../partials/admin-header") %>
 
   <main class="admin-main">
     <%- include("../partials/admin-breadcrumb", { pageTitle: 'Edit Breed', pageIcon: 'fas fa-edit' }) %>
@@ -39,7 +23,7 @@
         <h1 class="form-title">Edit Breed</h1>
         <p class="form-subtitle">Update breed information in the Woofy database.</p>
 
-        <form action="/breeds/update/<%= breed._id %>" method="POST">
+        <form action="/breeds/update/<%= breed._id %>" method="POST" enctype="multipart/form-data">
           <div class="admin-form-group">
             <label class="admin-form-label">Category</label>
             <select name="categoryId" class="admin-form-select" required>
@@ -88,8 +72,14 @@
           </div>
 
           <div class="admin-form-group">
-            <label class="admin-form-label">Image URL</label>
-            <input type="text" name="image" class="admin-form-input" value="<%= breed.image || '' %>">
+            <label class="admin-form-label">Image</label>
+            <% if (breed.image) { %>
+              <div style="margin-bottom:10px;">
+                <img src="<%= breed.image %>" alt="<%= breed.name %>" style="max-width:200px;max-height:150px;border-radius:8px;border:1px solid var(--admin-border);object-fit:cover;" />
+                <p style="font-size:0.78rem;color:var(--admin-text-muted);margin-top:4px;">Current image. Upload a new one to replace it.</p>
+              </div>
+            <% } %>
+            <input type="file" name="image" class="admin-form-input" accept="image/*" style="padding:8px;" />
           </div>
 
           <div class="admin-form-actions">

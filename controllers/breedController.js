@@ -26,7 +26,7 @@ exports.create = async (req, res) => {
     try {
         const categories = await Category.find();
 
-        console.log(categories); // kiểm tra có dữ liệu không
+        console.log(categories); // check if data exists
 
         res.render("breed/create", {
             categories
@@ -93,9 +93,23 @@ exports.update = async (req, res) => {
     try {
 
         const oldBreed = await Breed.findById(req.params.id);
+        const updateData = { ...req.body };
+
+        // Handle image upload: use uploaded file path, or keep existing image
+        if (req.file) {
+            updateData.image = "/uploads/breeds/" + req.file.filename;
+        } else {
+            // Keep existing image (don't overwrite with undefined)
+            if (oldBreed && oldBreed.image) {
+                updateData.image = oldBreed.image;
+            } else {
+                delete updateData.image;
+            }
+        }
+
         await Breed.findByIdAndUpdate(
             req.params.id,
-            req.body
+            updateData
         );
 
         await createNotification(

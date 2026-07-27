@@ -1,7 +1,7 @@
 const Favorite = require("../models/Favorite");
 const { createNotification } = require("./notificationController");
 
-// Hiển thị danh sách
+// Display list of favorites
 exports.index = async (req, res) => {
     try {
 
@@ -25,7 +25,7 @@ exports.index = async (req, res) => {
 };
 
 
-// Thêm favorite
+// Add favorite
 exports.addFavorite = async (req, res) => {
     try {
 
@@ -40,7 +40,7 @@ exports.addFavorite = async (req, res) => {
         if (exist) {
             return res.json({
                 success: false,
-                message: "Đã tồn tại"
+                message: "Already exists"
             });
         }
 
@@ -74,7 +74,7 @@ exports.addFavorite = async (req, res) => {
 };
 
 
-// Xóa favorite
+// Delete favorite
 exports.removeFavorite = async (req, res) => {
     
 
@@ -84,7 +84,7 @@ exports.removeFavorite = async (req, res) => {
 
             return res.status(401).json({
                 success:false,
-                message:"Chưa đăng nhập"
+                message:"Not logged in"
             });
 
         }

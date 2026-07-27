@@ -13,23 +13,7 @@
 
   <div class="admin-sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
-  <header class="admin-topbar">
-    <div class="admin-topbar-left">
-      <button class="admin-toggle-sidebar" onclick="toggleSidebar()" aria-label="Toggle sidebar">
-        <i class="fas fa-bars"></i>
-      </button>
-      <div class="admin-topbar-search">
-        <i class="fas fa-search"></i>
-        <input type="text" placeholder="Search categories..." />
-      </div>
-    </div>
-    <div class="admin-topbar-right">
-      <div class="admin-profile">
-        <div class="avatar"><%= (currentUser && currentUser.username) ? currentUser.username.charAt(0).toUpperCase() : 'A' %></div>
-        <span class="name"><%= (currentUser && currentUser.username) ? currentUser.username : 'Admin' %></span>
-      </div>
-    </div>
-  </header>
+  <%- include("../partials/admin-header") %>
 
   <main class="admin-main">
     <%- include("../partials/admin-breadcrumb", { pageTitle: 'Manage Categories', pageIcon: 'fas fa-folder' }) %>

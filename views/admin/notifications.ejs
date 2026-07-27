@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Woofy - Notifications</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="/css/woofy-theme.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+</head>
+<body class="admin-body">
+  <div class="admin-sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+  <%- include("../partials/admin-sidebar", { currentPage: 'notifications' }) %>
+
+  <header class="admin-topbar">
+    <div class="admin-topbar-left">
+      <button class="admin-toggle-sidebar" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="admin-topbar-search">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search..." disabled />
+      </div>
+    </div>
+    <div class="admin-topbar-right">
+      <div class="admin-profile" id="profileDropdownToggle">
+        <div class="avatar"><%= currentUser ? currentUser.username.charAt(0).toUpperCase() : 'A' %></div>
+        <span class="name"><%= currentUser ? currentUser.username : 'Admin' %></span>
+        <i class="fas fa-chevron-down" style="font-size:0.7rem;color:var(--admin-text-muted);"></i>
+      </div>
+      <div class="admin-profile-dropdown" id="profileDropdown">
+        <a href="/user/profile" class="dropdown-item"><i class="fas fa-user"></i> My Profile</a>
+        <a href="/admin" class="dropdown-item"><i class="fas fa-th-large"></i> Dashboard</a>
+        <a href="/breeds" class="dropdown-item"><i class="fas fa-paw"></i> Breeds</a>
+        <div class="dropdown-divider"></div>
+        <a href="/logout" class="dropdown-item dropdown-danger"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <%- include("../partials/admin-breadcrumb", { pageTitle: 'Notifications', pageIcon: 'fas fa-bell' }) %>
+
+    <div class="admin-page-header">
+      <div>
+        <h1><i class="fas fa-bell" style="color:var(--admin-primary);margin-right:10px;"></i> Notifications</h1>
+        <p style="color:var(--admin-text-light);font-size:0.9rem;margin-top:4px;">
+          <%= totalNotifications %> total · <%= unreadCount %> unread
+        </p>
+      </div>
+      <div class="admin-header-actions">
+        <% if (unreadCount > 0) { %>
+          <form method="POST" action="/admin/notifications/read-all" style="display:inline;">
+            <button type="submit" class="admin-btn-secondary" style="padding:10px 20px;">
+              <i class="fas fa-check-double"></i> Mark All Read
+            </button>
+          </form>
+        <% } %>
+        <form method="POST" action="/admin/notifications/clear-all" style="display:inline;">
+          <button type="submit" class="admin-btn-danger" style="padding:10px 20px;" onclick="return confirm('Clear all notifications?')">
+            <i class="fas fa-trash-alt"></i> Clear All
+          </button>
+        </form>
+        <a href="/admin/notifications" class="admin-btn-secondary" style="padding:10px 20px;text-decoration:none;">
+          <i class="fas fa-sync-alt"></i> Refresh
+        </a>
+      </div>
+    </div>
+
+    <% if (success) { %>
+      <div class="admin-alert success"><i class="fas fa-check-circle"></i> <%= success %><button onclick="this.parentElement.remove()" style="margin-left:auto;background:none;border:none;color:inherit;cursor:pointer;font-size:1rem;">&times;</button></div>
+    <% } %>
+    <% if (error) { %>
+      <div class="admin-alert error"><i class="fas fa-exclamation-circle"></i> <%= error %><button onclick="this.parentElement.remove()" style="margin-left:auto;background:none;border:none;color:inherit;cursor:pointer;font-size:1rem;">&times;</button></div>
+    <% } %>
+
+    <!-- Filters -->
+    <div class="admin-search-bar">
+      <form method="GET" action="/admin/notifications" style="display:flex;gap:12px;flex-wrap:wrap;width:100%;align-items:center;">
+        <select name="status" style="min-width:130px;padding:10px 16px;border:1px solid var(--admin-border);border-radius:var(--admin-radius-sm);font-size:0.88rem;outline:none;background:var(--admin-bg);color:var(--admin-text);font-family:inherit;cursor:pointer;">
+          <option value="">All Status</option>
+          <option value="unread" <%= statusFilter === 'unread' ? 'selected' : '' %>>Unread</option>
+          <option value="read" <%= statusFilter === 'read' ? 'selected' : '' %>>Read</option>
+        </select>
+        <button type="submit"><i class="fas fa-filter"></i> Filter</button>
+        <% if (statusFilter) { %>
+          <a href="/admin/notifications" class="admin-btn-secondary" style="padding:10px 20px;text-decoration:none;"><i class="fas fa-times"></i> Clear</a>
+        <% } %>
+      </form>
+    </div>
+
+    <!-- Notifications List -->
+    <div class="admin-card">
+      <div class="admin-card-body" style="padding:0;">
+        <% if (notifications && notifications.length > 0) { %>
+          <ul class="admin-notif-list">
+            <% notifications.forEach(function(n) { %>
+              <li class="admin-notif-item <%= n.read ? '' : 'unread' %>">
+                <span class="admin-notif-icon"><%= n.icon || '🔔' %></span>
+                <div class="admin-notif-content">
+                  <div class="admin-notif-title"><%= n.title %></div>
+                  <div class="admin-notif-desc"><%= n.description %></div>
+                  <div class="admin-notif-time"><%= new Date(n.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }) %></div>
+                </div>
+                <% if (!n.read) { %>
+                  <form method="POST" action="/admin/notifications/<%= n._id %>/read" style="display:inline;" class="mark-read-form">
+                    <button type="button" class="table-action btn-mark-read" title="Mark as read" style="background:none;border:none;cursor:pointer;font-size:1rem;padding:4px 8px;border-radius:6px;color:var(--admin-text-muted);transition:var(--admin-transition);font-family:inherit;">
+                      <i class="fas fa-check-circle"></i>
+                    </button>
+                  </form>
+                <% } %>
+                <form method="POST" action="/admin/notifications/<%= n._id %>/delete" style="display:inline;" class="delete-notif-form">
+                  <button type="button" class="table-action btn-delete-notif" title="Delete" style="background:none;border:none;cursor:pointer;font-size:1rem;padding:4px 8px;border-radius:6px;color:#e88080;transition:var(--admin-transition);font-family:inherit;">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </form>
+              </li>
+            <% }); %>
+          </ul>
+        <% } else { %>
+          <div class="admin-empty" style="padding:60px 20px;">
+            <span class="empty-icon" style="font-size:4rem;opacity:0.15;display:block;margin-bottom:16px;">🔔</span>
+            <h4 style="font-size:1.15rem;margin-bottom:8px;">
+              <% if (statusFilter) { %>No notifications match your filter<% } else { %>No notifications yet<% } %>
+            </h4>
+            <p style="color:var(--admin-text-muted);font-size:0.92rem;max-width:400px;margin:0 auto 20px;line-height:1.6;">
+              <% if (statusFilter) { %>Try adjusting your filter criteria.<% } else { %>Notifications will appear here when actions occur in the system.<% } %>
+            </p>
+          </div>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <% if (totalPages > 1) { %>
+      <div class="admin-pagination">
+        <% if (currentPage > 1) { %><a href="/admin/notifications?page=<%= currentPage - 1 %><%= statusFilter ? '&status=' + statusFilter : '' %>" class="admin-pagination-btn page-link" title="Previous"><i class="fas fa-chevron-left"></i></a><% } %>
+        <% for (let p = 1; p <= totalPages; p++) { %>
+          <a href="/admin/notifications?page=<%= p %><%= statusFilter ? '&status=' + statusFilter : '' %>" class="admin-pagination-btn <%= p === currentPage ? 'active' : '' %>"><%= p %></a>
+        <% } %>
+        <% if (currentPage < totalPages) { %><a href="/admin/notifications?page=<%= currentPage + 1 %><%= statusFilter ? '&status=' + statusFilter : '' %>" class="admin-pagination-btn page-link" title="Next"><i class="fas fa-chevron-right"></i></a><% } %>
+      </div>
+      <div style="text-align:center;margin-top:12px;font-size:0.82rem;color:var(--admin-text-muted);">Page <%= currentPage %> of <%= totalPages %></div>
+    <% } %>
+  </main>
+
+  <style>
+    .admin-alert { display:flex; align-items:center; gap:10px; padding:14px 20px; border-radius:var(--admin-radius-sm); margin-bottom:20px; font-size:0.9rem; font-weight:500; animation:adminFadeUp 0.3s ease; }
+    .admin-alert.success { background:rgba(123,196,127,0.12); color:#2d7a31; border:1px solid rgba(123,196,127,0.2); }
+    .admin-alert.error { background:rgba(232,128,128,0.12); color:#991b1b; border:1px solid rgba(232,128,128,0.2); }
+    .admin-alert i { font-size:1.1rem; }
+    .admin-pagination { display:flex; justify-content:center; align-items:center; gap:6px; margin-top:24px; flex-wrap:wrap; }
+    .admin-pagination-btn { display:inline-flex; align-items:center; justify-content:center; min-width:40px; height:40px; padding:0 10px; border-radius:10px; text-decoration:none; font-weight:600; font-size:0.88rem; background:#fff; color:var(--admin-text-light); border:1px solid var(--admin-border); transition:var(--admin-transition); }
+    .admin-pagination-btn:hover { border-color:var(--admin-primary-light); background:var(--admin-accent); color:var(--admin-primary-dark); }
+    .admin-pagination-btn.active { background:linear-gradient(135deg,var(--admin-primary),var(--admin-primary-dark)); color:#fff; border-color:transparent; box-shadow:0 4px 12px rgba(166,123,91,0.25); }
+    .page-link { min-width:40px; height:40px; padding:0; display:inline-flex; align-items:center; justify-content:center; text-decoration:none; }
+    .admin-profile { position:relative; cursor:pointer; }
+    .admin-profile-dropdown { position:absolute; top:calc(100% + 8px); right:0; width:200px; background:#fff; border:1px solid var(--admin-border); border-radius:var(--admin-radius-sm); box-shadow:0 8px 30px rgba(0,0,0,0.1); z-index:2000; display:none; padding:6px; opacity:0; transform:translateY(-4px); transition:opacity 0.2s ease, transform 0.2s ease; }
+    .admin-profile-dropdown.show { display:block; opacity:1; transform:translateY(0); }
+    .admin-profile-dropdown .dropdown-item { display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:8px; text-decoration:none; color:var(--admin-text-light); font-size:0.88rem; font-weight:500; transition:background 0.15s ease; }
+    .admin-profile-dropdown .dropdown-item:hover { background:var(--admin-accent); color:var(--admin-primary-dark); }
+    .admin-profile-dropdown .dropdown-item i { width:18px; text-align:center; }
+    .admin-profile-dropdown .dropdown-divider { height:1px; background:var(--admin-border); margin:4px 0; }
+    .admin-profile-dropdown .dropdown-danger { color:#e88080; }
+    .admin-profile-dropdown .dropdown-danger:hover { background:#fee2e2 !important; color:#991b1b !important; }
+  </style>
+
+  <script>
+    function toggleSidebar() { document.getElementById('adminSidebar').classList.toggle('open'); document.getElementById('sidebarOverlay').classList.toggle('show'); }
+
+    (function(){
+      var t=document.getElementById('profileDropdownToggle'),d=document.getElementById('profileDropdown');
+      if(t&&d){
+        t.addEventListener('click',function(e){e.stopPropagation();d.classList.toggle('show')});
+        document.addEventListener('click',function(e){if(!t.contains(e.target)&&!d.contains(e.target)){d.classList.remove('show')}});
+        document.addEventListener('keydown',function(e){if(e.key==='Escape'&&d.classList.contains('show')){d.classList.remove('show')}});
+      }
+    })();
+
+    // Mark as read buttons
+    document.querySelectorAll('.btn-mark-read').forEach(function(btn){
+      btn.addEventListener('click',function(e){
+        e.preventDefault();
+        var form = this.closest('.mark-read-form');
+        var li = this.closest('.admin-notif-item');
+        fetch(form.action, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
+          .then(function(res){ return res.json(); })
+          .then(function(data){
+            if(data.success){
+              li.classList.remove('unread');
+              btn.closest('form').remove();
+            }
+          });
+      });
+    });
+
+    // Delete notification buttons
+    document.querySelectorAll('.btn-delete-notif').forEach(function(btn){
+      btn.addEventListener('click',function(e){
+        e.preventDefault();
+        if(confirm('Delete this notification?')){
+          this.closest('.delete-notif-form').submit();
+        }
+      });
+    });
+
+    // Auto-hide alerts
+    setTimeout(function(){ document.querySelectorAll('.admin-alert').forEach(function(el){ el.remove(); }); }, 5000);
+  </script>
+</body>
+</html>

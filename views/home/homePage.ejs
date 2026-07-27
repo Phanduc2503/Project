@@ -12,10 +12,10 @@
   <main class="container">
     <section class="hero">
       <div class="hero-left">
-        <h1>Chào mừng đến với <span>Woofy</span></h1>
+        <h1>Welcome to <span>Woofy</span></h1>
         <p>
-          Nơi tìm kiếm người bạn bốn chân hoàn hảo cho bạn.
-          Khám phá giống chó, danh mục và những thông tin hữu ích về thú cưng.
+          The place to find your perfect four-legged friend.
+          Discover dog breeds, categories, and useful pet information.
         </p>
 
         <div class="hero-stats">
@@ -29,7 +29,7 @@
           </div>
         </div>
 
-        <a href="/user/breeds" class="btn-primary">Khám phá ngay</a>
+        <a href="/user/breeds" class="btn-primary">Explore Now</a>
       </div>
 
       <div class="hero-right">
@@ -39,7 +39,7 @@
 
     <section class="section">
       <div class="section-header">
-        <h2>📂 Danh mục giống chó</h2>
+        <h2>📂 Breed Categories</h2>
       </div>
 
       <div class="category-grid">
@@ -47,13 +47,13 @@
           <% categories.forEach(category => { %>
             <div class="category-card">
               <h3><%= category.name %></h3>
-              <p><%= category.description ? category.description : "Chưa có mô tả cho category này." %></p>
-              <a href="/category/<%= category._id %>" class="btn-detail">Xem giống chó →</a>
+              <p><%= category.description ? category.description : "No description available for this category." %></p>
+              <a href="/category/<%= category._id %>" class="btn-detail">View Breeds →</a>
             </div>
           <% }) %>
         <% } else { %>
           <div class="empty-box">
-            <p>Chưa có category nào trong database.</p>
+            <p>No categories in the database.</p>
           </div>
         <% } %>
       </div>
@@ -61,7 +61,7 @@
 
     <section class="section">
       <div class="section-header">
-        <h2>🐶 Giống chó nổi bật</h2>
+        <h2>🐶 Featured Breeds</h2>
       </div>
 
       <div class="breed-grid">
@@ -74,7 +74,7 @@
                 <% } else { %>
                   <img src="https://via.placeholder.com/600x400?text=No+Image" alt="No image">
                 <% } %>
-                <span class="category-badge"><%= breed.categoryId ? breed.categoryId.name : "Không có category" %></span>
+                <span class="category-badge"><%= breed.categoryId ? breed.categoryId.name : "No category" %></span>
               </div>
 
               <div class="breed-content">
@@ -84,13 +84,13 @@
                 <% if (breed.temperament) { %>
                   <p><strong>Temperament:</strong> <%= breed.temperament %></p>
                 <% } %>
-                <a href="/breeds/<%= breed._id %>" class="btn-detail">Xem chi tiết</a>
+                <a href="/breeds/<%= breed._id %>" class="btn-detail">View Details</a>
               </div>
             </div>
           <% }) %>
         <% } else { %>
           <div class="empty-box">
-            <p>Chưa có breed nào trong database.</p>
+            <p>No breeds in the database.</p>
           </div>
         <% } %>
       </div>

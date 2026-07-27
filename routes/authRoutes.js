@@ -7,8 +7,6 @@ const {
   requireAdmin,
 } = require("../middleware/authMiddleware");
 
-router.get("/admin", requireLogin, requireAdmin, authController.dashboard);
-
 router.get("/login", authController.showLogin);
 router.get("/register", authController.showRegister);
 

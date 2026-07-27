@@ -40,7 +40,7 @@ app.use(
   })
 );
 
-// currentUser cho tất cả EJS
+// Make currentUser available to all EJS templates
 app.use((req, res, next) => {
   res.locals.currentUser = req.session.user || null;
   next();

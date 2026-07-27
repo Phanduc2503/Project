@@ -115,6 +115,71 @@ exports.adminPage = async (req, res) => {
   }
 };
 
+// Admin reports page
+exports.adminReports = async (req, res) => {
+  try {
+    const totalBreeds = await Breed.countDocuments();
+    const totalCategories = await Category.countDocuments();
+    const totalUsers = await User.countDocuments();
+    const totalFavorites = await Favorite.countDocuments();
+
+    // Category distribution
+    const categories = await Category.find().lean();
+    const catDistribution = [];
+    for (const cat of categories) {
+      const count = await Breed.countDocuments({ categoryId: cat._id });
+      catDistribution.push({ name: cat.name, count });
+    }
+
+    // Top breeds by popularity (favorites count)
+    const topBreedsAgg = await Favorite.aggregate([
+      { $group: { _id: "$breedId", count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 10 }
+    ]);
+    const topBreedIds = topBreedsAgg.map(b => b._id);
+    const topBreeds = await Breed.find({ _id: { $in: topBreedIds } }).select("name").lean();
+    const breedMap = {};
+    topBreeds.forEach(b => { breedMap[b._id.toString()] = b.name; });
+    const popularBreeds = topBreedsAgg.map(b => ({
+      name: breedMap[b._id.toString()] || "Unknown",
+      count: b.count
+    }));
+
+    // User registrations over time (last 7 days)
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+    sevenDaysAgo.setHours(0, 0, 0, 0);
+    const userDays = [];
+    const userCounts = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(sevenDaysAgo);
+      d.setDate(d.getDate() + i);
+      const dayStart = new Date(d);
+      dayStart.setHours(0, 0, 0, 0);
+      const dayEnd = new Date(d);
+      dayEnd.setHours(23, 59, 59, 999);
+      const count = await User.countDocuments({ createdAt: { $gte: dayStart, $lte: dayEnd } });
+      userDays.push(d.toLocaleDateString("en-US", { month: "short", day: "numeric" }));
+      userCounts.push(count);
+    }
+
+    res.render("admin/reports", {
+      totalBreeds,
+      totalCategories,
+      totalUsers,
+      totalFavorites,
+      catDistribution,
+      popularBreeds,
+      reportDays: userDays,
+      reportUserCounts: userCounts
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Server Error");
+  }
+};
+
 // Admin search API - searches breeds, categories, and users
 exports.adminSearch = async (req, res) => {
   try {

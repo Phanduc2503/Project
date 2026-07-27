@@ -4,27 +4,27 @@ const router = express.Router();
 const categoryController = require("../controllers/categoryController");
 
 
-// Danh sách Category (user-facing)
+// List Categories (user-facing)
 router.get("/category", categoryController.index);
 
 router.get("/category/:id", categoryController.detail);
 
-// Admin: Danh sách Category
+// Admin: List Categories
 router.get("/categories", categoryController.adminIndex);
 
-// Hiển thị form thêm
+// Show create form
 router.get("/categories/create", categoryController.create);
 
-// Thêm Category
+// Create Category
 router.post("/categories", categoryController.store);
 
-// Hiển thị form sửa
+// Show edit form
 router.get("/categories/edit/:id", categoryController.edit);
 
-// Cập nhật Category
+// Update Category
 router.post("/categories/update/:id", categoryController.update);
 
-// Xóa Category
+// Delete Category
 router.get("/categories/delete/:id", categoryController.destroy);
 
 module.exports = router;

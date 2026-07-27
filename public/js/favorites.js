@@ -1,6 +1,6 @@
 console.log("favorite.js loaded");
 
-// Trang All Breeds
+// All Breeds page
 document.querySelectorAll(".favorite-btn").forEach(btn => {
 
     btn.addEventListener("click", async () => {
@@ -22,7 +22,7 @@ document.querySelectorAll(".favorite-btn").forEach(btn => {
 });
 
 
-// Trang Favorites
+// Favorites page
 document.querySelectorAll(".remove-btn").forEach(btn => {
 
     btn.addEventListener("click", async () => {

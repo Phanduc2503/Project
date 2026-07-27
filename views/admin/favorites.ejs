@@ -12,31 +12,7 @@
 <body class="admin-body">
   <div class="admin-sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
   <%- include("../partials/admin-sidebar", { currentPage: 'favorites' }) %>
-  <header class="admin-topbar">
-    <div class="admin-topbar-left">
-      <button class="admin-toggle-sidebar" onclick="toggleSidebar()" aria-label="Toggle sidebar">
-        <i class="fas fa-bars"></i>
-      </button>
-      <div class="admin-topbar-search">
-        <i class="fas fa-search"></i>
-        <input type="text" placeholder="Search favorites..." disabled />
-      </div>
-    </div>
-    <div class="admin-topbar-right">
-      <div class="admin-profile" id="profileDropdownToggle">
-        <div class="avatar"><%= currentUser ? currentUser.username.charAt(0).toUpperCase() : 'A' %></div>
-        <span class="name"><%= currentUser ? currentUser.username : 'Admin' %></span>
-        <i class="fas fa-chevron-down" style="font-size:0.7rem;color:var(--admin-text-muted);"></i>
-      </div>
-      <div class="admin-profile-dropdown" id="profileDropdown">
-        <a href="/user/profile" class="dropdown-item"><i class="fas fa-user"></i> My Profile</a>
-        <a href="/admin" class="dropdown-item"><i class="fas fa-th-large"></i> Dashboard</a>
-        <a href="/breeds" class="dropdown-item"><i class="fas fa-paw"></i> Breeds</a>
-        <div class="dropdown-divider"></div>
-        <a href="/logout" class="dropdown-item dropdown-danger"><i class="fas fa-sign-out-alt"></i> Logout</a>
-      </div>
-    </div>
-  </header>
+  <%- include("../partials/admin-header") %>
   <main class="admin-main">
     <%- include("../partials/admin-breadcrumb", { pageTitle: 'Manage Favorites', pageIcon: 'fas fa-heart' }) %>
     <div class="admin-page-header">
@@ -282,7 +258,7 @@
   </style>
   <script>
     function toggleSidebar() { document.getElementById('adminSidebar').classList.toggle('open'); document.getElementById('sidebarOverlay').classList.toggle('show'); }
-    (function(){var t=document.getElementById('profileDropdownToggle'),d=document.getElementById('profileDropdown');if(t&&d){t.addEventListener('click',function(e){e.stopPropagation();d.classList.toggle('show')});document.addEventListener('click',function(e){if(!t.contains(e.target)&&!d.contains(e.target)){d.classList.remove('show')}})}})();
+    (function(){var t=document.getElementById('profileDropdownToggle'),d=document.getElementById('profileDropdown');if(t&&d){t.addEventListener('click',function(e){e.stopPropagation();d.classList.toggle('show')});document.addEventListener('click',function(e){if(!t.contains(e.target)&&!d.contains(e.target)){d.classList.remove('show')}});document.addEventListener('keydown',function(e){if(e.key==='Escape'&&d.classList.contains('show')){d.classList.remove('show')}})}})();
     function toggleAllCheckboxes(){var sa=document.getElementById('selectAll');document.querySelectorAll('.fav-checkbox').forEach(function(cb){cb.checked=sa.checked});updateBulkButton()}
     function updateBulkButton(){var c=document.querySelectorAll('.fav-checkbox:checked'),b=document.getElementById('bulkDeleteBtn');if(c.length>0){b.style.display='inline-flex';b.innerHTML='<i class="fas fa-trash-alt"></i> Delete ('+c.length+')'}else{b.style.display='none'}}
     var currentBulkForm=null;

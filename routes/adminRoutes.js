@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const adminUserController = require("../controllers/adminUserController");
 const adminFavoriteController = require("../controllers/adminFavoriteController");
+const adminNotificationController = require("../controllers/adminNotificationController");
 const homeController = require("../controllers/homeController");
 const { requireLogin, requireAdmin } = require("../middleware/authMiddleware");
 
@@ -23,5 +24,28 @@ router.get("/admin/favorites", adminFavoriteController.index);
 router.post("/admin/favorites/delete/:id", adminFavoriteController.destroy);
 router.post("/admin/favorites/bulk-delete", adminFavoriteController.bulkDestroy);
 router.get("/admin/favorites/export/csv", adminFavoriteController.exportCsv);
+
+// Notification management
+router.get("/admin/notifications", adminNotificationController.index);
+router.post("/admin/notifications/:id/read", adminNotificationController.markAsRead);
+router.post("/admin/notifications/read-all", adminNotificationController.markAllAsRead);
+router.post("/admin/notifications/clear-all", adminNotificationController.clearAll);
+router.post("/admin/notifications/:id/delete", adminNotificationController.destroy);
+
+// Settings
+router.get("/admin/settings", (req, res) => {
+  res.render("admin/settings", { success: null, error: null });
+});
+router.post("/admin/settings", async (req, res) => {
+  try {
+    const { siteName, siteDescription, itemsPerPage } = req.body;
+    res.render("admin/settings", { success: "Settings saved successfully!", error: null });
+  } catch (err) {
+    res.render("admin/settings", { success: null, error: "Failed to save settings." });
+  }
+});
+
+// Reports
+router.get("/admin/reports", homeController.adminReports);
 
 module.exports = router;

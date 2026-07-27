@@ -163,7 +163,7 @@
         <div class="qa-label">Manage Users</div>
         <div class="qa-desc">View and manage users</div>
       </a>
-      <a href="/breeds" class="admin-quick-action">
+      <a href="/admin/reports" class="admin-quick-action">
         <div class="qa-icon"><i class="fas fa-chart-bar"></i></div>
         <div class="qa-label">View Reports</div>
         <div class="qa-desc">Analytics and insights</div>
@@ -176,7 +176,7 @@
       <div class="admin-card">
         <div class="admin-card-header">
           <h3><i class="fas fa-bell" style="color:var(--admin-primary);"></i> Notifications</h3>
-          <a href="/admin/notifications" class="card-action" style="display:none;">View All <i class="fas fa-arrow-right"></i></a>
+          <a href="/admin/notifications" class="card-action">View All <i class="fas fa-arrow-right"></i></a>
         </div>
         <div class="admin-card-body" style="padding:0;">
           <% if (recentNotifications && recentNotifications.length > 0) { %>
@@ -503,6 +503,12 @@
 
         document.addEventListener('click', function(e) {
           if (!toggle.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.remove('show');
+          }
+        });
+
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape' && dropdown.classList.contains('show')) {
             dropdown.classList.remove('show');
           }
         });
