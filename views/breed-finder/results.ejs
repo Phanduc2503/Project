@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Woofy - Breed Finder Results</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="/css/woofy-theme.css" />
+  <link rel="stylesheet" href="/css/breed-finder.css" />
+</head>
+<body>
+  <%- include('../partials/header') %>
+
+  <main class="bf-main">
+    <div class="bf-results-hero">
+      <div class="bf-hero-content">
+        <span class="bf-badge"><i class="fas fa-robot"></i> AI-Powered Results</span>
+        <h1>Your Perfect Matches</h1>
+        <p>Based on your preferences, here are the most compatible dog breeds for you.</p>
+      </div>
+    </div>
+
+    <div class="bf-container">
+      <!-- Summary Card -->
+      <div class="bf-summary-card">
+        <div class="bf-summary-header">
+          <i class="fas fa-clipboard-list"></i>
+          <h3>Your Preferences Summary</h3>
+        </div>
+        <div class="bf-summary-tags">
+          <% if (answers.living) { %><span class="bf-tag"><%= answers.living %></span><% } %>
+          <% if (answers.homeSize) { %><span class="bf-tag"><%= answers.homeSize %> Home</span><% } %>
+          <% if (answers.experience) { %><span class="bf-tag"><%= answers.experience %></span><% } %>
+          <% if (answers.family) { %><span class="bf-tag"><%= answers.family %></span><% } %>
+          <% if (answers.children === 'Yes') { %><span class="bf-tag">Has Children</span><% } %>
+          <% if (answers.otherPets && answers.otherPets !== 'None') { %><span class="bf-tag">Has <%= answers.otherPets %></span><% } %>
+          <% if (answers.exercise) { %><span class="bf-tag"><%= answers.exercise %> Exercise</span><% } %>
+          <% if (answers.preferredSize) { %><span class="bf-tag"><%= answers.preferredSize %> Size</span><% } %>
+          <% if (answers.energy) { %><span class="bf-tag"><%= answers.energy %> Energy</span><% } %>
+          <% if (answers.grooming) { %><span class="bf-tag"><%= answers.grooming %></span><% } %>
+          <% if (answers.purpose) { %><span class="bf-tag"><%= answers.purpose %></span><% } %>
+          <% if (answers.climate) { %><span class="bf-tag"><%= answers.climate %> Climate</span><% } %>
+        </div>
+        <% if (typeof isHistory === 'undefined' || !isHistory) { %>
+          <% if (savedRecordId && user) { %>
+            <button class="bf-btn bf-btn-primary bf-save-btn" onclick="saveRecommendation('<%= savedRecordId %>')">
+              <i class="fas fa-bookmark"></i> Save This Recommendation
+            </button>
+          <% } %>
+        <% } %>
+        <% if (typeof isHistory !== 'undefined' && isHistory) { %>
+          <span class="bf-history-badge"><i class="fas fa-history"></i> Viewing Saved Recommendation</span>
+        <% } %>
+      </div>
+
+      <!-- Results -->
+      <div class="bf-results-list">
+        <% if (results && results.length > 0) { %>
+          <% results.forEach(function(item, index) { %>
+            <div class="bf-result-card animate-in" style="animation-delay: <%= index * 0.1 %>s">
+              <div class="bf-result-rank">#<%= index + 1 %></div>
+              
+              <div class="bf-result-image">
+                <img src="<%= item.breed.image && item.breed.image.trim() !== '' ? item.breed.image : 'https://via.placeholder.com/600x400?text=No+Image' %>" 
+                     alt="<%= item.breed.name %>" 
+                     onerror="this.src='https://via.placeholder.com/600x400?text=No+Image'" />
+              </div>
+
+              <div class="bf-result-content">
+                <div class="bf-result-header">
+                  <div>
+                    <h2><%= item.breed.name %></h2>
+                    <span class="bf-result-category"><%= item.breed.categoryId ? item.breed.categoryId.name : 'General' %></span>
+                  </div>
+                  <div class="bf-score-circle" style="--score: <%= item.score %>%">
+                    <svg viewBox="0 0 36 36" class="bf-score-svg">
+                      <path class="bf-score-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                      <path class="bf-score-fill" stroke-dasharray="<%= item.score %>, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                      <text x="18" y="20.5" class="bf-score-text"><%= item.score %>%</text>
+                    </svg>
+                  </div>
+                </div>
+
+                <div class="bf-result-details">
+                  <div class="bf-detail-item">
+                    <span class="bf-detail-label">Origin</span>
+                    <span class="bf-detail-value"><%= item.breed.originCountry || 'N/A' %></span>
+                  </div>
+                  <div class="bf-detail-item">
+                    <span class="bf-detail-label">Life Expectancy</span>
+                    <span class="bf-detail-value"><%= item.breed.lifeExpectancy ? item.breed.lifeExpectancy + ' years' : 'N/A' %></span>
+                  </div>
+                  <div class="bf-detail-item">
+                    <span class="bf-detail-label">Temperament</span>
+                    <span class="bf-detail-value"><%= item.breed.temperament ? item.breed.temperament.substring(0, 60) : 'N/A' %></span>
+                  </div>
+                  <div class="bf-detail-item">
+                    <span class="bf-detail-label">Care</span>
+                    <span class="bf-detail-value"><%= item.breed.careRequirements ? item.breed.careRequirements.substring(0, 60) : 'N/A' %></span>
+                  </div>
+                </div>
+
+                <div class="bf-result-reason">
+                  <i class="fas fa-check-circle" style="color: var(--success);"></i>
+                  <p><%= item.reason %></p>
+                </div>
+
+                <% if (item.breed.description) { %>
+                  <p class="bf-result-desc"><%= item.breed.description.substring(0, 200) %><%= item.breed.description.length > 200 ? '...' : '' %></p>
+                <% } %>
+
+                <!-- AI Explanation -->
+                <% if (item.aiExplanation) { %>
+                  <div class="bf-ai-section">
+                    <div class="bf-ai-header">
+                      <i class="fas fa-robot"></i> AI Analysis
+                    </div>
+                    <div class="bf-ai-content">
+                      <% if (item.aiExplanation.whyFit) { %>
+                        <div class="bf-ai-item">
+                          <strong>Why it fits:</strong>
+                          <p><%= item.aiExplanation.whyFit %></p>
+                        </div>
+                      <% } %>
+                      <% if (item.aiExplanation.advantages) { %>
+                        <div class="bf-ai-item">
+                          <strong>Advantages:</strong>
+                          <p><%= item.aiExplanation.advantages %></p>
+                        </div>
+                      <% } %>
+                      <% if (item.aiExplanation.disadvantages) { %>
+                        <div class="bf-ai-item">
+                          <strong>Disadvantages:</strong>
+                          <p><%= item.aiExplanation.disadvantages %></p>
+                        </div>
+                      <% } %>
+                      <% if (item.aiExplanation.trainingTips) { %>
+                        <div class="bf-ai-item">
+                          <strong>Training Tips:</strong>
+                          <p><%= item.aiExplanation.trainingTips %></p>
+                        </div>
+                      <% } %>
+                      <% if (item.aiExplanation.considerations) { %>
+                        <div class="bf-ai-item">
+                          <strong>Things to Consider:</strong>
+                          <p><%= item.aiExplanation.considerations %></p>
+                        </div>
+                      <% } %>
+                    </div>
+                  </div>
+                <% } %>
+
+                <div class="bf-result-actions">
+                  <a href="/breeds/<%= item.breedId %>" class="bf-btn bf-btn-outline bf-btn-sm">
+                    <i class="fas fa-eye"></i> View Details
+                  </a>
+                  <button class="bf-btn bf-btn-sm bf-compare-btn <%= index < 3 ? '' : 'disabled' %>" 
+                          onclick="toggleCompare('<%= item.breedId %>', '<%= item.breed.name %>', this)"
+                          <%= index >= 3 ? 'disabled' : '' %>>
+                    <i class="fas fa-balance-scale"></i> Compare
+                  </button>
+                </div>
+              </div>
+            </div>
+          <% }); %>
+        <% } else { %>
+          <div class="bf-empty">
+            <span class="bf-empty-icon">🔍</span>
+            <h3>No matches found</h3>
+            <p>We couldn't find breeds matching your criteria. Try adjusting your preferences.</p>
+            <a href="/breed-finder" class="bf-btn bf-btn-primary">Try Again</a>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- Compare Bar -->
+      <div class="bf-compare-bar" id="compareBar" style="display:none;">
+        <div class="bf-compare-bar-content">
+          <span class="bf-compare-label"><i class="fas fa-balance-scale"></i> Compare Breeds (<span id="compareCount">0</span>/3)</span>
+          <div class="bf-compare-selections" id="compareSelections"></div>
+          <button class="bf-btn bf-btn-primary bf-btn-sm" onclick="goCompare()" id="compareBtn" disabled>
+            <i class="fas fa-arrow-right"></i> Compare
+          </button>
+          <button class="bf-btn bf-btn-ghost bf-btn-sm" onclick="clearCompare()">
+            <i class="fas fa-times"></i> Clear
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <%- include('../partials/footer') %>
+
+  <script>
+    let compareIds = [];
+
+    function saveRecommendation(recordId) {
+      fetch('/breed-finder/save/' + recordId, { method: 'POST' })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.success) {
+            alert('Recommendation saved to your profile!');
+            location.reload();
+          } else {
+            alert(data.error || 'Failed to save');
+          }
+        })
+        .catch(function() { alert('Error saving recommendation'); });
+    }
+
+    function toggleCompare(breedId, breedName, btn) {
+      var idx = compareIds.indexOf(breedId);
+      if (idx > -1) {
+        compareIds.splice(idx, 1);
+        btn.classList.remove('active');
+      } else {
+        if (compareIds.length >= 3) {
+          alert('You can compare up to 3 breeds at a time.');
+          return;
+        }
+        compareIds.push(breedId);
+        btn.classList.add('active');
+      }
+      updateCompareBar();
+    }
+
+    function updateCompareBar() {
+      var bar = document.getElementById('compareBar');
+      var count = document.getElementById('compareCount');
+      var selections = document.getElementById('compareSelections');
+      var compareBtn = document.getElementById('compareBtn');
+
+      if (compareIds.length === 0) {
+        bar.style.display = 'none';
+        return;
+      }
+
+      bar.style.display = 'block';
+      count.textContent = compareIds.length;
+      compareBtn.disabled = compareIds.length < 2;
+
+      selections.innerHTML = '';
+      compareIds.forEach(function(id) {
+        var span = document.createElement('span');
+        span.className = 'bf-compare-chip';
+        span.textContent = id.substring(0, 8) + '...';
+        selections.appendChild(span);
+      });
+    }
+
+    function clearCompare() {
+      compareIds = [];
+      document.querySelectorAll('.bf-compare-btn.active').forEach(function(b) {
+        b.classList.remove('active');
+      });
+      updateCompareBar();
+    }
+
+    function goCompare() {
+      if (compareIds.length < 2) return;
+      window.location.href = '/breed-finder/compare?ids=' + compareIds.join(',');
+    }
+  </script>
+</body>
+</html>

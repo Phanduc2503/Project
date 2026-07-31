@@ -12,31 +12,7 @@
   <div class="admin-sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
   <%- include("../partials/admin-sidebar", { currentPage: 'notifications' }) %>
 
-  <header class="admin-topbar">
-    <div class="admin-topbar-left">
-      <button class="admin-toggle-sidebar" onclick="toggleSidebar()" aria-label="Toggle sidebar">
-        <i class="fas fa-bars"></i>
-      </button>
-      <div class="admin-topbar-search">
-        <i class="fas fa-search"></i>
-        <input type="text" placeholder="Search..." disabled />
-      </div>
-    </div>
-    <div class="admin-topbar-right">
-      <div class="admin-profile" id="profileDropdownToggle">
-        <div class="avatar"><%= currentUser ? currentUser.username.charAt(0).toUpperCase() : 'A' %></div>
-        <span class="name"><%= currentUser ? currentUser.username : 'Admin' %></span>
-        <i class="fas fa-chevron-down" style="font-size:0.7rem;color:var(--admin-text-muted);"></i>
-      </div>
-      <div class="admin-profile-dropdown" id="profileDropdown">
-        <a href="/user/profile" class="dropdown-item"><i class="fas fa-user"></i> My Profile</a>
-        <a href="/admin" class="dropdown-item"><i class="fas fa-th-large"></i> Dashboard</a>
-        <a href="/breeds" class="dropdown-item"><i class="fas fa-paw"></i> Breeds</a>
-        <div class="dropdown-divider"></div>
-        <a href="/logout" class="dropdown-item dropdown-danger"><i class="fas fa-sign-out-alt"></i> Logout</a>
-      </div>
-    </div>
-  </header>
+  <%- include("../partials/admin-header") %>
 
   <main class="admin-main">
     <%- include("../partials/admin-breadcrumb", { pageTitle: 'Notifications', pageIcon: 'fas fa-bell' }) %>
@@ -154,28 +130,10 @@
     .admin-pagination-btn:hover { border-color:var(--admin-primary-light); background:var(--admin-accent); color:var(--admin-primary-dark); }
     .admin-pagination-btn.active { background:linear-gradient(135deg,var(--admin-primary),var(--admin-primary-dark)); color:#fff; border-color:transparent; box-shadow:0 4px 12px rgba(166,123,91,0.25); }
     .page-link { min-width:40px; height:40px; padding:0; display:inline-flex; align-items:center; justify-content:center; text-decoration:none; }
-    .admin-profile { position:relative; cursor:pointer; }
-    .admin-profile-dropdown { position:absolute; top:calc(100% + 8px); right:0; width:200px; background:#fff; border:1px solid var(--admin-border); border-radius:var(--admin-radius-sm); box-shadow:0 8px 30px rgba(0,0,0,0.1); z-index:2000; display:none; padding:6px; opacity:0; transform:translateY(-4px); transition:opacity 0.2s ease, transform 0.2s ease; }
-    .admin-profile-dropdown.show { display:block; opacity:1; transform:translateY(0); }
-    .admin-profile-dropdown .dropdown-item { display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:8px; text-decoration:none; color:var(--admin-text-light); font-size:0.88rem; font-weight:500; transition:background 0.15s ease; }
-    .admin-profile-dropdown .dropdown-item:hover { background:var(--admin-accent); color:var(--admin-primary-dark); }
-    .admin-profile-dropdown .dropdown-item i { width:18px; text-align:center; }
-    .admin-profile-dropdown .dropdown-divider { height:1px; background:var(--admin-border); margin:4px 0; }
-    .admin-profile-dropdown .dropdown-danger { color:#e88080; }
-    .admin-profile-dropdown .dropdown-danger:hover { background:#fee2e2 !important; color:#991b1b !important; }
   </style>
 
   <script>
     function toggleSidebar() { document.getElementById('adminSidebar').classList.toggle('open'); document.getElementById('sidebarOverlay').classList.toggle('show'); }
-
-    (function(){
-      var t=document.getElementById('profileDropdownToggle'),d=document.getElementById('profileDropdown');
-      if(t&&d){
-        t.addEventListener('click',function(e){e.stopPropagation();d.classList.toggle('show')});
-        document.addEventListener('click',function(e){if(!t.contains(e.target)&&!d.contains(e.target)){d.classList.remove('show')}});
-        document.addEventListener('keydown',function(e){if(e.key==='Escape'&&d.classList.contains('show')){d.classList.remove('show')}});
-      }
-    })();
 
     // Mark as read buttons
     document.querySelectorAll('.btn-mark-read').forEach(function(btn){

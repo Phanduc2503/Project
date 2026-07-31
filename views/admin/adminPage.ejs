@@ -16,46 +16,7 @@
   <%- include("../partials/admin-sidebar", { currentPage: 'dashboard' }) %>
 
   <!-- Top Navbar -->
-  <header class="admin-topbar">
-    <div class="admin-topbar-left">
-      <button class="admin-toggle-sidebar" onclick="toggleSidebar()" aria-label="Toggle sidebar">
-        <i class="fas fa-bars"></i>
-      </button>
-      <div class="admin-topbar-search" id="globalSearch">
-        <i class="fas fa-search"></i>
-        <input type="text" id="searchInput" placeholder="Search breeds, users, categories..." autocomplete="off" />
-        <div class="admin-search-dropdown" id="searchDropdown"></div>
-      </div>
-    </div>
-
-    <div class="admin-topbar-right">
-      <div class="admin-profile" id="profileDropdownToggle">
-        <div class="avatar">
-          <% if (currentUser && currentUser.username) { %>
-            <%= currentUser.username.charAt(0).toUpperCase() %>
-          <% } else { %>
-            A
-          <% } %>
-        </div>
-        <span class="name">
-          <% if (currentUser && currentUser.username) { %>
-            <%= currentUser.username %>
-          <% } else { %>
-            Admin
-          <% } %>
-        </span>
-        <i class="fas fa-chevron-down" style="font-size:0.7rem;color:var(--admin-text-muted);"></i>
-      </div>
-      <!-- Profile Dropdown -->
-      <div class="admin-profile-dropdown" id="profileDropdown">
-        <a href="/user/profile" class="dropdown-item"><i class="fas fa-user"></i> My Profile</a>
-        <a href="/admin" class="dropdown-item"><i class="fas fa-th-large"></i> Dashboard</a>
-        <a href="/breeds" class="dropdown-item"><i class="fas fa-paw"></i> Breeds</a>
-        <div class="dropdown-divider"></div>
-        <a href="/logout" class="dropdown-item dropdown-danger"><i class="fas fa-sign-out-alt"></i> Logout</a>
-      </div>
-    </div>
-  </header>
+  <%- include("../partials/admin-header") %>
 
   <!-- Main Content -->
   <main class="admin-main">
@@ -141,6 +102,19 @@
           <div class="stat-number"><%= totalFavorites %></div>
           <div class="stat-change up">
             <i class="fas fa-arrow-up"></i> Saved favorites
+          </div>
+        </div>
+      </a>
+
+      <a href="/breed-finder" class="admin-stat-card" style="text-decoration:none;cursor:pointer;">
+        <div class="stat-icon" style="background:rgba(123,196,127,0.12);color:#5aad5e;">
+          <i class="fas fa-robot"></i>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Breed Finder Uses</div>
+          <div class="stat-number"><%= totalBreedFinderUses || 0 %></div>
+          <div class="stat-change up">
+            <i class="fas fa-arrow-up"></i> Top: <%= topRecommendedBreed || 'N/A' %>
           </div>
         </div>
       </a>
@@ -278,54 +252,6 @@
   </main>
 
   <style>
-    /* Search dropdown */
-    .admin-search-dropdown {
-      position: absolute;
-      top: calc(100% + 6px);
-      left: 0;
-      right: 0;
-      background: #fff;
-      border: 1px solid var(--admin-border);
-      border-radius: var(--admin-radius-sm);
-      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
-      z-index: 2000;
-      display: none;
-      max-height: 360px;
-      overflow-y: auto;
-    }
-    .admin-search-dropdown.show { display: block; }
-    .admin-search-dropdown .search-result-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 14px;
-      text-decoration: none;
-      color: var(--admin-text);
-      transition: background 0.15s ease;
-      border-bottom: 1px solid rgba(237,229,221,0.3);
-    }
-    .admin-search-dropdown .search-result-item:last-child { border-bottom: none; }
-    .admin-search-dropdown .search-result-item:hover { background: var(--admin-accent); }
-    .admin-search-dropdown .search-result-item .sr-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.85rem;
-      flex-shrink: 0;
-    }
-    .admin-search-dropdown .search-result-item .sr-icon.type-breed { background: rgba(196,149,106,0.12); color: var(--admin-primary-dark); }
-    .admin-search-dropdown .search-result-item .sr-icon.type-category { background: rgba(123,196,127,0.15); color: #5aad5e; }
-    .admin-search-dropdown .search-result-item .sr-icon.type-user { background: rgba(106,176,232,0.15); color: #4a90d9; }
-    .admin-search-dropdown .search-result-item .sr-info { flex: 1; min-width: 0; }
-    .admin-search-dropdown .search-result-item .sr-info .sr-label { font-size: 0.85rem; font-weight: 600; color: var(--admin-text); }
-    .admin-search-dropdown .search-result-item .sr-info .sr-sublabel { font-size: 0.75rem; color: var(--admin-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .admin-search-dropdown .search-result-item .sr-type { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: var(--admin-text-muted); letter-spacing: 0.3px; flex-shrink: 0; }
-    .admin-search-dropdown .search-no-results { padding: 20px; text-align: center; color: var(--admin-text-muted); font-size: 0.85rem; }
-    .admin-search-dropdown .search-loading { padding: 16px; text-align: center; color: var(--admin-text-muted); font-size: 0.85rem; }
-
     /* Date picker dropdown */
     .admin-date-picker { position: relative; }
     .admin-date-dropdown {
@@ -357,50 +283,6 @@
     .admin-date-dropdown .dropdown-item:hover { background: var(--admin-accent); color: var(--admin-primary-dark); }
     .admin-date-dropdown .dropdown-item.active { background: var(--admin-sidebar-active); color: var(--admin-primary-dark); font-weight: 600; }
     .admin-date-dropdown .dropdown-item i { width: 18px; text-align: center; font-size: 0.9rem; }
-
-    /* Profile dropdown */
-    .admin-profile {
-      position: relative;
-      cursor: pointer;
-    }
-    .admin-profile-dropdown {
-      position: absolute;
-      top: calc(100% + 8px);
-      right: 0;
-      width: 200px;
-      background: #fff;
-      border: 1px solid var(--admin-border);
-      border-radius: var(--admin-radius-sm);
-      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
-      z-index: 2000;
-      display: none;
-      padding: 6px;
-      opacity: 0;
-      transform: translateY(-4px);
-      transition: opacity 0.2s ease, transform 0.2s ease;
-    }
-    .admin-profile-dropdown.show {
-      display: block;
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .admin-profile-dropdown .dropdown-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 14px;
-      border-radius: 8px;
-      text-decoration: none;
-      color: var(--admin-text-light);
-      font-size: 0.88rem;
-      font-weight: 500;
-      transition: background 0.15s ease;
-    }
-    .admin-profile-dropdown .dropdown-item:hover { background: var(--admin-accent); color: var(--admin-primary-dark); }
-    .admin-profile-dropdown .dropdown-item i { width: 18px; text-align: center; }
-    .admin-profile-dropdown .dropdown-divider { height: 1px; background: var(--admin-border); margin: 4px 0; }
-    .admin-profile-dropdown .dropdown-danger { color: #e88080; }
-    .admin-profile-dropdown .dropdown-danger:hover { background: #fee2e2 !important; color: #991b1b !important; }
   </style>
 
   <script>
@@ -411,109 +293,6 @@
       sidebar.classList.toggle('open');
       overlay.classList.toggle('show');
     }
-
-    // ===== SEARCH FUNCTIONALITY =====
-    (function() {
-      const searchInput = document.getElementById('searchInput');
-      const searchDropdown = document.getElementById('searchDropdown');
-      let searchTimeout = null;
-
-      if (searchInput) {
-        searchInput.addEventListener('input', function() {
-          const q = this.value.trim();
-          clearTimeout(searchTimeout);
-
-          if (q.length === 0) {
-            searchDropdown.classList.remove('show');
-            searchDropdown.innerHTML = '';
-            return;
-          }
-
-          searchDropdown.innerHTML = '<div class="search-loading"><i class="fas fa-spinner fa-spin"></i> Searching...</div>';
-          searchDropdown.classList.add('show');
-
-          searchTimeout = setTimeout(function() {
-            fetch('/api/admin/search?q=' + encodeURIComponent(q))
-              .then(function(res) { return res.json(); })
-              .then(function(data) {
-                if (!data.results || data.results.length === 0) {
-                  searchDropdown.innerHTML = '<div class="search-no-results"><i class="fas fa-search"></i> No results found for "' + q + '"</div>';
-                  return;
-                }
-
-                var html = '';
-                data.results.forEach(function(item) {
-                  html += '<a href="' + item.url + '" class="search-result-item">' +
-                    '<div class="sr-icon type-' + item.type + '"><i class="fas ' + item.icon + '"></i></div>' +
-                    '<div class="sr-info">' +
-                      '<div class="sr-label">' + escapeHtml(item.label) + '</div>' +
-                      '<div class="sr-sublabel">' + escapeHtml(item.sublabel) + '</div>' +
-                    '</div>' +
-                    '<div class="sr-type">' + item.type + '</div>' +
-                  '</a>';
-                });
-                searchDropdown.innerHTML = html;
-              })
-              .catch(function() {
-                searchDropdown.innerHTML = '<div class="search-no-results">Search failed. Please try again.</div>';
-              });
-          }, 300);
-        });
-
-        // Close search on outside click
-        document.addEventListener('click', function(e) {
-          var searchWrapper = document.getElementById('globalSearch');
-          if (searchWrapper && !searchWrapper.contains(e.target)) {
-            searchDropdown.classList.remove('show');
-          }
-        });
-
-        // Keyboard: Enter to navigate first result
-        searchInput.addEventListener('keydown', function(e) {
-          if (e.key === 'Enter') {
-            var firstLink = searchDropdown.querySelector('.search-result-item');
-            if (firstLink) {
-              window.location.href = firstLink.getAttribute('href');
-            }
-          }
-          if (e.key === 'Escape') {
-            searchDropdown.classList.remove('show');
-            searchInput.blur();
-          }
-        });
-      }
-    })();
-
-    function escapeHtml(text) {
-      var div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    }
-
-    // ===== PROFILE DROPDOWN =====
-    (function() {
-      const toggle = document.getElementById('profileDropdownToggle');
-      const dropdown = document.getElementById('profileDropdown');
-
-      if (toggle && dropdown) {
-        toggle.addEventListener('click', function(e) {
-          e.stopPropagation();
-          dropdown.classList.toggle('show');
-        });
-
-        document.addEventListener('click', function(e) {
-          if (!toggle.contains(e.target) && !dropdown.contains(e.target)) {
-            dropdown.classList.remove('show');
-          }
-        });
-
-        document.addEventListener('keydown', function(e) {
-          if (e.key === 'Escape' && dropdown.classList.contains('show')) {
-            dropdown.classList.remove('show');
-          }
-        });
-      }
-    })();
 
     // ===== DATE FILTER DROPDOWN =====
     (function() {

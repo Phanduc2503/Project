@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Woofy - AI Breed Finder</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="/css/woofy-theme.css" />
+  <link rel="stylesheet" href="/css/breed-finder.css" />
+</head>
+<body>
+  <%- include('../partials/header') %>
+
+  <main class="bf-main">
+    <div class="bf-hero">
+      <div class="bf-hero-content">
+        <span class="bf-badge"><i class="fas fa-robot"></i> AI-Powered</span>
+        <h1>AI Breed Finder</h1>
+        <p>Answer a few questions and let our AI find the perfect dog breed for your lifestyle.</p>
+      </div>
+    </div>
+
+    <div class="bf-container">
+      <form action="/breed-finder/results" method="POST" id="breedFinderForm">
+        <!-- Progress Bar -->
+        <div class="bf-progress-wrapper">
+          <div class="bf-progress-bar" id="progressBar">
+            <div class="bf-progress-fill" id="progressFill"></div>
+          </div>
+          <div class="bf-step-indicator" id="stepIndicator">
+            <span id="currentStep">1</span>/<span id="totalSteps">12</span>
+          </div>
+        </div>
+
+        <!-- Step 1: Living -->
+        <div class="bf-step active" data-step="1">
+          <div class="bf-step-header">
+            <div class="bf-step-number">1</div>
+            <div>
+              <h2>Where do you live?</h2>
+              <p>Choose the type of home you have.</p>
+            </div>
+          </div>
+          <div class="bf-options">
+            <label class="bf-option" data-value="Apartment">
+              <input type="radio" name="living" value="Apartment" required />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🏢</span>
+                <span class="bf-option-label">Apartment</span>
+                <span class="bf-option-desc">City living, limited space</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="House">
+              <input type="radio" name="living" value="House" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🏠</span>
+                <span class="bf-option-label">House</span>
+                <span class="bf-option-desc">Suburban home with yard</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="Farm">
+              <input type="radio" name="living" value="Farm" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🌾</span>
+                <span class="bf-option-label">Farm</span>
+                <span class="bf-option-desc">Rural area, lots of land</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="Other">
+              <input type="radio" name="living" value="Other" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🏡</span>
+                <span class="bf-option-label">Other</span>
+                <span class="bf-option-desc">Different living situation</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Step 2: Home Size -->
+        <div class="bf-step" data-step="2">
+          <div class="bf-step-header">
+            <div class="bf-step-number">2</div>
+            <div>
+              <h2>Home size</h2>
+              <p>How big is your living space?</p>
+            </div>
+          </div>
+          <div class="bf-options">
+            <label class="bf-option" data-value="Small">
+              <input type="radio" name="homeSize" value="Small" required />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🪟</span>
+                <span class="bf-option-label">Small</span>
+                <span class="bf-option-desc">Compact living space</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="Medium">
+              <input type="radio" name="homeSize" value="Medium" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🏘️</span>
+                <span class="bf-option-label">Medium</span>
+                <span class="bf-option-desc">Average-sized home</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="Large">
+              <input type="radio" name="homeSize" value="Large" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🏰</span>
+                <span class="bf-option-label">Large</span>
+                <span class="bf-option-desc">Spacious with plenty of room</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Step 3: Experience -->
+        <div class="bf-step" data-step="3">
+          <div class="bf-step-header">
+            <div class="bf-step-number">3</div>
+            <div>
+              <h2>Experience with dogs</h2>
+              <p>How experienced are you with dogs?</p>
+            </div>
+          </div>
+          <div class="bf-options">
+            <label class="bf-option" data-value="Beginner">
+              <input type="radio" name="experience" value="Beginner" required />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🌱</span>
+                <span class="bf-option-label">Beginner</span>
+                <span class="bf-option-desc">First time dog owner</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="Intermediate">
+              <input type="radio" name="experience" value="Intermediate" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">⭐</span>
+                <span class="bf-option-label">Intermediate</span>
+                <span class="bf-option-desc">Some experience with dogs</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="Experienced">
+              <input type="radio" name="experience" value="Experienced" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🏆</span>
+                <span class="bf-option-label">Experienced</span>
+                <span class="bf-option-desc">Have owned multiple dogs</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Step 4: Family -->
+        <div class="bf-step" data-step="4">
+          <div class="bf-step-header">
+            <div class="bf-step-number">4</div>
+            <div>
+              <h2>Family</h2>
+              <p>What best describes your household?</p>
+            </div>
+          </div>
+          <div class="bf-options">
+            <label class="bf-option" data-value="Single">
+              <input type="radio" name="family" value="Single" required />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🧑</span>
+                <span class="bf-option-label">Single</span>
+                <span class="bf-option-desc">Living alone</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="Couple">
+              <input type="radio" name="family" value="Couple" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">👫</span>
+                <span class="bf-option-label">Couple</span>
+                <span class="bf-option-desc">Living with partner</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="Family with children">
+              <input type="radio" name="family" value="Family with children" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">👨‍👩‍👧‍👦</span>
+                <span class="bf-option-label">Family with children</span>
+                <span class="bf-option-desc">Have kids at home</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="Senior">
+              <input type="radio" name="family" value="Senior" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">👴</span>
+                <span class="bf-option-label">Senior</span>
+                <span class="bf-option-desc">Retired or older adult</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Step 5: Children -->
+        <div class="bf-step" data-step="5">
+          <div class="bf-step-header">
+            <div class="bf-step-number">5</div>
+            <div>
+              <h2>Children</h2>
+              <p>Do you have children?</p>
+            </div>
+          </div>
+          <div class="bf-options bf-options-inline">
+            <label class="bf-option" data-value="No">
+              <input type="radio" name="children" value="No" required />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🙅</span>
+                <span class="bf-option-label">No</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="Yes">
+              <input type="radio" name="children" value="Yes" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">👶</span>
+                <span class="bf-option-label">Yes</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Step 6: Other Pets -->
+        <div class="bf-step" data-step="6">
+          <div class="bf-step-header">
+            <div class="bf-step-number">6</div>
+            <div>
+              <h2>Other pets</h2>
+              <p>Do you have other pets at home?</p>
+            </div>
+          </div>
+          <div class="bf-options">
+            <label class="bf-option" data-value="None">
+              <input type="radio" name="otherPets" value="None" required />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🚫</span>
+                <span class="bf-option-label">None</span>
+                <span class="bf-option-desc">No other pets</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="Cats">
+              <input type="radio" name="otherPets" value="Cats" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🐱</span>
+                <span class="bf-option-label">Cats</span>
+                <span class="bf-option-desc">Have cats</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="Dogs">
+              <input type="radio" name="otherPets" value="Dogs" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🐕</span>
+                <span class="bf-option-label">Dogs</span>
+                <span class="bf-option-desc">Have other dogs</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="Other">
+              <input type="radio" name="otherPets" value="Other" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🐰</span>
+                <span class="bf-option-label">Other</span>
+                <span class="bf-option-desc">Other types of pets</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Step 7: Exercise -->
+        <div class="bf-step" data-step="7">
+          <div class="bf-step-header">
+            <div class="bf-step-number">7</div>
+            <div>
+              <h2>Daily exercise time</h2>
+              <p>How much time can you dedicate to exercise?</p>
+            </div>
+          </div>
+          <div class="bf-options">
+            <label class="bf-option" data-value="Less than 30 min">
+              <input type="radio" name="exercise" value="Less than 30 min" required />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🪑</span>
+                <span class="bf-option-label">Less than 30 min</span>
+                <span class="bf-option-desc">Minimal exercise time</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="30-60 min">
+              <input type="radio" name="exercise" value="30-60 min" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🚶</span>
+                <span class="bf-option-label">30-60 min</span>
+                <span class="bf-option-desc">Moderate daily walks</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="1-2 hours">
+              <input type="radio" name="exercise" value="1-2 hours" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🏃</span>
+                <span class="bf-option-label">1-2 hours</span>
+                <span class="bf-option-desc">Active lifestyle</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="More than 2 hours">
+              <input type="radio" name="exercise" value="More than 2 hours" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🏋️</span>
+                <span class="bf-option-label">More than 2 hours</span>
+                <span class="bf-option-desc">Very active lifestyle</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Step 8: Preferred Size -->
+        <div class="bf-step" data-step="8">
+          <div class="bf-step-header">
+            <div class="bf-step-number">8</div>
+            <div>
+              <h2>Preferred dog size</h2>
+              <p>What size dog are you looking for?</p>
+            </div>
+          </div>
+          <div class="bf-options">
+            <label class="bf-option" data-value="Small">
+              <input type="radio" name="preferredSize" value="Small" required />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🐩</span>
+                <span class="bf-option-label">Small</span>
+                <span class="bf-option-desc">Up to 10 kg</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="Medium">
+              <input type="radio" name="preferredSize" value="Medium" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🐕</span>
+                <span class="bf-option-label">Medium</span>
+                <span class="bf-option-desc">10-25 kg</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="Large">
+              <input type="radio" name="preferredSize" value="Large" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🦮</span>
+                <span class="bf-option-label">Large</span>
+                <span class="bf-option-desc">Over 25 kg</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="Any">
+              <input type="radio" name="preferredSize" value="Any" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🐾</span>
+                <span class="bf-option-label">Any</span>
+                <span class="bf-option-desc">No preference</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Step 9: Energy -->
+        <div class="bf-step" data-step="9">
+          <div class="bf-step-header">
+            <div class="bf-step-number">9</div>
+            <div>
+              <h2>Energy level</h2>
+              <p>What energy level suits you best?</p>
+            </div>
+          </div>
+          <div class="bf-options">
+            <label class="bf-option" data-value="Low">
+              <input type="radio" name="energy" value="Low" required />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">😴</span>
+                <span class="bf-option-label">Low</span>
+                <span class="bf-option-desc">Calm and relaxed</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="Medium">
+              <input type="radio" name="energy" value="Medium" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">😊</span>
+                <span class="bf-option-label">Medium</span>
+                <span class="bf-option-desc">Balanced energy</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="High">
+              <input type="radio" name="energy" value="High" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">⚡</span>
+                <span class="bf-option-label">High</span>
+                <span class="bf-option-desc">Very energetic</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Step 10: Grooming -->
+        <div class="bf-step" data-step="10">
+          <div class="bf-step-header">
+            <div class="bf-step-number">10</div>
+            <div>
+              <h2>Grooming</h2>
+              <p>How much grooming can you handle?</p>
+            </div>
+          </div>
+          <div class="bf-options">
+            <label class="bf-option" data-value="Low maintenance">
+              <input type="radio" name="grooming" value="Low maintenance" required />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">✅</span>
+                <span class="bf-option-label">Low maintenance</span>
+                <span class="bf-option-desc">Minimal grooming needed</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="Medium">
+              <input type="radio" name="grooming" value="Medium" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🪥</span>
+                <span class="bf-option-label">Medium</span>
+                <span class="bf-option-desc">Regular brushing</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="High maintenance">
+              <input type="radio" name="grooming" value="High maintenance" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">💅</span>
+                <span class="bf-option-label">High maintenance</span>
+                <span class="bf-option-desc">Professional grooming needed</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Step 11: Purpose -->
+        <div class="bf-step" data-step="11">
+          <div class="bf-step-header">
+            <div class="bf-step-number">11</div>
+            <div>
+              <h2>Purpose</h2>
+              <p>What is the main purpose for getting a dog?</p>
+            </div>
+          </div>
+          <div class="bf-options bf-options-grid">
+            <label class="bf-option" data-value="Companion">
+              <input type="radio" name="purpose" value="Companion" required />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">💕</span>
+                <span class="bf-option-label">Companion</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="Guard dog">
+              <input type="radio" name="purpose" value="Guard dog" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🛡️</span>
+                <span class="bf-option-label">Guard dog</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="Family dog">
+              <input type="radio" name="purpose" value="Family dog" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">👨‍👩‍👧‍👦</span>
+                <span class="bf-option-label">Family dog</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="Running partner">
+              <input type="radio" name="purpose" value="Running partner" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🏃</span>
+                <span class="bf-option-label">Running partner</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="Hiking">
+              <input type="radio" name="purpose" value="Hiking" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">⛰️</span>
+                <span class="bf-option-label">Hiking</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="Service dog">
+              <input type="radio" name="purpose" value="Service dog" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🎗️</span>
+                <span class="bf-option-label">Service dog</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="Therapy dog">
+              <input type="radio" name="purpose" value="Therapy dog" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">💚</span>
+                <span class="bf-option-label">Therapy dog</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="Show dog">
+              <input type="radio" name="purpose" value="Show dog" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🏅</span>
+                <span class="bf-option-label">Show dog</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="Any">
+              <input type="radio" name="purpose" value="Any" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🐾</span>
+                <span class="bf-option-label">Any</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Step 12: Climate -->
+        <div class="bf-step" data-step="12">
+          <div class="bf-step-header">
+            <div class="bf-step-number">12</div>
+            <div>
+              <h2>Climate</h2>
+              <p>What climate do you live in?</p>
+            </div>
+          </div>
+          <div class="bf-options">
+            <label class="bf-option" data-value="Hot">
+              <input type="radio" name="climate" value="Hot" required />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">☀️</span>
+                <span class="bf-option-label">Hot</span>
+                <span class="bf-option-desc">Warm climate year-round</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="Cold">
+              <input type="radio" name="climate" value="Cold" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">❄️</span>
+                <span class="bf-option-label">Cold</span>
+                <span class="bf-option-desc">Cold climate with snow</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="Moderate">
+              <input type="radio" name="climate" value="Moderate" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🌈</span>
+                <span class="bf-option-label">Moderate</span>
+                <span class="bf-option-desc">Mild climate</span>
+              </div>
+            </label>
+            <label class="bf-option" data-value="Any">
+              <input type="radio" name="climate" value="Any" />
+              <div class="bf-option-content">
+                <span class="bf-option-icon">🌍</span>
+                <span class="bf-option-label">Any</span>
+                <span class="bf-option-desc">No preference</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="bf-nav">
+          <button type="button" class="bf-btn bf-btn-outline" id="prevBtn" onclick="prevStep()">
+            <i class="fas fa-arrow-left"></i> Previous
+          </button>
+          <button type="button" class="bf-btn bf-btn-primary" id="nextBtn" onclick="nextStep()">
+            Next <i class="fas fa-arrow-right"></i>
+          </button>
+          <button type="submit" class="bf-btn bf-btn-primary" id="submitBtn" style="display:none;">
+            <i class="fas fa-search"></i> Find My Perfect Breed
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <%- include('../partials/footer') %>
+
+  <script src="/js/breed-finder.js"></script>
+</body>
+</html>

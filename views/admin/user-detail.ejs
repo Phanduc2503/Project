@@ -13,33 +13,7 @@
 
   <%- include("../partials/admin-sidebar", { currentPage: 'users' }) %>
 
-  <header class="admin-topbar">
-    <div class="admin-topbar-left">
-      <button class="admin-toggle-sidebar" onclick="toggleSidebar()" aria-label="Toggle sidebar">
-        <i class="fas fa-bars"></i>
-      </button>
-      <div class="admin-topbar-search">
-        <i class="fas fa-search"></i>
-        <input type="text" placeholder="Search..." disabled />
-      </div>
-    </div>
-    <div class="admin-topbar-right">
-      <div class="admin-profile" id="profileDropdownToggle">
-        <div class="avatar">
-          <%= currentUser ? currentUser.username.charAt(0).toUpperCase() : 'A' %>
-        </div>
-        <span class="name"><%= currentUser ? currentUser.username : 'Admin' %></span>
-        <i class="fas fa-chevron-down" style="font-size:0.7rem;color:var(--admin-text-muted);"></i>
-      </div>
-      <div class="admin-profile-dropdown" id="profileDropdown">
-        <a href="/user/profile" class="dropdown-item"><i class="fas fa-user"></i> My Profile</a>
-        <a href="/admin" class="dropdown-item"><i class="fas fa-th-large"></i> Dashboard</a>
-        <a href="/breeds" class="dropdown-item"><i class="fas fa-paw"></i> Breeds</a>
-        <div class="dropdown-divider"></div>
-        <a href="/logout" class="dropdown-item dropdown-danger"><i class="fas fa-sign-out-alt"></i> Logout</a>
-      </div>
-    </div>
-  </header>
+  <%- include("../partials/admin-header") %>
 
   <main class="admin-main">
     <%- include("../partials/admin-breadcrumb", { pageTitle: 'User Details', pageIcon: 'fas fa-user' }) %>
@@ -131,26 +105,6 @@
       document.getElementById('sidebarOverlay').classList.toggle('show');
     }
 
-    (function() {
-      var toggle = document.getElementById('profileDropdownToggle');
-      var dropdown = document.getElementById('profileDropdown');
-      if (toggle && dropdown) {
-        toggle.addEventListener('click', function(e) {
-          e.stopPropagation();
-          dropdown.classList.toggle('show');
-        });
-        document.addEventListener('click', function(e) {
-          if (!toggle.contains(e.target) && !dropdown.contains(e.target)) {
-            dropdown.classList.remove('show');
-          }
-        });
-        document.addEventListener('keydown', function(e) {
-          if (e.key === 'Escape' && dropdown.classList.contains('show')) {
-            dropdown.classList.remove('show');
-          }
-        });
-      }
-    })();
   </script>
 </body>
 </html>

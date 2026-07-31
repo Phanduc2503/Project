@@ -2,6 +2,7 @@ const Breed = require("../models/Breed");
 const Category = require("../models/Category");
 const Favorite = require("../models/Favorite");
 const User = require("../models/User");
+const BreedFinder = require("../models/BreedFinder");
 
 exports.index = async (req, res) => {
 
@@ -38,9 +39,19 @@ exports.profile = async (req, res) => {
         const totalFavorites = favorites.length;
         const totalBreeds = await Breed.countDocuments();
 
+        // Get user's breed finder recommendations
+        const recommendations = await BreedFinder.find({
+            userId: user._id,
+            isSaved: true
+        })
+        .sort({ createdAt: -1 })
+        .limit(4)
+        .lean();
+
         res.render("user/profile", {
             user,
             favorites,
+            recommendations,
             totalFavorites,
             totalBreeds
         });

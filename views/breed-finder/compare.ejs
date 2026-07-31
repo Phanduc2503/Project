@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Woofy - Compare Breeds</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="/css/woofy-theme.css" />
+  <link rel="stylesheet" href="/css/breed-finder.css" />
+</head>
+<body>
+  <%- include('../partials/header') %>
+
+  <main class="bf-main">
+    <div class="bf-container">
+      <div class="bf-page-header">
+        <a href="javascript:history.back()" class="bf-back-link"><i class="fas fa-arrow-left"></i> Back</a>
+        <h1><i class="fas fa-balance-scale"></i> Compare Breeds</h1>
+      </div>
+
+      <% if (comparison && comparison.length > 0) { %>
+        <div class="bf-compare-table-wrapper">
+          <table class="bf-compare-table">
+            <thead>
+              <tr>
+                <th class="bf-compare-feature">Feature</th>
+                <% comparison.forEach(function(item) { %>
+                  <th class="bf-compare-breed-header">
+                    <div class="bf-compare-breed-info">
+                      <img src="<%= item.image && item.image.trim() !== '' ? item.image : 'https://via.placeholder.com/200x150?text=No+Image' %>" 
+                           alt="<%= item.name %>" 
+                           class="bf-compare-img"
+                           onerror="this.src='https://via.placeholder.com/200x150?text=No+Image'" />
+                      <h3><%= item.name %></h3>
+                    </div>
+                  </th>
+                <% }); %>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="bf-compare-feature">Origin</td>
+                <% comparison.forEach(function(item) { %>
+                  <td><%= item.origin %></td>
+                <% }); %>
+              </tr>
+              <tr>
+                <td class="bf-compare-feature">Temperament</td>
+                <% comparison.forEach(function(item) { %>
+                  <td><%= item.temperament %></td>
+                <% }); %>
+              </tr>
+              <tr>
+                <td class="bf-compare-feature">Energy Level</td>
+                <% comparison.forEach(function(item) { %>
+                  <td><span class="bf-compare-badge energy-<%= item.energy.toLowerCase() %>"><%= item.energy %></span></td>
+                <% }); %>
+              </tr>
+              <tr>
+                <td class="bf-compare-feature">Trainability</td>
+                <% comparison.forEach(function(item) { %>
+                  <td><span class="bf-compare-badge train-<%= item.trainability.toLowerCase() %>"><%= item.trainability %></span></td>
+                <% }); %>
+              </tr>
+              <tr>
+                <td class="bf-compare-feature">Good with Children</td>
+                <% comparison.forEach(function(item) { %>
+                  <td><span class="bf-compare-badge <%= item.children === 'Good' ? 'good' : 'caution' %>"><%= item.children %></span></td>
+                <% }); %>
+              </tr>
+              <tr>
+                <td class="bf-compare-feature">Apartment Friendly</td>
+                <% comparison.forEach(function(item) { %>
+                  <td><span class="bf-compare-badge <%= item.apartment === 'Good' ? 'good' : (item.apartment === 'Needs Space' ? 'caution' : 'moderate') %>"><%= item.apartment %></span></td>
+                <% }); %>
+              </tr>
+              <tr>
+                <td class="bf-compare-feature">Exercise Needs</td>
+                <% comparison.forEach(function(item) { %>
+                  <td><span class="bf-compare-badge exercise-<%= item.exercise.toLowerCase() %>"><%= item.exercise %></span></td>
+                <% }); %>
+              </tr>
+              <tr>
+                <td class="bf-compare-feature">Grooming</td>
+                <% comparison.forEach(function(item) { %>
+                  <td><span class="bf-compare-badge groom-<%= item.grooming.toLowerCase() %>"><%= item.grooming %></span></td>
+                <% }); %>
+              </tr>
+              <tr>
+                <td class="bf-compare-feature">Life Expectancy</td>
+                <% comparison.forEach(function(item) { %>
+                  <td><%= item.lifeExpectancy %></td>
+                <% }); %>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="bf-compare-actions">
+          <a href="/breed-finder" class="bf-btn bf-btn-primary">
+            <i class="fas fa-redo"></i> Try Again
+          </a>
+        </div>
+      <% } else { %>
+        <div class="bf-empty">
+          <span class="bf-empty-icon">🐾</span>
+          <h3>No breeds to compare</h3>
+          <p>Select at least 2 breeds to compare them side by side.</p>
+          <a href="/breed-finder" class="bf-btn bf-btn-primary">Find Breeds</a>
+        </div>
+      <% } %>
+    </div>
+  </main>
+
+  <%- include('../partials/footer') %>
+</body>
+</html>

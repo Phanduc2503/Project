@@ -23,7 +23,13 @@
         <h1 class="form-title">Create Breed</h1>
         <p class="form-subtitle">Add a new dog breed to the Woofy database.</p>
 
-        <form action="/breeds" method="POST">
+        <% if (typeof error !== 'undefined' && error) { %>
+          <div class="admin-alert error" style="display:flex;align-items:center;gap:10px;padding:14px 20px;border-radius:var(--admin-radius-sm);margin-bottom:20px;font-size:0.9rem;font-weight:500;animation:adminFadeUp 0.3s ease;background:rgba(232,128,128,0.12);color:#991b1b;border:1px solid rgba(232,128,128,0.2);">
+            <i class="fas fa-exclamation-circle" style="font-size:1.1rem;"></i> <%= error %>
+          </div>
+        <% } %>
+
+        <form action="/breeds" method="POST" enctype="multipart/form-data">
           <div class="admin-form-group">
             <label class="admin-form-label">Category</label>
             <select name="categoryId" class="admin-form-select" required>
@@ -72,8 +78,14 @@
           </div>
 
           <div class="admin-form-group">
-            <label class="admin-form-label">Image URL</label>
-            <input type="text" name="image" class="admin-form-input" placeholder="https://example.com/dog.jpg">
+            <label class="admin-form-label">Image <span style="color:#e88080;">* Required</span></label>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <input type="file" name="image" class="admin-form-input" accept="image/png,image/jpeg,image/jpg,image/webp" required style="padding:8px;" onchange="previewImage(event)" />
+              <div id="imagePreviewContainer" style="display:none;margin-top:8px;">
+                <img id="imagePreview" src="#" alt="Preview" style="max-width:250px;max-height:180px;border-radius:8px;border:1px solid var(--admin-border);object-fit:cover;" />
+                <p style="font-size:0.78rem;color:var(--admin-text-muted);margin-top:4px;">Selected image preview</p>
+              </div>
+            </div>
           </div>
 
           <div class="admin-form-actions">
@@ -89,6 +101,23 @@
     function toggleSidebar() {
       document.getElementById('adminSidebar').classList.toggle('open');
       document.getElementById('sidebarOverlay').classList.toggle('show');
+    }
+
+    function previewImage(event) {
+      var file = event.target.files[0];
+      var container = document.getElementById('imagePreviewContainer');
+      var preview = document.getElementById('imagePreview');
+      if (file) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          preview.src = e.target.result;
+          container.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      } else {
+        container.style.display = 'none';
+        preview.src = '#';
+      }
     }
   </script>
 </body>

@@ -14,33 +14,7 @@
 
   <%- include("../partials/admin-sidebar", { currentPage: 'reports' }) %>
 
-  <header class="admin-topbar">
-    <div class="admin-topbar-left">
-      <button class="admin-toggle-sidebar" onclick="toggleSidebar()" aria-label="Toggle sidebar">
-        <i class="fas fa-bars"></i>
-      </button>
-      <div class="admin-topbar-search">
-        <i class="fas fa-search"></i>
-        <input type="text" placeholder="Search..." disabled />
-      </div>
-    </div>
-    <div class="admin-topbar-right">
-      <div class="admin-profile" id="profileDropdownToggle">
-        <div class="avatar">
-          <%= currentUser ? currentUser.username.charAt(0).toUpperCase() : 'A' %>
-        </div>
-        <span class="name"><%= currentUser ? currentUser.username : 'Admin' %></span>
-        <i class="fas fa-chevron-down" style="font-size:0.7rem;color:var(--admin-text-muted);"></i>
-      </div>
-      <div class="admin-profile-dropdown" id="profileDropdown">
-        <a href="/user/profile" class="dropdown-item"><i class="fas fa-user"></i> My Profile</a>
-        <a href="/admin" class="dropdown-item"><i class="fas fa-th-large"></i> Dashboard</a>
-        <a href="/breeds" class="dropdown-item"><i class="fas fa-paw"></i> Breeds</a>
-        <div class="dropdown-divider"></div>
-        <a href="/logout" class="dropdown-item dropdown-danger"><i class="fas fa-sign-out-alt"></i> Logout</a>
-      </div>
-    </div>
-  </header>
+  <%- include("../partials/admin-header") %>
 
   <main class="admin-main">
     <%- include("../partials/admin-breadcrumb", { pageTitle: 'Reports', pageIcon: 'fas fa-chart-bar' }) %>
@@ -128,19 +102,30 @@
         </div>
       </div>
     </div>
+
+    <!-- Breed Finder Reports Section -->
+    <div class="admin-card" style="margin-top:24px;">
+      <div class="admin-card-header">
+        <h3><i class="fas fa-robot" style="color:var(--admin-primary);"></i> AI Breed Finder Analytics</h3>
+      </div>
+      <div class="admin-card-body">
+        <div class="admin-grid-2col" style="margin-bottom:24px;">
+          <div class="chart-container" style="height:240px;">
+            <canvas id="breedFinderUsageChart"></canvas>
+          </div>
+          <div class="chart-container" style="height:240px;">
+            <canvas id="lifestyleChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-container" style="height:240px;">
+          <canvas id="topRecommendedChart"></canvas>
+        </div>
+      </div>
+    </div>
   </main>
 
   <style>
     .chart-container { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-    .admin-profile { position: relative; cursor: pointer; }
-    .admin-profile-dropdown { position: absolute; top: calc(100% + 8px); right: 0; width: 200px; background: #fff; border: 1px solid var(--admin-border); border-radius: var(--admin-radius-sm); box-shadow: 0 8px 30px rgba(0,0,0,0.1); z-index: 2000; display: none; padding: 6px; opacity: 0; transform: translateY(-4px); transition: opacity 0.2s ease, transform 0.2s ease; }
-    .admin-profile-dropdown.show { display: block; opacity: 1; transform: translateY(0); }
-    .admin-profile-dropdown .dropdown-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; text-decoration: none; color: var(--admin-text-light); font-size: 0.88rem; font-weight: 500; transition: background 0.15s ease; }
-    .admin-profile-dropdown .dropdown-item:hover { background: var(--admin-accent); color: var(--admin-primary-dark); }
-    .admin-profile-dropdown .dropdown-item i { width: 18px; text-align: center; }
-    .admin-profile-dropdown .dropdown-divider { height: 1px; background: var(--admin-border); margin: 4px 0; }
-    .admin-profile-dropdown .dropdown-danger { color: #e88080; }
-    .admin-profile-dropdown .dropdown-danger:hover { background: #fee2e2 !important; color: #991b1b !important; }
   </style>
 
   <script>
@@ -148,15 +133,6 @@
       document.getElementById('adminSidebar').classList.toggle('open');
       document.getElementById('sidebarOverlay').classList.toggle('show');
     }
-    (function() {
-      var toggle = document.getElementById('profileDropdownToggle');
-      var dropdown = document.getElementById('profileDropdown');
-      if (toggle && dropdown) {
-        toggle.addEventListener('click', function(e) { e.stopPropagation(); dropdown.classList.toggle('show'); });
-        document.addEventListener('click', function(e) { if (!toggle.contains(e.target) && !dropdown.contains(e.target)) { dropdown.classList.remove('show'); } });
-      }
-    })();
-
     document.addEventListener('DOMContentLoaded', function() {
       // Category Distribution Chart
       var catCanvas = document.getElementById('categoryChart');
@@ -213,6 +189,88 @@
           }
         });
       }
+
+      // ===== BREED FINDER CHARTS =====
+      fetch('/api/breed-finder/chart-data')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          // Usage Chart
+          var usageCanvas = document.getElementById('breedFinderUsageChart');
+          if (usageCanvas && data.usageDays) {
+            new Chart(usageCanvas.getContext('2d'), {
+              type: 'line',
+              data: {
+                labels: data.usageDays,
+                datasets: [{
+                  label: 'Breed Finder Uses',
+                  data: data.usageCounts,
+                  borderColor: '#7bc47f',
+                  backgroundColor: 'rgba(123,196,127,0.1)',
+                  fill: true,
+                  tension: 0.4,
+                  pointBackgroundColor: '#7bc47f'
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+              }
+            });
+          }
+
+          // Lifestyle Distribution
+          var lifestyleCanvas = document.getElementById('lifestyleChart');
+          if (lifestyleCanvas && data.lifestyleDistribution) {
+            new Chart(lifestyleCanvas.getContext('2d'), {
+              type: 'doughnut',
+              data: {
+                labels: data.lifestyleDistribution.map(function(l) { return l.name; }),
+                datasets: [{
+                  data: data.lifestyleDistribution.map(function(l) { return l.count; }),
+                  backgroundColor: ['#c4956a','#7bc47f','#6ab0e8','#e88080','#f4c542'],
+                  borderWidth: 0
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '55%',
+                plugins: {
+                  legend: { position: 'bottom', labels: { padding: 10, usePointStyle: true, font: { size: 10 } } }
+                }
+              }
+            });
+          }
+
+          // Top Recommended Breeds
+          var topRecCanvas = document.getElementById('topRecommendedChart');
+          if (topRecCanvas && data.popularBreeds) {
+            new Chart(topRecCanvas.getContext('2d'), {
+              type: 'bar',
+              data: {
+                labels: data.popularBreeds.map(function(b) { return b.name; }),
+                datasets: [{
+                  label: 'Times Recommended',
+                  data: data.popularBreeds.map(function(b) { return b.count; }),
+                  backgroundColor: 'rgba(196,149,106,0.7)',
+                  borderColor: '#c4956a',
+                  borderWidth: 1,
+                  borderRadius: 4
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: { legend: { display: false } },
+                scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } }
+              }
+            });
+          }
+        })
+        .catch(function() { console.log('Failed to load breed finder chart data'); });
     });
   </script>
 </body>

@@ -11,7 +11,7 @@ router.get("/breeds", breedController.index);
 router.get("/breeds/create", breedController.create);
 
 // Create Breed
-router.post("/breeds", breedController.store);
+router.post("/breeds", uploadBreed.single("image"), breedController.store);
 
 // Show edit form
 router.get("/breeds/edit/:id", breedController.edit);

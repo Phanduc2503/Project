@@ -22,6 +22,7 @@ const breedRoutes = require("./routes/breedRoutes");
 const userRoutes = require("./routes/userRoutes");
 const favoriteRoutes = require("./routes/favoriteRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
+const breedFinderRoutes = require("./routes/breedFinderRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 
 // ===== VIEW ENGINE =====
@@ -54,6 +55,7 @@ app.use("/", breedRoutes);
 app.use("/user", userRoutes);
 app.use("/user/favorites", favoriteRoutes);
 app.use("/", notificationRoutes);
+app.use("/", breedFinderRoutes);
 app.use("/", adminRoutes);
 
 // ===== SERVER =====

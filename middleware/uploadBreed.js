@@ -13,23 +13,30 @@ const storage = multer.diskStorage({
         cb(null, breedDir);
     },
     filename: function (req, file, cb) {
-        const ext = path.extname(file.originalname);
+        const ext = path.extname(file.originalname).toLowerCase();
         const fileName = "breed-" + Date.now() + ext;
         cb(null, fileName);
     }
 });
 
+const allowedMimes = ["image/jpeg", "image/png", "image/webp"];
+const allowedExts = [".jpg", ".jpeg", ".png", ".webp"];
+
 const fileFilter = (req, file, cb) => {
-    if (file.mimetype.startsWith("image/")) {
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (allowedMimes.includes(file.mimetype) && allowedExts.includes(ext)) {
         cb(null, true);
     } else {
-        cb(new Error("Chỉ được upload file ảnh"), false);
+        cb(new Error("Only .jpg, .jpeg, .png, .webp files are allowed"), false);
     }
 };
 
 const uploadBreed = multer({
     storage,
-    fileFilter
+    fileFilter,
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5 MB
+    }
 });
 
 module.exports = uploadBreed;

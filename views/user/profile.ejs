@@ -112,6 +112,36 @@
             </div>
           </div>
 
+          <!-- Recommended Breeds -->
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-robot" style="color:var(--primary-dark);"></i> Recommended Breeds</h3>
+              <% if (recommendations && recommendations.length > 0) { %>
+                <a href="/breed-finder/history" class="card-link">View All <i class="fas fa-arrow-right"></i></a>
+              <% } %>
+            </div>
+            <div class="card-body">
+              <% if (recommendations && recommendations.length > 0) { %>
+                <div class="breed-mini-list">
+                  <% recommendations.slice(0, 4).forEach(function(rec) { %>
+                    <a href="/breed-finder/saved/<%= rec._id %>" class="breed-mini-item">
+                      <div class="mini-info">
+                        <h4><i class="fas fa-paw"></i> Breed Finder</h4>
+                        <span><%= new Date(rec.createdAt).toLocaleDateString("en-US", { month: 'short', day: 'numeric' }) %></span>
+                      </div>
+                    </a>
+                  <% }); %>
+                </div>
+              <% } else { %>
+                <div class="empty-state">
+                  <span class="empty-icon">🤖</span>
+                  <p>No recommendations yet.</p>
+                  <a href="/breed-finder">Find your perfect breed</a>
+                </div>
+              <% } %>
+            </div>
+          </div>
+
           <!-- Recent Activity -->
           <div class="card">
             <div class="card-header">

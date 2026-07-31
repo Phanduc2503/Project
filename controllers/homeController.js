@@ -2,6 +2,7 @@ const Breed = require("../models/Breed");
 const Category = require("../models/Category");
 const User = require("../models/User");
 const Favorite = require("../models/Favorite");
+const BreedFinder = require("../models/BreedFinder");
 
 exports.homePage = async (req, res) => {
   try {
@@ -88,6 +89,21 @@ exports.adminPage = async (req, res) => {
       .sort({ createdAt: -1 })
       .limit(10);
 
+    // Breed Finder stats
+    const totalBreedFinderUses = await BreedFinder.countDocuments(dateFilter);
+    const topBreedAgg = await BreedFinder.aggregate([
+      { $match: dateFilter },
+      { $unwind: "$results" },
+      { $group: { _id: "$results.breedId", count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 1 },
+    ]);
+    let topRecommendedBreed = "N/A";
+    if (topBreedAgg.length > 0) {
+      const topB = await Breed.findById(topBreedAgg[0]._id).select("name").lean();
+      if (topB) topRecommendedBreed = topB.name;
+    }
+
     res.render("admin/adminPage", {
       totalBreeds,
       totalCategories,
@@ -98,6 +114,8 @@ exports.adminPage = async (req, res) => {
       recentFavorites,
       recentNotifications,
       currentRange: range,
+      totalBreedFinderUses,
+      topRecommendedBreed,
     });
   } catch (error) {
     console.log(error);
@@ -180,7 +198,7 @@ exports.adminReports = async (req, res) => {
   }
 };
 
-// Admin search API - searches breeds, categories, and users
+// Admin search API - searches breeds, categories, users, and favorites
 exports.adminSearch = async (req, res) => {
   try {
     const q = req.query.q || "";
@@ -190,7 +208,7 @@ exports.adminSearch = async (req, res) => {
 
     const regex = { $regex: q, $options: "i" };
 
-    const [breeds, categories, users] = await Promise.all([
+    const [breeds, categories, users, favorites] = await Promise.all([
       Breed.find({
         $or: [
           { name: regex },
@@ -214,6 +232,20 @@ exports.adminSearch = async (req, res) => {
         ]
       })
         .select("username email avatar")
+        .limit(5)
+        .lean(),
+
+      Favorite.find({})
+        .populate({
+          path: "userId",
+          match: { $or: [{ username: regex }, { email: regex }] },
+          select: "username email"
+        })
+        .populate({
+          path: "breedId",
+          match: { name: regex },
+          select: "name"
+        })
         .limit(5)
         .lean(),
     ]);
@@ -248,14 +280,90 @@ exports.adminSearch = async (req, res) => {
         label: u.username,
         sublabel: u.email,
         image: u.avatar || null,
-        url: "/user/profile",
+        url: "/admin/users/" + u._id,
         icon: "fa-user",
       });
+    });
+
+    favorites.forEach(function(f) {
+      // Only include favorites that have a match on either breed or user
+      if (f.breedId || f.userId) {
+        var favLabel = "";
+        var favSublabel = "";
+        var favUrl = "/admin/favorites";
+        if (f.breedId && f.userId) {
+          favLabel = f.breedId.name + " (by " + f.userId.username + ")";
+          favSublabel = "Favorite";
+        } else if (f.breedId && !f.userId) {
+          favLabel = f.breedId.name;
+          favSublabel = "Favorite (user deleted)";
+        } else if (f.userId && !f.breedId) {
+          favLabel = f.userId.username + "'s favorite";
+          favSublabel = "Favorite (breed deleted)";
+        }
+        results.push({
+          type: "favorite",
+          label: favLabel,
+          sublabel: favSublabel,
+          image: null,
+          url: favUrl,
+          icon: "fa-heart",
+        });
+      }
     });
 
     res.json({ results });
   } catch (error) {
     console.error("Admin search error:", error);
     res.status(500).json({ results: [], error: "Search failed" });
+  }
+};
+
+// Global admin search results page
+exports.adminSearchResults = async (req, res) => {
+  try {
+    const q = req.query.q || "";
+    if (!q || q.trim().length === 0) {
+      return res.redirect("/admin");
+    }
+
+    const regex = { $regex: q, $options: "i" };
+
+    const [breeds, categories, users] = await Promise.all([
+      Breed.find({
+        $or: [
+          { name: regex },
+          { originCountry: regex },
+          { temperament: regex },
+        ]
+      })
+      .populate("categoryId", "name")
+      .sort({ name: 1 })
+      .lean(),
+
+      Category.find({ name: regex })
+        .sort({ name: 1 })
+        .lean(),
+
+      User.find({
+        $or: [
+          { username: regex },
+          { email: regex },
+        ]
+      })
+        .sort({ username: 1 })
+        .lean(),
+    ]);
+
+    res.render("admin/search-results", {
+      query: q,
+      breeds,
+      categories,
+      users,
+      totalResults: breeds.length + categories.length + users.length,
+    });
+  } catch (error) {
+    console.error("Admin search results error:", error);
+    res.status(500).send("Search failed");
   }
 };

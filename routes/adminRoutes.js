@@ -48,4 +48,7 @@ router.post("/admin/settings", async (req, res) => {
 // Reports
 router.get("/admin/reports", homeController.adminReports);
 
+// Global admin search results page
+router.get("/admin/search", homeController.adminSearchResults);
+
 module.exports = router;

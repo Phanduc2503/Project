@@ -39,10 +39,19 @@ exports.create = async (req, res) => {
 
 exports.store = async (req, res) => {
     try {
-        console.log("Before create");
-        console.log(req.body);
+        // Validate image is required
+        if (!req.file) {
+            const categories = await Category.find();
+            return res.render("breed/create", {
+                categories,
+                error: "Image is required. Please select a .jpg, .jpeg, .png, or .webp file (max 5 MB)."
+            });
+        }
 
-        const breed = new Breed(req.body);
+        const breedData = { ...req.body };
+        breedData.image = "/uploads/breeds/" + req.file.filename;
+
+        const breed = new Breed(breedData);
 
         await breed.save();
 
@@ -58,6 +67,21 @@ exports.store = async (req, res) => {
     } catch (error) {
         console.log("ERROR:");
         console.log(error);
+        // Check for Multer errors (file too large, wrong type)
+        if (error.code === 'LIMIT_FILE_SIZE') {
+            const categories = await Category.find();
+            return res.render("breed/create", {
+                categories,
+                error: "File is too large. Maximum size is 5 MB."
+            });
+        }
+        if (error.message && error.message.includes("Only .jpg")) {
+            const categories = await Category.find();
+            return res.render("breed/create", {
+                categories,
+                error: error.message
+            });
+        }
         res.status(500).send(error.message);
     }
 };
